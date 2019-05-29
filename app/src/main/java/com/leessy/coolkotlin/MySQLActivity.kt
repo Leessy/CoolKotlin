@@ -1,24 +1,36 @@
 package com.leessy.coolkotlin
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.GridLayoutManager
 import android.util.Log
+import android.widget.Toast
 import com.jakewharton.rxbinding2.view.RxView
-import com.mysql.jdbc.PreparedStatement
-import io.reactivex.Scheduler
+import com.leessy.SQL.SqlLogData
+import com.leessy.adapter.SqlLogsAdapter
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_my_sql.*
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.PreparedStatement
 import java.sql.SQLException
-import java.util.*
+import java.util.concurrent.TimeUnit
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.leessy.SQL.RecycleViewDivider
+
 
 class MySQLActivity : AppCompatActivity() {
-    lateinit var con: Connection
+    var con: Connection? = null
     val TAG = "MySQLActivity"
     val paraCount = 5
     var paras = arrayOfNulls<String>(paraCount)
+    val sqlDatas = ArrayList<SqlLogData>()
 
+
+    var mAdapter: SqlLogsAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,47 +41,105 @@ class MySQLActivity : AppCompatActivity() {
             .subscribe { connetSQL() }
 
         RxView.clicks(getDataBt)
-            .observeOn(Schedulers.io())
-            .subscribe { getData() }
-    }
-
-    //获取数据
-    private fun getData() {
-        var q = "select * from log_records"
-        var pst: java.sql.PreparedStatement = con.prepareStatement(q)//准备执行语句
-        var retsult = pst.executeQuery()//执行语句，得到结果集
-        while (retsult.next()) {
-            for (i in 1..paraCount) {
-                paras[i] = retsult.getString(i )
+            .filter {
+                (con != null && !con!!.isClosed).let {
+                    if (!it) {
+                        showToast("数据库未连接")
+                    }
+                    it
+                }
             }
-            System.out.println(Arrays.toString(paras))
+            .throttleFirst(2, TimeUnit.SECONDS)
+            .observeOn(Schedulers.io())
+            .map { getData() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { mAdapter?.setNewData(sqlDatas) }
 
-        }//显示数据
-        retsult.close()
-        con.close()//关闭连接
-        pst.close()
+        initListView()
     }
+
 
     //连接数据库
     private fun connetSQL() {
+        if (con != null) return
         try {
-            //                Class.forName("net.sourceforge.jtds.jdbc.Driver");//sql server使用
-            //                con = DriverManager.getConnection("jdbc:jtds:sqlserver://" + ip + ":1433/" + db + ";charset=utf8", user, pwd);
             Class.forName("com.mysql.jdbc.Driver")
-            //引用代码此处需要修改，address为数据IP，Port为端口号，DBName为数据名称，UserName为数据库登录账户，Password为数据库登录密码
             val url = "jdbc:mysql://39.108.67.218:3306/log_server?useUnicode=true&amp;characterEncoding=utf-8"
             con = DriverManager.getConnection(url, "root", "123456")
-            Log.d(TAG, "run: 连接成功==$con")
-            Log.d(TAG, "run erro : " + con.getWarnings())
-            //                con = DriverManager.getConnection("jdbc:mysql://address:Port/DBName", UserName, Password);
+            AndroidSchedulers.mainThread().scheduleDirect {
+                if (con?.isClosed!!) {
+                    showToast("连接失败")
+                } else {
+                    showToast("连接成功")
+                }
+            }
+            Log.d(TAG, "run: 连接成功   isClosed==${con?.isClosed}")
         } catch (e: SQLException) {
-            // TODO Auto-generated catch block
-            Log.d(TAG, "run: 连接1==$e")
+            Log.d(TAG, "run: 连接 e 1==$e")
             e.printStackTrace()
         } catch (e: Exception) {
-            // TODO Auto-generated catch block
-            Log.d(TAG, "run: 连接2==$e")
+            Log.d(TAG, "run: 连接 e 2==$e")
             e.printStackTrace()
+        }
+    }
+
+
+    //获取数据
+    /**
+    '%a'     //以a结尾的数据
+    'a%'     //以a开头的数据
+    '%a%'    //含有a的数据
+    '_a_'    //三位且中间字母是a的
+    '_a'     //两位且结尾字母是a的
+    'a_'     //两位且开头字母是a的
+     */
+    private fun getData() {
+//        var q = "select * from log_records  ORDER BY createTime desc"
+        var q = "select * from log_records WHERE sn like 'F901%' ORDER BY createTime desc"
+        var pst: PreparedStatement = con!!.prepareStatement(q)//准备执行语句
+        var retsult = pst.executeQuery()//执行语句，得到结果集
+
+        sqlDatas.clear()
+        while (retsult.next()) {
+            sqlDatas.add(SqlLogData(retsult.getString(4)).apply {
+                this.id = retsult.getLong(1)
+                this.filename = retsult.getString(2)
+                this.Url = retsult.getString(3)
+                this.createTime = retsult.getString(5)
+            })
+//            for (i in 0..paraCount - 1) {
+//                paras[i] = retsult.getString(i + 1)
+//            }
+//            System.out.println(Arrays.toString(paras))
+        }
+        retsult.close()
+        pst.close()
+    }
+
+    //recycleview
+    private fun initListView() {
+        mAdapter = mRecyclerview.run {
+            //添加默认分割线：高度为2px，颜色为灰色
+            addItemDecoration(RecycleViewDivider(this@MySQLActivity, LinearLayoutManager.HORIZONTAL))
+            layoutManager = GridLayoutManager(this.context, 1)
+            adapter = SqlLogsAdapter(0)
+            adapter as SqlLogsAdapter
+        }.apply {
+            this.onItemClickListener = BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
+                showToast("点击 ${sqlDatas[position].createTime}")
+            }
+        }
+    }
+
+
+    fun showToast(s: String) {
+        Toast.makeText(this@MySQLActivity, s, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        con?.let {
+            it.close()
         }
     }
 }
