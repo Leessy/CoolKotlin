@@ -1,6 +1,12 @@
 package com.leessy.coolkotlin
 
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.content.Context
+import android.content.Intent
+import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
@@ -20,6 +26,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.leessy.SQL.RecycleViewDivider
+import com.leessy.SQL.TestRecordsData
 
 
 class MySQLActivity : AppCompatActivity() {
@@ -39,6 +46,9 @@ class MySQLActivity : AppCompatActivity() {
         RxView.clicks(connectBt)
             .observeOn(Schedulers.io())
             .subscribe { connetSQL() }
+        RxView.clicks(updateLog)
+            .observeOn(Schedulers.io())
+            .subscribe { updateRecords() }
 
         RxView.clicks(getDataBt)
             .filter {
@@ -56,6 +66,38 @@ class MySQLActivity : AppCompatActivity() {
             .subscribe { mAdapter?.setNewData(sqlDatas) }
 
         initListView()
+        connetSQL()
+    }
+
+
+    //上传一条测试记录
+    @SuppressLint("MissingPermission")
+    private fun updateRecords() {
+        if (con == null) return
+        val data = TestRecordsData.dev_test_records_Table().apply {
+            //            system_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID)
+//            system_version = android.os.Build.VERSION.RELEASE
+            system_id = "000"
+            system_version = android.os.Build.VERSION.RELEASE
+            dev_type = "F502"
+            dev_configtype = "F502A"
+            dev_sn = "--"
+            test_sn = "--"
+            mobile_mac = "--"
+            blu_mac = "123"
+            eth_mac = "456"
+            wifi_mac = "111"
+            dev_imei = "000"
+            dev_imsi = "0000"
+            serial = android.os.Build.SERIAL
+            cpuinfo = android.os.Build.CPU_ABI
+            test_result = false
+            test_jsondata = "{}"
+            time = "2019-06-05 12:00:00"
+        }
+        Log.d(TAG, "数据=$data")
+        val i = TestRecordsData.insert(con, data)
+        Log.d(TAG, "插入数据id=$i")
     }
 
 
@@ -126,7 +168,9 @@ class MySQLActivity : AppCompatActivity() {
             adapter as SqlLogsAdapter
         }.apply {
             this.onItemClickListener = BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
-                showToast("点击 ${sqlDatas[position].createTime}")
+                startActivity(Intent(this@MySQLActivity, WebViewActivity::class.java).apply {
+                    putExtra("url", sqlDatas[position].Url)
+                })
             }
         }
     }

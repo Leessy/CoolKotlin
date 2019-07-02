@@ -31,5 +31,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="MySQL崩溃日志查看"/>
+    <Button
+            android:id="@+id/coroutine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="kotlinCoroutine 协程"/>
+    <Button
+            android:id="@+id/xcrash"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="xcrash异常捕获"/>
 
 </LinearLayout>

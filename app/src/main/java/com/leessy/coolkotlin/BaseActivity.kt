@@ -2,11 +2,13 @@ package com.leessy.coolkotlin
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity;
-
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import kotlinx.android.synthetic.main.activity_base.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 
-class BaseActivity : AppCompatActivity() {
+open class BaseActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,4 +21,21 @@ class BaseActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        println("onDestroy ???")
+        cancel()
+    }
+
+//    suspend fun showIOData() {
+//        val deferred = async(Dispatchers.IO) {
+//            // impl
+//            println(Thread.currentThread().name)
+//            return@async 1
+//        }
+//        withContext(Dispatchers.Main) {
+//            val data = deferred.await()
+//            // Show data in UI
+//        }
+//    }
 }
