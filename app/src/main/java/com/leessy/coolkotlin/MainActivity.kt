@@ -3,11 +3,13 @@ package com.leessy.coolkotlin
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.jakewharton.rxbinding2.view.RxView
 import com.leessy.xCrash.XcrashTestActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
 
 class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
@@ -33,10 +35,15 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         RxView.clicks(coroutine).observeOn(AndroidSchedulers.mainThread())
             .subscribe { startActivity(Intent(this, CoroutineActivity::class.java)) }
 
+
         RxView.clicks(xcrash).observeOn(AndroidSchedulers.mainThread())
-            .subscribe { startActivity(Intent(this, XcrashTestActivity::class.java)) }
+            .subscribe {
+                startActivity(Intent(this, XcrashTestActivity::class.java))
+            }
 
+        RxView.clicks(AiFaceCoreTest).observeOn(AndroidSchedulers.mainThread())
+            .subscribe { startActivity(Intent(this, AiFaceCoreTestActivity::class.java)) }
 
-        startActivity(Intent(this, XcrashTestActivity::class.java))
     }
+
 }

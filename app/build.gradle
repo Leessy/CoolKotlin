@@ -71,5 +71,6 @@ dependencies {
 
     //utils
     api 'com.blankj:utilcode:1.22.7'
+    implementation project(path: ':aifacecore')
 
 }

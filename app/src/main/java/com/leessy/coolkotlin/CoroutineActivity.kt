@@ -117,6 +117,7 @@ class CoroutineActivity : BaseActivity() {
     }
 
 
+    @Synchronized
     fun setup(hello: String): Job = GlobalScope.launch(Dispatchers.Main) {
         // launch coroutine in the main thread
         for (i in 100 downTo 1) { // countdown from 10 to 1

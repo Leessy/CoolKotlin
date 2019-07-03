@@ -41,5 +41,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="xcrash异常捕获"/>
+    <Button
+            android:id="@+id/AiFaceCoreTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="算法核心库测试"/>
 
 </LinearLayout>

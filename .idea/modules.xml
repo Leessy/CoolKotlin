@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CoolKotlin.iml" filepath="$PROJECT_DIR$/CoolKotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/CoolKotlin.iml" filepath="$PROJECT_DIR$/.idea/CoolKotlin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/aifacecore/aifacecore.iml" filepath="$PROJECT_DIR$/aifacecore/aifacecore.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/myfacetest/myfacetest.iml" filepath="$PROJECT_DIR$/myfacetest/myfacetest.iml" />
     </modules>
