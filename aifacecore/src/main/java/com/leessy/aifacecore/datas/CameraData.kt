@@ -9,7 +9,7 @@ import com.leessy.aifacecore.opt.ImageColor
  *
  * 相机数据 实体类
  */
-class CamreraData(
+class CameraData(
     val byteArray: ByteArray,
     val width: Int,
     val height: Int,

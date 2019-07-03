@@ -1,6 +1,6 @@
 package com.leessy.aifacecore.opt
 
-import com.leessy.aifacecore.datas.FRectData
+import com.leessy.aifacecore.datas.RectData
 import io.reactivex.Observable
 
 /**
@@ -8,6 +8,6 @@ import io.reactivex.Observable
  * business@onfacemind.com
  */
 
-fun Observable<FRectData>.FollowId(cameraID: Int): Observable<FRectData> {
-    return filter { it.cameraId == cameraID }
+fun Observable<RectData>.FollowId(imageColor: ImageColor, cameraID: Int): Observable<RectData> {
+    return filter { it.cameraId == cameraID && it.imageColor == imageColor }
 }

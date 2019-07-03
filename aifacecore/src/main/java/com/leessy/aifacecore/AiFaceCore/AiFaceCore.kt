@@ -1,12 +1,15 @@
 package com.leessy.aifacecore.AiFaceCore
 
 import android.content.Context
-import android.util.Log
 import com.AiChlFace.AiChlFace
 import com.AiChlIrFace.AiChlIrFace
-import kotlinx.coroutines.Dispatchers
+import com.leessy.aifacecore.datas.CameraData
+import com.leessy.aifacecore.datas.RectData
+import com.leessy.aifacecore.opt.DataEmitterCenter
+import com.leessy.aifacecore.opt.FaceRectEmitterCenter
+import com.leessy.aifacecore.opt.ImageColor
+import io.reactivex.Observable
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
@@ -21,7 +24,7 @@ object AiFaceCore {
     private var AiIrFaceSDK: Boolean = false
     lateinit var initMode: AiFaceType
     private val channelNum = 4//默认是全部使用各4通道
-    lateinit var call: IAiFaceInitCall
+    internal lateinit var call: IAiFaceInitCall
     internal var AiChlFaceSize: Int = 0
     internal var AiChlIrFaceSize: Int = 0
 
@@ -80,11 +83,61 @@ object AiFaceCore {
 
 
     /**
+     * 数据转发中心  发射器
+     *
+     * @param CameraID  同一相机颜色最多可以使用2个id，默认id为0
+     * @param imageColor 说明相机颜色类型 根据颜色类型使用红外或者彩色算法
+     *
+     */
+    fun dataEmitter(
+        byteArray: ByteArray,
+        width: Int,
+        height: Int,
+        CameraID: Int = 0,
+        imageColor: ImageColor,
+        stream: Int = 2,
+        bMirror: Int = 0,
+        nRotate: Int = 0
+    ) = DataEmitterCenter.buidler(
+        byteArray,
+        width,
+        height,
+        CameraID,
+        imageColor,
+        stream,
+        bMirror,
+        nRotate
+    )
+
+
+    /**
+     * 获取数据源
+     * @param CameraID      根据 (颜色 +id)   获取数据   不通颜色可以有相同id 默认id为0
+     * @param imageColor    根据 (颜色 +id)   获取数据  不通颜色可以有相同id 默认id为0
+     */
+    fun Follows(imageColor: ImageColor = ImageColor.COLOR, CameraID: Int = 0): Observable<CameraData> {
+        return DataEmitterCenter.faceSubject.filter { it.imageColor == imageColor && it.CameraID == CameraID }
+    }
+
+    /**
+     *根据颜色类型+相机id 获取人脸数据
+     */
+    fun FollowFaceRect(imageColor: ImageColor = ImageColor.COLOR, CameraID: Int = 0): Observable<RectData> {
+        return FaceRectEmitterCenter.FaceRectObservableForID(imageColor, CameraID)
+    }
+
+    /**
+     * 获取全部数据人脸框数据
+     */
+    fun FollowFaceRectAll(): Observable<CameraData> {
+        return DataEmitterCenter.faceSubject
+    }
+
+    /**
      * 使用读卡模块授权时 设置读取
      */
     fun setCardReader() {
         //todo 待实现读卡授权的逻辑
-
     }
 }
 

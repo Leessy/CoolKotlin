@@ -1,12 +1,14 @@
 package com.leessy.aifacecore.datas
 
+import com.leessy.aifacecore.opt.ImageColor
+
 /**
  *
  * @author Created by 刘承. on 2019/7/3
  * business@onfacemind.com
  * 人脸框数据
  */
-class FRectData(var cameraId: Int = 0) {
+class RectData(var imageColor: ImageColor, var cameraId: Int = 0) {
     //人脸
     //相机id，或者数据分类值
 

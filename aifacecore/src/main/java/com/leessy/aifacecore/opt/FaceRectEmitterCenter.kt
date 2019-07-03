@@ -1,7 +1,7 @@
 package com.leessy.aifacecore.opt
 
 import com.AiChlFace.FACE_DETECT_RESULT
-import com.leessy.aifacecore.datas.FRectData
+import com.leessy.aifacecore.datas.RectData
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
@@ -11,27 +11,19 @@ import io.reactivex.subjects.PublishSubject
  * business@onfacemind.com
  */
 
-object FaceRectCenter {
+object FaceRectEmitterCenter {
     /**
      * 统一人脸分发中心
      */
-    private val faceSubject = PublishSubject.create<FRectData>()
+    internal val faceSubject = PublishSubject.create<RectData>()
 
     /**
      * 发送人框
      */
-    internal fun sendFaceRect(cameraId: Int, faceresult: Any) {
-        faceSubject.onNext(FRectData(cameraId = cameraId).apply {
+    internal fun sendFaceRect(mageColor: ImageColor, cameraId: Int, faceresult: Any) {
+        faceSubject.onNext(RectData(mageColor, cameraId).apply {
             transf(this, faceresult)
         })
-    }
-
-
-    /**
-     * 获取人脸框数据
-     */
-    fun FaceRectObservable(): Observable<FRectData> {
-        return faceSubject
     }
 
 
@@ -40,15 +32,15 @@ object FaceRectCenter {
      *
      * 默认为 id 0
      */
-    fun FaceRectObservableForID(camreraId: Int = 0): Observable<FRectData> {
-        return faceSubject.FollowId(cameraID = camreraId)
+    fun FaceRectObservableForID(imageColor: ImageColor = ImageColor.COLOR, camreraId: Int = 0): Observable<RectData> {
+        return faceSubject.FollowId(imageColor, camreraId)
     }
 
 
     /**
      * 解析转换人脸数据
      */
-    private fun transf(f: FRectData, faceresult: Any) {
+    private fun transf(f: RectData, faceresult: Any) {
         f.run {
             if (faceresult is FACE_DETECT_RESULT) {
                 nFaceLeft = faceresult.nFaceLeft

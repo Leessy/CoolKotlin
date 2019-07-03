@@ -2,7 +2,6 @@ package com.leessy.aifacecore.opt
 
 import com.AiChlFace.AiChlFace
 import com.AiChlFace.FACE_DETECT_RESULT
-import com.leessy.aifacecore.datas.CamreraData
 import com.leessy.aifacecore.datas.FaceData
 import com.leessy.aifacecore.datas.isReadyFeature
 import io.reactivex.Observable
@@ -16,7 +15,7 @@ import io.reactivex.Observable
 /**
  * 提取特征码
  */
-fun Observable<FaceData>.FeatureGet(): Observable<FaceData>? {
+fun Observable<FaceData>.FeatureGet(): Observable<FaceData> {
     return filter { it.isReadyFeature() }
         .map {
             if (it.RGB24 != null && it.detectResult != null) {
@@ -78,7 +77,7 @@ fun Observable<FaceData>.FeatureGet(): Observable<FaceData>? {
 /**
  * 提取特征码  并过滤失败数据
  */
-fun Observable<FaceData>.FeatureGetandFilter(cd: Observable<FaceData>): Observable<FaceData>? {
+fun Observable<FaceData>.FeatureGetandFilter(cd: Observable<FaceData>): Observable<FaceData> {
     return FeatureGet()?.filter { it.FeatureGet == 0 }
 }
 

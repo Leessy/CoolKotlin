@@ -68,7 +68,7 @@ object CamerasMng {
 
     private fun connectDevice(device: UsbDevice, controlBlock: USBMonitor.UsbControlBlock) {
         cameraList.add(Camera(controlBlock).apply {
-            devName = device.deviceName
+            initmarking()
         })
     }
 

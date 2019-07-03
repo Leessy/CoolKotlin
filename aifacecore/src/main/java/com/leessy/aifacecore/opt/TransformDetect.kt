@@ -1,7 +1,7 @@
 package com.leessy.aifacecore.opt
 
 import com.AiChlFace.FACE_DETECT_RESULT
-import com.leessy.aifacecore.datas.CamreraData
+import com.leessy.aifacecore.datas.CameraData
 import com.leessy.aifacecore.datas.FaceData
 import io.reactivex.Observable
 
@@ -14,7 +14,7 @@ import io.reactivex.Observable
 /**
  * 人脸检测
  */
-fun Observable<CamreraData>.DetectFace(): Observable<FaceData>? {
+fun Observable<CameraData>.DetectFace(): Observable<FaceData> {
     return map {
         FaceData().apply {
             CameraID = it.CameraID
@@ -88,7 +88,7 @@ fun Observable<CamreraData>.DetectFace(): Observable<FaceData>? {
                 }
             }
             if (faceNum > 0) {
-                FaceRectCenter.sendFaceRect(it.CameraID, detectResult!!)
+                FaceRectEmitterCenter.sendFaceRect(it.imageColor, it.CameraID, detectResult!!)
             }
             width = w[0]
             height = h[0]
@@ -100,6 +100,6 @@ fun Observable<CamreraData>.DetectFace(): Observable<FaceData>? {
 /**
  * 人脸检测 并过滤无人脸的数据
  */
-fun Observable<CamreraData>.DetectFaceAndFilter(cd: Observable<CamreraData>): Observable<FaceData>? {
+fun Observable<CameraData>.DetectFaceAndFilter(cd: Observable<CameraData>): Observable<FaceData>? {
     return DetectFace()?.filter { it.faceNum > 0 }
 }
