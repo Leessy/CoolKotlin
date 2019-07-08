@@ -14,14 +14,6 @@ import java.util.*
 object ComparList {
     var TAG = "ComparList"
 
-    //    companion object {
-//        private val TAG = "ComparList"
-//        private val comparList = ComparList()
-//
-//        fun instance(): ComparList {
-//            return comparList
-//        }
-//    }
     /**
      * 是否已创建对比列表
      */

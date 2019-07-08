@@ -13,7 +13,6 @@ import com.AiChlIrFace.AiChlIrFace
 object AiFaceOpt {
 
     //可见光1
-    @Synchronized
     fun DetectFaceEx_1(
         nFmt: Int,
         bSrcImg: ByteArray,

@@ -2,10 +2,11 @@ package com.leessy.camera
 
 import android.graphics.SurfaceTexture
 import android.util.Log
-import com.serenegiant.usb.IFrameCallback
-import com.serenegiant.usb.Size
-import com.serenegiant.usb.USBMonitor
-import com.serenegiant.usb.UVCCamera
+import android.view.Surface
+import com.serenegiant.usb.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.nio.ByteBuffer
 
 
 /**
@@ -23,9 +24,12 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
     private var Width: Int = 0//相机实际启动宽
     private var Height: Int = 0//相机实际启动高
 
+    var n = 0L
 
     private val iFrameCallback = IFrameCallback {
-        Log.d("------", "iFrameCallback  $devName   $Width   $Height")
+        if (n++ % 20 == 0L) {
+            Log.d("------", "iFrameCallback     $devName   $Width   $Height")
+        }
         call?.run {
             call(it, Width, Height)
         }
@@ -44,6 +48,7 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
             uvcCamera?.setAutoFocus(true)
             return true
         } catch (e: Exception) {
+
             uvcCamera = null
         }
         return false
@@ -67,37 +72,34 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
      */
     @Synchronized
     fun setPreviewSize(w: Int, h: Int): Boolean {
-        if (!isOpen()) {
-            return false
+        if (!isOpen()) return false
+        Log.d("------", "setPreviewSize $w  $h ")
+
+        val list = uvcCamera?.getSupportedSizeList()
+        var size: Size? = null//查询是否支持预设值=宽高
+        list?.forEach {
+            Log.d("------", "setPreviewSize F:  ${it} ")
+            if (it.width == w || it.height == h) size = it
         }
-        try {
-            val list = uvcCamera?.getSupportedSizeList()
-            //查询是否支持预设值=宽高
-            var size: Size? = null
-            list?.forEach {
-                if (it.width == w || it.height == h) size = it
-            }
-            return if (size == null) {
-                false
-            } else {
+        return if (size != null) {
+            try {
                 uvcCamera?.let {
                     it.setPreviewSize(//设置预览尺寸 根据设备自行设置
-                        Width,
-                        Height,
+                        size!!.width,
+                        size!!.height,
                         1,
                         15,
                         UVCCamera.FRAME_FORMAT_MJPEG, //此格式设置15帧生效  -----  UVCCamera.FRAME_FORMAT_YUYV,
                         0.4f
                     )
-                    Width = it.previewSize.width
-                    Height = it.previewSize.height
                     it.updateCameraParams()
                 }
-                true
+            } catch (e: IllegalArgumentException) {
+                Log.d("------", "setPreviewSize erro:  ${e} ")
+                return false
             }
-        } catch (e: Exception) {
-        }
-        return false
+            true
+        } else false
     }
 
 
@@ -107,33 +109,54 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
      * 可在此设置宽高、回调数据、surface
      */
     @Synchronized
-    fun startPreview(previewTexture: SurfaceTexture? = null, w: Int = 0, h: Int = 0, previewcall: IFrameCall? = null) {
+    fun startPreview(
+        previewTexture: SurfaceTexture? = null,
+        surface: Surface? = null,
+        w: Int = 0,
+        h: Int = 0,
+        previewcall: IFrameCall? = null
+    ) {
         if (openCamera()) {
-            setFrameCall(previewcall)
+            previewcall?.let {
+                setFrameCall(previewcall)//此处为空不再重置为空
+            }
             previewSurfaceTexture = previewTexture
             uvcCamera?.run {
-                if (previewTexture == null) {
-                    setPreviewTexture(SURFACE_TEXTURE)
-                } else {
+                if (previewTexture != null) {
                     setPreviewTexture(previewTexture)
+                } else if (surface != null) {
+                    setPreviewDisplay(surface)
+                } else {
+                    setPreviewTexture(SURFACE_TEXTURE)
                 }
                 if (w != 0 && h != 0) {
                     this@Camera.setPreviewSize(w, h)
                 }
                 setFrameCallback(iFrameCallback, UVCCamera.PIXEL_FORMAT_YUV420SP)// uvcCamera.PIXEL_FORMAT_NV21
+                previewSize?.let {
+                    //获取不到分辨率数据的自行get，人脸算法需要
+                    Height = previewSize.height
+                    Width = previewSize.width
+                }
                 startPreview()
+                powerlineFrequency = 1
+                updateCameraParams()
                 isPreview = true
             }
-        }
+        } else Log.d("------", "open  faild ")
+
     }
 
 
     //取消预览
     @Synchronized
     fun stopPreview() {
+        if (!isPreview) return
         isPreview = false
         call = null
+        Log.d("------", "stopPreview  111")
         uvcCamera?.stopPreview()
+        Log.d("------", "stopPreview 222 ")
         previewSurfaceTexture = null
     }
 
@@ -141,13 +164,11 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
     /**
      * 使相机进入关闭状态
      */
-    @Synchronized
     fun destroyCamera() {
         if (isPreviewing()) stopPreview()
         uvcCamera?.destroy()
         uvcCamera = null
         previewSurfaceTexture = null
-
     }
 
     //初始化相机硬件相关内容

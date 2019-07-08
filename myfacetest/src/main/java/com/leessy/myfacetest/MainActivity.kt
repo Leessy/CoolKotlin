@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import com.AiChlFace.AiChlFace
+import com.AiChlFace.FACE_DETECT_RESULT
 import com.jakewharton.rxbinding2.view.RxView
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.Observable
@@ -38,26 +39,27 @@ class MainActivity : RxAppCompatActivity() {
         text.append("\n使用内存根目录图片aaaa.jpg")
         facesize = AiChlFace.FeatureSize()
         startAiface()
-//
-//        RxView.clicks(StartTest).take(1)
-//            .subscribe {
-//                faceFun(subject0)
-//            }
-//
-//        RxView.clicks(start1).take(1)
-//            .subscribe {
-//                faceFun(subject1)
-//            }
-//
-//        RxView.clicks(start2).take(1)
-//            .subscribe {
-//                faceFun(subject2)
-//            }
-//
-//        RxView.clicks(start3).take(1)
-//            .subscribe {
-//                faceFun(subject3)
-//            }
+
+        RxView.clicks(StartTest).take(1)
+            .subscribe {
+                faceFun(subject0)
+            }
+
+        RxView.clicks(start1).take(1)
+            .subscribe {
+                faceFun(subject1)
+            }
+
+        RxView.clicks(start2).take(1)
+            .subscribe {
+                faceFun(subject2)
+            }
+
+        RxView.clicks(start3).take(1)
+            .subscribe {
+                faceFun(subject3)
+            }
+
 
         Observable.interval(2, TimeUnit.SECONDS)
             .compose(this.bindToLifecycle())
@@ -66,15 +68,51 @@ class MainActivity : RxAppCompatActivity() {
             .subscribe {
                 textView.text = "\nCPU总消耗: $it"
             }
+//
+//        if(s==0){
+//            faceFun(subject0)
+//            faceFun(subject1)
+//            faceFun(subject2)
+//            faceFun(subject3)
+//        }
 
-        if(s==0){
-            faceFun(subject0)
-            faceFun(subject1)
-            faceFun(subject2)
-            faceFun(subject3)
-        }
+
+        Observable.interval(10, TimeUnit.MILLISECONDS)
+            .observeOn(Schedulers.computation())
+            .compose(this.bindToLifecycle())
+            .subscribe {
+                if (bytes != null) {
+                    val RGB24 = ByteArray(640 * 480 * 3)
+                    val ww = IntArray(1)
+                    val hh = IntArray(1)
+                    val detectResult = FACE_DETECT_RESULT()
+
+                    val test0 = System.currentTimeMillis()
+
+                    val n = AiChlFace.DetectFaceEx(
+                        1,
+                        2, bytes, 480, 640, 0, 0, 0, 0,
+                        0, 0, RGB24, ww, hh, detectResult
+                    )
+                    Log.d(
+                        "-----",
+                        "人脸  $n    时间= ${System.currentTimeMillis() - test0}   thread ${Thread.currentThread().name}"
+                    )
+
+                    val st1 = System.currentTimeMillis()
+                    val id_temp = ByteArray(facesize)
+                    var r=-1
+//                     r = AiChlFace.FeatureGet(2, RGB24, 480, 640, detectResult, id_temp)
+                    Log.d(
+                        "-----",
+                        "人脸 特征  $r   时间= ${System.currentTimeMillis() - st1}   thread ${Thread.currentThread().name}"
+                    )
+
+                }
+            }
     }
 
+    var test = 0
 
     //开始测试
     private fun startAiface() {
@@ -130,16 +168,21 @@ class MainActivity : RxAppCompatActivity() {
                     2, bytes, w, h, 0, 0, 0, 0,
                     0, 0, rgb24, w1, h1, result
                 )
+
                 if (ret > 0) {
                     num[it]++
                     val startTime2 = System.currentTimeMillis()
                     currentPoints[it] = startTime2 - startTime
+                    Log.d(tag, "--- 检测人脸 $it  时间  ${currentPoints[it]}   thread=${Thread.currentThread().name}")
+
                     totalpoints[it] = totalpoints[it] + currentPoints[it]
 
-                    val id_temp = ByteArray(facesize)
-                    var r = AiChlFace.FeatureGet(it, rgb24, w1[0], h1[0], result, id_temp)
-                    currentgetface[it] = System.currentTimeMillis() - startTime2
-                    Log.d(tag, "提取特征码 $it  时间  ${currentgetface[it]}")
+                    if (test++ % 5 == 0) {
+                        val id_temp = ByteArray(facesize)
+                        var r = AiChlFace.FeatureGet(it, rgb24, w1[0], h1[0], result, id_temp)
+                        currentgetface[it] = System.currentTimeMillis() - startTime2
+                        Log.d(tag, "--- 提取特征码 $it  时间  ${currentgetface[it]}")
+                    }
                     totalgetFacepoints[it] += currentgetface[it]
                 }
                 Log.d(tag, "结束 $it      thread=${Thread.currentThread().name}")

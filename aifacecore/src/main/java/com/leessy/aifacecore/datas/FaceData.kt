@@ -12,8 +12,8 @@ import com.leessy.aifacecore.opt.ImageColor
 class FaceData {
     var YUV: ByteArray? = null//yuv
     var RGB24: ByteArray? = null//rgb24
-    var Feature: ByteArray? = null//特征
-    var FeatureGet: Int? = -1//提取特征返回值
+    var feature: ByteArray? = null//特征
+    var featureGetStatu: Int? = -1//提取特征返回值
     var detectResult: Any? = null
     var width: Int = 0//转换之后的宽高
     var height: Int = 0//转换之后的宽高
@@ -28,6 +28,13 @@ class FaceData {
     var CompareDataID: Long = 0//对比 数据库id
 
     var Livings: Int = 0//活体结果
+    override fun toString(): String {
+        return "FaceData(featureGetStatu=$featureGetStatu, detectResult=$detectResult, width=$width, height=$height, faceNum=$faceNum, imageColor=$imageColor, CameraID=$CameraID, nChannelNo=$nChannelNo, CompareRet=$CompareRet, CompareDataID=$CompareDataID, Livings=$Livings)"
+    }
+
+
+    var testTime_face = 0L//测试时间用
+    var testTime_feature = 0L//测试时间用
 }
 
 
@@ -42,8 +49,8 @@ fun FaceData.isLivings(): Boolean {
  * 检查数据是否可以参与识别
  */
 fun FaceData.isReadyCompare(): Boolean {
-    return FeatureGet == 0 && Feature != null
-            && Feature!!.size ==
+    return featureGetStatu == 0 && feature != null
+            && feature!!.size ==
             if (imageColor == ImageColor.COLOR) AiFaceCore.AiChlFaceSize
             else AiFaceCore.AiChlIrFaceSize
 }

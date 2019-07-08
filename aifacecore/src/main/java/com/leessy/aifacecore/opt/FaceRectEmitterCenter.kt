@@ -3,6 +3,8 @@ package com.leessy.aifacecore.opt
 import com.AiChlFace.FACE_DETECT_RESULT
 import com.leessy.aifacecore.datas.RectData
 import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 
 /**
@@ -15,7 +17,7 @@ object FaceRectEmitterCenter {
     /**
      * 统一人脸分发中心
      */
-    internal val faceSubject = PublishSubject.create<RectData>()
+    private val faceSubject = PublishSubject.create<RectData>()
 
     /**
      * 发送人框
@@ -27,13 +29,17 @@ object FaceRectEmitterCenter {
     }
 
 
+    fun getEmitter(): Observable<RectData> {
+        return faceSubject.observeOn(Schedulers.computation())
+    }
+
     /**
      * 指定id获取人脸数据
      *
      * 默认为 id 0
      */
     fun FaceRectObservableForID(imageColor: ImageColor = ImageColor.COLOR, camreraId: Int = 0): Observable<RectData> {
-        return faceSubject.FollowId(imageColor, camreraId)
+        return getEmitter().FollowId(imageColor, camreraId)
     }
 
 
@@ -78,6 +84,5 @@ object FaceRectEmitterCenter {
                 nQuality = faceresult.nQuality
             }
         }
-
     }
 }

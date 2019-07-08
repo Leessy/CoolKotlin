@@ -4,14 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.Toast
 import com.jakewharton.rxbinding2.view.RxView
+import com.leessy.aifacecore.AiFaceCore.AiFaceCore
+import com.leessy.aifacecore.AiFaceCore.AiFaceType
+import com.leessy.aifacecore.AiFaceCore.IAiFaceInitCall
+import com.leessy.camera.CamerasMng
 import com.leessy.xCrash.XcrashTestActivity
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.*
+import java.util.concurrent.TimeUnit
 
-class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
+class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +49,36 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             }
 
         RxView.clicks(AiFaceCoreTest).observeOn(AndroidSchedulers.mainThread())
-            .subscribe { startActivity(Intent(this, AiFaceCoreTestActivity::class.java)) }
+            .subscribe {
+                isAuto = true
+                startActivity(Intent(this, AiFaceCoreTestActivity::class.java))
+            }
 
+
+
+        CamerasMng.initCameras(application)
+
+        AiFaceCore.initAiFace(
+            application, AiFaceType.MODE_DEBUG, object : IAiFaceInitCall {
+                override fun call(colorsInit: Boolean, irInit: Boolean) {
+                    Log.d("----", "算法初始化    $colorsInit   $irInit")
+                    GlobalScope.launch(Dispatchers.Main) {
+                        Toast.makeText(application, "算法初始化    $colorsInit   $irInit", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        )
     }
 
+    var isAuto = false
+
+    override fun onResume() {
+        super.onResume()
+        if (isAuto) {
+            Observable.timer(2, TimeUnit.SECONDS).compose(this.bindToLifecycle())
+                .subscribe {
+                    startActivity(Intent(this, AiFaceCoreTestActivity::class.java))
+                }
+        }
+    }
 }
