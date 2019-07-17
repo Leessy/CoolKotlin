@@ -112,7 +112,7 @@ class MainActivity : RxAppCompatActivity() {
 //        }
 
 
-        //系统人脸检测测试
+        //系统人脸检测测试/////////////////
 //        Observable.interval(10, TimeUnit.MILLISECONDS)
 //            .observeOn(Schedulers.computation())
 //            .compose(this.bindToLifecycle())
@@ -130,7 +130,7 @@ class MainActivity : RxAppCompatActivity() {
 //
 //            }
 
-        //单通道算法测试
+        //单通道算法测试///////////////////
 //        Observable.interval(1200, TimeUnit.MILLISECONDS)
 //            .observeOn(Schedulers.computation())
 //            .compose(this.bindToLifecycle())
