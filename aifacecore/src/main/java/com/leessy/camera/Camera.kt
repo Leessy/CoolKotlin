@@ -28,7 +28,7 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
 
     private val iFrameCallback = IFrameCallback {
         if (n++ % 20 == 0L) {
-            Log.d("------", "iFrameCallback     $devName   $Width   $Height")
+            Log.d("------", "iFrameCallback     $devName   $Width   $Height  ${it.capacity()}")
         }
         call?.run {
             call(it, Width, Height)
@@ -48,7 +48,6 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
             uvcCamera?.setAutoFocus(true)
             return true
         } catch (e: Exception) {
-
             uvcCamera = null
         }
         return false
@@ -69,6 +68,9 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
 
     /**
      * 设置预览宽高
+     *
+     *
+     *目前问题:1.红外相机在mjpeg模式下，有些分辨率设置失效，但是回调的数据分辨率是正确的
      */
     @Synchronized
     fun setPreviewSize(w: Int, h: Int): Boolean {
@@ -78,9 +80,11 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
         val list = uvcCamera?.getSupportedSizeList()
         var size: Size? = null//查询是否支持预设值=宽高
         list?.forEach {
-            Log.d("------", "setPreviewSize F:  ${it} ")
-            if (it.width == w || it.height == h) size = it
+            Log.d("------", "$devName setPreviewSize F:  ${it} ")
+            if (it.width == w && it.height == h) size = it
         }
+        Log.d("------", "$devName setPreviewSize *-****:  ${size} ")
+
         return if (size != null) {
             try {
                 uvcCamera?.let {
@@ -145,6 +149,15 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
             }
         } else Log.d("------", "open  faild ")
 
+    }
+
+    //假关闭，从相机中脱离，相机逻辑不变，应用不再使用相机数据
+    fun stopSecede() {
+        if (!isPreview) return
+        uvcCamera?.setPreviewTexture(SURFACE_TEXTURE)
+        uvcCamera?.setFrameCallback(null, UVCCamera.PIXEL_FORMAT_YUV420SP)
+        previewSurfaceTexture = null
+        setFrameCall(null)//重置为空
     }
 
 

@@ -1,25 +1,31 @@
 package com.leessy.coolkotlin
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.SurfaceTexture
+import android.graphics.*
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.TextureView
+import android.widget.Button
 import com.AiChlFace.AiChlFace
 import com.AiChlFace.FACE_DETECT_RESULT
 import com.jakewharton.rxbinding2.view.RxView
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
+import com.leessy.aifacecore.opt.DetectFace
 import com.leessy.aifacecore.opt.DetectFace_Feature
+import com.leessy.aifacecore.opt.FeatureGet
 import com.leessy.aifacecore.opt.ImageColor
 import com.leessy.camera.Camera
 import com.leessy.camera.CamerasMng
 import com.leessy.camera.IFrameCall
+import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_ai_face_core_test.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
@@ -31,10 +37,15 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ai_face_core_test)
-//
-//        Observable.timer(4, TimeUnit.SECONDS)
-//            .compose(this.bindToLifecycle())
-//            .subscribe { finish() }
+        Log.d("----", "**************************???")
+
+        Observable.timer(5000, TimeUnit.MILLISECONDS, Schedulers.io())
+            .compose(this.bindToLifecycle())
+            .subscribe({
+                finish()
+            }, {
+            })
+
 
         //获取设备列表
         CamerasMng.cameraList.forEach {
@@ -74,9 +85,11 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         }
 
 
+        textureview.rotation = -90F
         textureview.setSurfaceTextureListener(object : TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(surface: SurfaceTexture?, width: Int, height: Int) {
                 Log.d("----", "--   onSurfaceTextureAvailable")
+                MatrixView(textureview, width, height)
                 c?.startPreview(surface)
             }
 
@@ -90,13 +103,16 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 
             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?): Boolean {
                 Log.d("----", "--   onSurfaceTextureDestroyed")
-                c?.stopPreview()
+                c?.stopSecede()
+//                c?.stopPreview()
                 return true
             }
         })
+        textureview2.rotation = -90F
         textureview2.setSurfaceTextureListener(object : TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(surface: SurfaceTexture?, width: Int, height: Int) {
                 Log.d("----", "--   onSurfaceTextureAvailable")
+                MatrixView(textureview2, width, height)
                 c2?.startPreview(surface)
             }
 
@@ -110,7 +126,8 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 
             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?): Boolean {
                 Log.d("----", "--   onSurfaceTextureDestroyed")
-                c2?.stopPreview()
+                c2?.stopSecede()
+//                c2?.stopPreview()
                 return true
             }
         })
@@ -121,8 +138,8 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        c?.destroyCamera()
-        c2?.destroyCamera()
+//        c?.destroyCamera()
+//        c2?.destroyCamera()
     }
 
     var bbb: ByteArray? = null
@@ -134,109 +151,140 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         c?.setFrameCall(object : IFrameCall {
             override fun call(bf: ByteBuffer, w: Int, h: Int) {
 //                发送到算法库识别
-                if (num1++ % 6 != 0L) return
+                if (num1++ % 2 != 0L) return
                 val bytes = ByteArray(bf.capacity())
                 bf.get(bytes, 0, bytes.size)
 //                发送到算法库识别
-                AiFaceCore.dataEmitter(bytes, w, h, 0, ImageColor.COLOR, nRotate = 2)
+                AiFaceCore.dataEmitter(bytes, w, h, 0, ImageColor.COLOR, bMirror = 1, nRotate = 2)
             }
         })
         c2?.setFrameCall(object : IFrameCall {
             override fun call(bf: ByteBuffer, w: Int, h: Int) {
-                if (num2++ % 6 != 0L) return
+                if (num2++ % 2 != 0L) return
                 val bytes = ByteArray(bf.capacity())
                 bf.get(bytes, 0, bytes.size)
 //                发送到算法库识别
-//                AiFaceCore.dataEmitter(bytes, w, h, 0, ImageColor.IR, nRotate = 2)
+                AiFaceCore.dataEmitter(bytes, 640, 480, 0, ImageColor.IR, bMirror = 1, nRotate = 2)
             }
         })
 
         //人脸框数据处理
-        AiFaceCore.FollowFaceRect()
+        AiFaceCore.FollowFaceRect(imageColor = ImageColor.COLOR)
+            .compose(this.bindUntilEvent(ActivityEvent.STOP))
+            .observeOn(Schedulers.newThread())
+            .map {
+                it.apply {
+                    rect = RectF(
+                        it.nFaceLeft.toFloat(),
+                        it.nFaceTop.toFloat(),
+                        it.nFaceRight.toFloat(),
+                        it.nFaceBottom.toFloat()
+                    )
+                }
+            }
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                //                Log.d("---- 人脸框", "${it.imageColor}  ${it.nFaceBottom}")
+                //画彩色人脸框或者红外人脸框
+                when (it.imageColor) {
+                    ImageColor.COLOR ->
+                        faceview.setFaces(it.rect, 480, 640)
+                    ImageColor.IR ->
+                        faceview2.setFaces(it.rect, 480, 640)
+                }
 
             }
 
+
         //彩色人脸数据处理
         AiFaceCore.Follows(ImageColor.COLOR)
-            .compose(this.bindToLifecycle())
-//            .DetectFace()
-//            .FeatureGet()
-            .DetectFace_Feature()
+            .compose(this.bindUntilEvent(ActivityEvent.STOP))
+            .DetectFace()
+            .observeOn(Schedulers.newThread())
+            .sample(200, TimeUnit.MILLISECONDS)
+            .FeatureGet()
+//            .DetectFace_Feature()
             .subscribe {
-                Log.d(
-                    "----",
-                    "\n-----------------------------------------------" +
-                            "\n 彩色 人脸个数${it.faceNum} " +
-                            "\n 检测时间 ${it.testTime_face} " +
-                            "\n 特征时间=${it.testTime_feature} " +
-                            "\n Thread= ${Thread.currentThread().name}"
-                )
+                Log.d("----", "-*----------彩色 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}")
+                Log.d("----", "-*----------彩色 检测时间     ${it.testTime_face}")
+                Log.d("----", "-*----------彩色 特征时间     ${it.testTime_feature}")
             }
 
         //红外人脸数据处理
         AiFaceCore.Follows(ImageColor.IR)
-            .compose(this.bindToLifecycle())
-//            .DetectFace()
+            .compose(this.bindUntilEvent(ActivityEvent.STOP))
+            .DetectFace()
+//            .observeOn(Schedulers.newThread())
+//            .sample(200, TimeUnit.MILLISECONDS)
 //            .FeatureGet()
-            .DetectFace_Feature()
+//            .DetectFace_Feature()
+
             .subscribe {
-                Log.d(
-                    "----",
-                    "\n-----------------------------------------------" +
-                            "\n 红外 人脸个数${it.faceNum} " +
-                            "\n 检测时间 ${it.testTime_face} " +
-                            "\n 特征时间=${it.testTime_feature} " +
-                            "\n Thread= ${Thread.currentThread().name}"
-                )
+                Log.d("----", "-*----------红外 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}")
+                Log.d("----", "-*----------红外 检测时间     ${it.testTime_face}")
+                Log.d("----", "-*----------红外 特征时间     ${it.testTime_feature}")
             }
+    }
+
+    //视图转换  镜像
+    private fun MatrixView(textureView: TextureView, w: Int, h: Int) {
+        val matrix = Matrix()
+        textureView.getTransform(matrix)
+        //                matrix.postRotate(90, i / 2, i1 / 2);//绕某个点旋转90度，这里选择的原点是图片的中心点
+        //                matrix.setSinCos(1, 0, i / 2, i1 / 2);//把图像旋转90度，那么90度对应的sin和cos分别是1和0。
+        matrix.setScale(-1f, 1f)
+        matrix.postTranslate(w.toFloat(), 0f)
+        textureView.setTransform(matrix)
     }
 
     private fun test() {
         /////////////////////test//////////////////////
-        val file = try {
-            File(Environment.getExternalStorageDirectory(), "aaaa.jpg")
-        } catch (e: Exception) {
-            return
-        }
-        if (!file.isFile) return
-        val bmp: Bitmap? = BitmapFactory.decodeFile(file.absolutePath) ?: return
-        bbb = (YUV420SP_Util.BitmapToYUV420SP(bmp) ?: return)
-
-        Observable.interval(10, TimeUnit.MILLISECONDS)
-            .observeOn(Schedulers.io())
-            .subscribe {
-                if (bbb != null) {
-                    val test0 = System.currentTimeMillis()
-                    val RGB24 = ByteArray(640 * 480 * 3)
-                    val ww = IntArray(1)
-                    val hh = IntArray(1)
-                    val detectResult = FACE_DETECT_RESULT()
-                    val n = AiChlFace.DetectFaceEx(
-                        2, 2, bbb, 480, 640, 0, 0, 0, 0,
-                        0, 0, RGB24, ww, hh, detectResult
-                    )
-                    Log.d(
-                        "-----",
-                        "人脸  $n    时间= ${System.currentTimeMillis() - test0}   thread ${Thread.currentThread().name}"
-                    )
-                }
-            }
+//        val file = try {
+//            File(Environment.getExternalStorageDirectory(), "aaaa.jpg")
+//        } catch (e: Exception) {
+//            return
+//        }
+//        if (!file.isFile) return
+//        val bmp: Bitmap? = BitmapFactory.decodeFile(file.absolutePath) ?: return
+//        bbb = (YUV420SP_Util.BitmapToYUV420SP(bmp) ?: return)
+//
+//        Observable.interval(10, TimeUnit.MILLISECONDS)
+//                .observeOn(Schedulers.io())
+//                .subscribe {
+//                    if (bbb != null) {
+//                        val test0 = System.currentTimeMillis()
+//                        val RGB24 = ByteArray(640 * 480 * 3)
+//                        val ww = IntArray(1)
+//                        val hh = IntArray(1)
+//                        val detectResult = FACE_DETECT_RESULT()
+//                        val n = AiChlFace.DetectFaceEx(
+//                                2, 2, bbb, 480, 640, 0, 0, 0, 0,
+//                                0, 0, RGB24, ww, hh, detectResult
+//                        )
+//                        Log.d(
+//                                "-----",
+//                                "人脸  $n    时间= ${System.currentTimeMillis() - test0}   thread ${Thread.currentThread().name}"
+//                        )
+//                    }
+//                }
 
 
 //        Observable.interval(10, TimeUnit.MILLISECONDS)
-//            .observeOn(Schedulers.computation())
-//            .subscribe {
-//                val test0 = System.currentTimeMillis()
-//                val b = ByteArray(640 * 480 * 3)
-//                for (i in 0 until 10) {
+//                .observeOn(Schedulers.computation())
+//                .subscribe {
+//                    val test0 = System.currentTimeMillis()
+//                    val b = IntArray(640 * 480 * 3)
 //                    b.indices.forEach {
-//                        b[it] = 10
+//                        b[it] = it
 //                    }
+//                    b.forEach {
+//                        val s = (it * 2.0F).toInt()
+//                        val s1 = (it * 3.1415926412 * 2.0F).toInt()
+//                        val s3 = (it * 3.1415926412 * 2.1110001110F).toInt()
+//                    }
+//                    Log.d(
+//                            "----", "***  时间= ${System.currentTimeMillis() - test0}   thread ${Thread.currentThread().name}"
+//                    )
 //                }
-//                Log.d(
-//                    "----", "***  时间= ${System.currentTimeMillis() - test0}   thread ${Thread.currentThread().name}"
-//                )
-//            }
     }
 }

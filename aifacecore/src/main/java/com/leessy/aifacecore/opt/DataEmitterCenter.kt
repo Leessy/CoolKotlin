@@ -27,8 +27,6 @@ object DataEmitterCenter {
 
     internal fun getEmitter(imageColor: ImageColor = ImageColor.COLOR, CameraID: Int = 0): Observable<CameraData> {
         return checkout(imageColor, CameraID)
-            .observeOn(Schedulers.computation())
-            .sample(350, TimeUnit.MILLISECONDS)
     }
 
     //筛选

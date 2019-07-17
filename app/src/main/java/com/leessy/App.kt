@@ -3,8 +3,10 @@ package com.leessy
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.os.Vibrator
 import android.support.multidex.MultiDex
 import android.util.Log
+import com.leessy.service.LocationService
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONObject
 import xcrash.ICrashCallback
@@ -21,9 +23,9 @@ import java.nio.charset.Charset
  * @author Created by 刘承. on 2019/7/2
  * business@onfacemind.com
  */
-class app : Application() {
+class App : Application() {
+    private val TAG = javaClass.name
 
-    val TAG = "-----------"
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         MultiDex.install(this)
@@ -32,7 +34,6 @@ class app : Application() {
     override fun onCreate() {
         super.onCreate()
 //        initXcrash()
-
     }
 
     //初始化 scrash
@@ -60,7 +61,7 @@ class app : Application() {
                 // TombstoneManager.appendSection(logPath, "expanded_key_3", "expanded_content_row_1\n\nexpanded_content_row_2");
                 debug(logPath, null)
 
-                Log.d(TAG, "重启程序！！！"+Thread.currentThread().name)
+                Log.d(TAG, "重启程序！！！" + Thread.currentThread().name)
                 Thread.sleep(1200)
 //                restartApp(this)
             }

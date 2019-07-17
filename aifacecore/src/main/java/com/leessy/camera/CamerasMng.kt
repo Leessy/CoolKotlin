@@ -31,8 +31,8 @@ object CamerasMng {
         mUSBMonitor = USBMonitor(c, object : USBMonitor.OnDeviceConnectListener {
             override fun onAttach(device: UsbDevice?) {
                 device?.let {
-                    Log.d("----", "on Attach ${device}")
                     if (it.deviceClass == 239 && it.deviceSubclass == 2) {
+                        Log.d("----", "on Attach ${device.deviceName}  ${device.vendorId}  ${device.productId} ")
                         mUSBMonitor?.requestPermission(device)
                     }
                 }
@@ -40,6 +40,10 @@ object CamerasMng {
 
             override fun onConnect(device: UsbDevice?, controlBlock: USBMonitor.UsbControlBlock?, createNew: Boolean) {
                 Log.d("----", "onConnect ${controlBlock?.busNum}    ${controlBlock?.devNum}   $createNew")
+                Log.d("----", "onConnect ${controlBlock?.manufacture} ")
+                Log.d("----", "onConnect ${controlBlock?.productId} ")
+                Log.d("----", "onConnect ${controlBlock?.productName} ")
+                Log.d("----", "onConnect ${controlBlock?.getDeviceKeyNameWithSerial()} ")
                 if (!createNew) return
                 device?.let {
                     GlobalScope.launch {
@@ -49,7 +53,7 @@ object CamerasMng {
             }
 
             override fun onDisconnect(device: UsbDevice?, controlBlock: USBMonitor.UsbControlBlock?) {
-                Log.d("----", "onDisconnect ${device?.deviceName}")
+                Log.d("----", "on Disconnect ${device?.deviceName}")
                 GlobalScope.launch {
                     disconnect(device!!, controlBlock!!)
                 }
@@ -101,6 +105,14 @@ object CamerasMng {
         c?.destroyCamera()//释放相机资源
         cameraList.remove(c)
         Log.d("----", "dettach --- 设备个数   ${cameraList.size}")
+    }
+
+
+    //关闭所有camera
+    fun destroyAllCamera() {
+        cameraList.forEach {
+            it.destroyCamera()
+        }
     }
 
     fun destroy() {

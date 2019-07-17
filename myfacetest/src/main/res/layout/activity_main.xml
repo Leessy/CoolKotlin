@@ -28,7 +28,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent"
-            />
+    />
 
     <TextView
             android:layout_width="0dp"
@@ -94,6 +94,21 @@
             android:layout_marginStart="3dp"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent"/>
+    <Button
+            android:id="@+id/test1"
+            android:text="主线程检测一次"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/start3" app:layout_constraintStart_toEndOf="@+id/start3"
+            android:layout_marginStart="8dp"/>
+
+    <Button android:layout_width="wrap_content"
+            android:id="@+id/test2"
+            android:text="新子线程检测一次"
+            android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/test1" app:layout_constraintStart_toStartOf="@+id/test1"
+            android:layout_marginStart="8dp"/>
 
     <TextView
             android:layout_width="0dp"

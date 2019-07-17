@@ -50,7 +50,6 @@ fun Observable<CameraData>.DetectFace_Feature(): Observable<FaceData> {
                         this.testTime_face = System.currentTimeMillis() - start
 
                         if (isReadyFeature()) {
-                            val start = System.currentTimeMillis()//开始时间
                             feature = ByteArray(AiFaceCore.AiChlFaceSize)
                             width = w[0]
                             height = h[0]
@@ -61,7 +60,7 @@ fun Observable<CameraData>.DetectFace_Feature(): Observable<FaceData> {
                                 (detectResult as FACE_DETECT_RESULT?)!!,
                                 feature!!
                             )
-                            testTime_feature = System.currentTimeMillis() - start
+                            testTime_feature = System.currentTimeMillis() - start - testTime_face//测试时间
                         }
                     } else {
                         faceNum = AiFaceOpt.DetectFaceEx_3(
@@ -80,6 +79,7 @@ fun Observable<CameraData>.DetectFace_Feature(): Observable<FaceData> {
                                 (detectResult as FACE_DETECT_RESULT?)!!,
                                 feature!!
                             )
+                            testTime_feature = System.currentTimeMillis() - start - testTime_face//测试时间
                         }
                     }
                 }
@@ -103,6 +103,7 @@ fun Observable<CameraData>.DetectFace_Feature(): Observable<FaceData> {
                                 (detectResult)!! as com.AiChlIrFace.FACE_DETECT_RESULT,
                                 feature!!
                             )
+                            testTime_feature = System.currentTimeMillis() - start - testTime_face//测试时间
                         }
                     } else {
                         faceNum = AiFaceOpt.DetectFaceExIR_2(
@@ -123,6 +124,7 @@ fun Observable<CameraData>.DetectFace_Feature(): Observable<FaceData> {
                                 (detectResult)!! as com.AiChlIrFace.FACE_DETECT_RESULT,
                                 feature!!
                             )
+                            testTime_feature = System.currentTimeMillis() - start - testTime_face//测试时间
                         }
                     }
                 }
@@ -164,34 +166,28 @@ fun Observable<CameraData>.DetectFace(): Observable<FaceData> {
 
             when (it.imageColor) {
                 ImageColor.COLOR -> {
-                    if (nChannelNo == AiFaceChannelNo.COLORNo1) {
-                        var test0 = System.currentTimeMillis()
-
-                        faceNum = AiFaceOpt.DetectFaceEx_1(
+                    faceNum = if (nChannelNo == AiFaceChannelNo.COLORNo1) {
+                        AiFaceOpt.DetectFaceEx_1(
                             it.stream, it.byteArray, it.width, it.height, 0, 0, 0, 0,
                             it.nRotate, it.bMirror, RGB24!!, w, h, detectResult as FACE_DETECT_RESULT
                         )
-                        Log.d(
-                            "-----",
-                            "****人脸时间  ${imageColor.name}     ${System.currentTimeMillis() - test0}   thread ${Thread.currentThread().name}"
-                        )
                     } else {
-                        faceNum = AiFaceOpt.DetectFaceEx_3(
+                        AiFaceOpt.DetectFaceEx_3(
                             it.stream, it.byteArray, it.width, it.height, 0, 0, 0, 0,
                             it.nRotate, it.bMirror, RGB24!!, w, h, detectResult as FACE_DETECT_RESULT
                         )
                     }
                 }
                 ImageColor.IR -> {
-                    if (nChannelNo == AiFaceChannelNo.IRNo0) {
-                        faceNum = AiFaceOpt.DetectFaceExIR_0(
+                    faceNum = if (nChannelNo == AiFaceChannelNo.IRNo0) {
+                        AiFaceOpt.DetectFaceExIR_0(
                             it.stream, it.byteArray, it.width, it.height,
                             0, 0, 0, 0,
                             it.nRotate, it.bMirror, RGB24!!, w, h,
                             detectResult as com.AiChlIrFace.FACE_DETECT_RESULT
                         )
                     } else {
-                        faceNum = AiFaceOpt.DetectFaceExIR_2(
+                        AiFaceOpt.DetectFaceExIR_2(
                             it.stream, it.byteArray, it.width, it.height,
                             0, 0, 0, 0,
                             it.nRotate, it.bMirror, RGB24!!, w, h,
@@ -207,6 +203,7 @@ fun Observable<CameraData>.DetectFace(): Observable<FaceData> {
             width = w[0]
             height = h[0]
             this.testTime_face = System.currentTimeMillis() - start
+            Log.d("---", "-**-人脸时间 ${this.testTime_face}   $imageColor    Thread=${Thread.currentThread().name}")
         }
     }
 }

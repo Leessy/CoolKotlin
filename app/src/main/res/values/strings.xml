@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">CoolKotlin</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="accessibility_service_label">key监听</string>
+    <string name="accessibility_description">key监听1111</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

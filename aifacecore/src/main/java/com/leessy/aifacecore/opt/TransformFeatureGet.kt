@@ -1,6 +1,8 @@
 package com.leessy.aifacecore.opt
 
+import com.AiChlFace.AiChlFace
 import com.AiChlFace.FACE_DETECT_RESULT
+import com.AiChlIrFace.AiChlIrFace
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.datas.FaceData
 import com.leessy.aifacecore.datas.isReadyFeature
@@ -25,23 +27,19 @@ fun Observable<FaceData>.FeatureGet(): Observable<FaceData> {
                 AiFaceChannelNo.IRNo0 -> {
                     it.feature = ByteArray(AiFaceCore.AiChlIrFaceSize)
                     it.run {
-                        featureGetStatu = AiFaceOpt.FeatureGetIR_0(
+                        //                        featureGetStatu = AiFaceOpt.FeatureGetIR_0(
+//                            it.RGB24!!,
+//                            it.width,
+//                            it.height,
+//                            (it.detectResult as com.AiChlIrFace.FACE_DETECT_RESULT?)!!,
+//                            it.feature!!
+//                        )
+                        featureGetStatu = AiChlIrFace.FeatureGet(
+                            0,
                             it.RGB24!!,
                             it.width,
                             it.height,
                             (it.detectResult as com.AiChlIrFace.FACE_DETECT_RESULT?)!!,
-                            it.feature!!
-                        )
-                    }
-                }
-                AiFaceChannelNo.COLORNo1 -> {
-                    it.feature = ByteArray(AiFaceCore.AiChlFaceSize)
-                    it.run {
-                        featureGetStatu = AiFaceOpt.FeatureGet_1(
-                            it.RGB24!!,
-                            it.width,
-                            it.height,
-                            (it.detectResult as FACE_DETECT_RESULT?)!!,
                             it.feature!!
                         )
                     }
@@ -58,10 +56,30 @@ fun Observable<FaceData>.FeatureGet(): Observable<FaceData> {
                         )
                     }
                 }
+                AiFaceChannelNo.COLORNo1 -> {
+                    it.feature = ByteArray(AiFaceCore.AiChlFaceSize)
+                    it.run {
+                        //                        featureGetStatu = AiFaceOpt.FeatureGet_1(
+//                            it.RGB24!!,
+//                            it.width,
+//                            it.height,
+//                            (it.detectResult as FACE_DETECT_RESULT?)!!,
+//                            it.feature!!
+//                        )
+                        featureGetStatu = AiChlFace.FeatureGet(
+                            1,
+                            it.RGB24!!,
+                            it.width,
+                            it.height,
+                            (it.detectResult as FACE_DETECT_RESULT?)!!,
+                            it.feature!!
+                        )
+                    }
+                }
                 AiFaceChannelNo.COLORNo3 -> {
                     it.feature = ByteArray(AiFaceCore.AiChlFaceSize)
                     it.run {
-                        featureGetStatu = AiFaceOpt.FeatureGet_1(
+                        featureGetStatu = AiFaceOpt.FeatureGet_3(
                             it.RGB24!!,
                             it.width,
                             it.height,
@@ -72,10 +90,6 @@ fun Observable<FaceData>.FeatureGet(): Observable<FaceData> {
                 }
             }
             it.testTime_feature = System.currentTimeMillis() - start
-//            Log.d(
-//                "-----",
-//                "*****人脸特征时间  ${it.testTime_feature}     thread ${Thread.currentThread().name}"
-//            )
         }
         it
     }

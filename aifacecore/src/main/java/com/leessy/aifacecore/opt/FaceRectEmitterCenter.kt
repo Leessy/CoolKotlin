@@ -30,7 +30,7 @@ object FaceRectEmitterCenter {
 
 
     fun getEmitter(): Observable<RectData> {
-        return faceSubject.observeOn(Schedulers.computation())
+        return faceSubject
     }
 
     /**
@@ -38,8 +38,8 @@ object FaceRectEmitterCenter {
      *
      * 默认为 id 0
      */
-    fun FaceRectObservableForID(imageColor: ImageColor = ImageColor.COLOR, camreraId: Int = 0): Observable<RectData> {
-        return getEmitter().FollowId(imageColor, camreraId)
+    fun FaceRectObservableForID(imageColor: ImageColor, camreraId: Int): Observable<RectData> {
+        return getEmitter()
     }
 
 
