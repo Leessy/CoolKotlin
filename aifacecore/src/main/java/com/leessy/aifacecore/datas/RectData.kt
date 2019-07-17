@@ -1,5 +1,6 @@
 package com.leessy.aifacecore.datas
 
+import android.graphics.RectF
 import com.leessy.aifacecore.opt.ImageColor
 
 /**
@@ -28,4 +29,5 @@ class RectData(var imageColor: ImageColor, var cameraId: Int = 0) {
     var nAnglePitch: Int = 0
     var nAngleRoll: Int = 0 // 人脸偏转角度（左右，上下，水平方向）
     var nQuality: Int = 0 // 人脸质量
+    var rect: RectF? = null
 }

@@ -8,6 +8,6 @@ import io.reactivex.Observable
  * business@onfacemind.com
  */
 
-fun Observable<RectData>.FollowId(imageColor: ImageColor, cameraID: Int): Observable<RectData> {
-    return filter { it.cameraId == cameraID && it.imageColor == imageColor }
-}
+//fun Observable<RectData>.FollowId(imageColor: ImageColor, cameraID: Int): Observable<RectData> {
+////    return filter { it.cameraId == cameraID && it.imageColor == imageColor }
+////}

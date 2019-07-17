@@ -1,1 +1,1 @@
-include ':app', ':myfacetest', ':aifacecore'
+include ':app', ':myfacetest', ':aifacecore', ':arcface'

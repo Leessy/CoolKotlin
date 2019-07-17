@@ -6,45 +6,94 @@
               android:orientation="vertical"
               tools:context=".MainActivity">
 
+    <!--<Button-->
+    <!--android:id="@+id/functionList1"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Appbarlayout"/>-->
+    <!--<Button-->
+    <!--android:id="@+id/fullscreenactivity"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="FullScreenActivity"/>-->
+    <!--<Button-->
+    <!--android:id="@+id/basec"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="basec"/>-->
+    <!--<Button-->
+    <!--android:id="@+id/ListDemo"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="List"/>-->
+    <!--<Button-->
+    <!--android:id="@+id/MySQLBt"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="MySQL崩溃日志查看"/>-->
+    <!--<Button-->
+    <!--android:id="@+id/coroutine"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="kotlinCoroutine 协程"/>-->
+    <!--<Button-->
+    <!--android:id="@+id/xcrash"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="xcrash异常捕获"/>-->
+
     <Button
-            android:id="@+id/functionList1"
+            android:id="@+id/loaction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Appbarlayout"/>
-    <Button
-            android:id="@+id/fullscreenactivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="FullScreenActivity"/>
-    <Button
-            android:id="@+id/basec"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="basec"/>
-    <Button
-            android:id="@+id/ListDemo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="List"/>
-    <Button
-            android:id="@+id/MySQLBt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="MySQL崩溃日志查看"/>
-    <Button
-            android:id="@+id/coroutine"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="kotlinCoroutine 协程"/>
-    <Button
-            android:id="@+id/xcrash"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="xcrash异常捕获"/>
+            android:text="定位测试"/>
     <Button
             android:id="@+id/AiFaceCoreTest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="算法核心库测试"/>
+
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="300dp">
+
+        <Button
+                android:id="@+id/w_led"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="白补光灯"/>
+
+        <Button
+                android:id="@+id/w_ir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="红补光灯"/>
+
+        <Button
+                android:id="@+id/led_r"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="红"/>
+
+        <Button
+                android:id="@+id/led_g"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="绿"/>
+
+        <Button
+                android:id="@+id/led_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="蓝"/>
+
+        <Button
+                android:id="@+id/colse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="关灯"/>
+    </LinearLayout>
 
 </LinearLayout>

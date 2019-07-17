@@ -37,7 +37,7 @@ object AiFaceOpt {
     }
 
     //可见光3
-    @Synchronized
+    
     fun DetectFaceEx_3(
         nFmt: Int,
         bSrcImg: ByteArray,
@@ -62,7 +62,7 @@ object AiFaceOpt {
     }
 
     //红外0
-    @Synchronized
+    
     fun DetectFaceExIR_0(
         nFmt: Int,
         bSrcImg: ByteArray,
@@ -87,7 +87,7 @@ object AiFaceOpt {
     }
 
     //红外2
-    @Synchronized
+    
     fun DetectFaceExIR_2(
         nFmt: Int,
         bSrcImg: ByteArray,
@@ -145,7 +145,7 @@ object AiFaceOpt {
         sFaceResult: com.AiChlIrFace.FACE_DETECT_RESULT,
         bFeature: ByteArray
     ): Int {
-        return FeatureGet_1(bRgb24, nWidth, nHeight, transformFaceResult(sFaceResult), bFeature)
+        return AiChlIrFace.FeatureGet(0, bRgb24, nWidth, nHeight, sFaceResult, bFeature)
     }
 
     //红外1  提取特征
@@ -157,14 +157,14 @@ object AiFaceOpt {
         sFaceResult: com.AiChlIrFace.FACE_DETECT_RESULT,
         bFeature: ByteArray
     ): Int {
-        return FeatureGet_3(bRgb24, nWidth, nHeight, transformFaceResult(sFaceResult), bFeature)
+        return AiChlIrFace.FeatureGet(2, bRgb24, nWidth, nHeight, sFaceResult, bFeature)
     }
 
     //1：1对比 根据模板类型 切换对应算法 (如果转换了，红外1：1应使用彩色对比方法返回结果，否则模板长度错误会导致崩溃)
-    @Synchronized
-    fun FeatureCompareIr(nChannelNo: Int, bFeature1: ByteArray, bFeature2: ByteArray): Int {
-        return AiChlFace.FeatureCompare(nChannelNo, bFeature1, bFeature2)
-    }
+    
+//    fun FeatureCompareIr(nChannelNo: Int, bFeature1: ByteArray, bFeature2: ByteArray): Int {
+//        return AiChlFace.FeatureCompare(nChannelNo, bFeature1, bFeature2)
+//    }
 
     //转换人脸数据
     private fun transformFaceResult(detectResult: com.AiChlIrFace.FACE_DETECT_RESULT): FACE_DETECT_RESULT {

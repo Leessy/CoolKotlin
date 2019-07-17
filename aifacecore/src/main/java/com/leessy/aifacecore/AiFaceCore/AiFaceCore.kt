@@ -12,6 +12,7 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -135,7 +136,9 @@ object AiFaceCore {
      * @param imageColor    根据 (颜色 +id)   获取数据  不通颜色可以有相同id 默认id为0
      */
     fun Follows(imageColor: ImageColor = ImageColor.COLOR, CameraID: Int = 0): Observable<CameraData> {
-        return DataEmitterCenter.getEmitter(imageColor, CameraID).observeOn(Schedulers.computation())
+        return DataEmitterCenter.getEmitter(imageColor, CameraID)
+            .observeOn(Schedulers.computation())
+            .sample(160, TimeUnit.MILLISECONDS)
 
     }
 
@@ -146,18 +149,18 @@ object AiFaceCore {
         return FaceRectEmitterCenter.FaceRectObservableForID(imageColor, CameraID)
     }
 
-    /**
-     * 获取全部数据人脸框数据
-     */
-    fun FollowFaceRectAll(): Observable<RectData> {
-        return FaceRectEmitterCenter.getEmitter()
-    }
-
-    /**
-     * 使用读卡模块授权时 设置读取
-     */
-    fun setCardReader() {
-        //todo 待实现读卡授权的逻辑
-    }
+//    /**
+//     * 获取全部数据人脸框数据
+//     */
+//    fun FollowFaceRectAll(): Observable<RectData> {
+//        return FaceRectEmitterCenter.getEmitter()
+//    }
+//
+//    /**
+//     * 使用读卡模块授权时 设置读取
+//     */
+//    fun setCardReader() {
+//        //todo 待实现读卡授权的逻辑
+//    }
 }
 
