@@ -5,7 +5,7 @@ import com.AiChlFace.FACE_DETECT_RESULT
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.datas.CameraData
 import com.leessy.aifacecore.datas.FaceData
-import com.leessy.aifacecore.datas.isReadyFeature
+import com.leessy.aifacecore.datas.isReadyGetFeature
 import io.reactivex.Observable
 
 /**
@@ -49,38 +49,38 @@ fun Observable<CameraData>.DetectFace_Feature(): Observable<FaceData> {
                         )
                         this.testTime_face = System.currentTimeMillis() - start
 
-                        if (isReadyFeature()) {
-                            feature = ByteArray(AiFaceCore.AiChlFaceSize)
-                            width = w[0]
-                            height = h[0]
-                            featureGetStatu = AiFaceOpt.FeatureGet_1(
-                                RGB24!!,
-                                width,
-                                height,
-                                (detectResult as FACE_DETECT_RESULT?)!!,
-                                feature!!
-                            )
-                            testTime_feature = System.currentTimeMillis() - start - testTime_face//测试时间
-                        }
+//                        if (isReadyGetFeature()) {
+//                            feature = ByteArray(AiFaceCore.AiChlFaceSize)
+//                            width = w[0]
+//                            height = h[0]
+//                            featureGetStatu = AiFaceOpt.FeatureGet_1(
+//                                RGB24!!,
+//                                width,
+//                                height,
+//                                (detectResult as FACE_DETECT_RESULT?)!!,
+//                                feature!!
+//                            )
+//                            testTime_feature = System.currentTimeMillis() - start - testTime_face//测试时间
+//                        }
                     } else {
                         faceNum = AiFaceOpt.DetectFaceEx_3(
                             it.stream, it.byteArray, it.width, it.height, 0, 0, 0, 0,
                             it.nRotate, it.bMirror, RGB24!!, w, h, detectResult as FACE_DETECT_RESULT
                         )
                         this.testTime_face = System.currentTimeMillis() - start
-                        if (isReadyFeature()) {
-                            feature = ByteArray(AiFaceCore.AiChlFaceSize)
-                            width = w[0]
-                            height = h[0]
-                            featureGetStatu = AiFaceOpt.FeatureGet_3(
-                                RGB24!!,
-                                width,
-                                height,
-                                (detectResult as FACE_DETECT_RESULT?)!!,
-                                feature!!
-                            )
-                            testTime_feature = System.currentTimeMillis() - start - testTime_face//测试时间
-                        }
+//                        if (isReadyGetFeature()) {
+//                            feature = ByteArray(AiFaceCore.AiChlFaceSize)
+//                            width = w[0]
+//                            height = h[0]
+//                            featureGetStatu = AiFaceOpt.FeatureGet_3(
+//                                RGB24!!,
+//                                width,
+//                                height,
+//                                (detectResult as FACE_DETECT_RESULT?)!!,
+//                                feature!!
+//                            )
+//                            testTime_feature = System.currentTimeMillis() - start - testTime_face//测试时间
+//                        }
                     }
                 }
                 ImageColor.IR -> {
@@ -92,19 +92,19 @@ fun Observable<CameraData>.DetectFace_Feature(): Observable<FaceData> {
                             detectResult as com.AiChlIrFace.FACE_DETECT_RESULT
                         )
                         this.testTime_face = System.currentTimeMillis() - start
-                        if (isReadyFeature()) {
-                            feature = ByteArray(AiFaceCore.AiChlIrFaceSize)
-                            width = w[0]
-                            height = h[0]
-                            featureGetStatu = AiFaceOpt.FeatureGetIR_0(
-                                RGB24!!,
-                                width,
-                                height,
-                                (detectResult)!! as com.AiChlIrFace.FACE_DETECT_RESULT,
-                                feature!!
-                            )
-                            testTime_feature = System.currentTimeMillis() - start - testTime_face//测试时间
-                        }
+//                        if (isReadyGetFeature()) {
+//                            feature = ByteArray(AiFaceCore.AiChlIrFaceSize)
+//                            width = w[0]
+//                            height = h[0]
+//                            featureGetStatu = AiFaceOpt.FeatureGetIR_0(
+//                                RGB24!!,
+//                                width,
+//                                height,
+//                                (detectResult)!! as com.AiChlIrFace.FACE_DETECT_RESULT,
+//                                feature!!
+//                            )
+//                            testTime_feature = System.currentTimeMillis() - start - testTime_face//测试时间
+//                        }
                     } else {
                         faceNum = AiFaceOpt.DetectFaceExIR_2(
                             it.stream, it.byteArray, it.width, it.height,
@@ -113,19 +113,19 @@ fun Observable<CameraData>.DetectFace_Feature(): Observable<FaceData> {
                             detectResult as com.AiChlIrFace.FACE_DETECT_RESULT
                         )
                         this.testTime_face = System.currentTimeMillis() - start
-                        if (isReadyFeature()) {
-                            feature = ByteArray(AiFaceCore.AiChlIrFaceSize)
-                            width = w[0]
-                            height = h[0]
-                            featureGetStatu = AiFaceOpt.FeatureGetIR_2(
-                                RGB24!!,
-                                width,
-                                height,
-                                (detectResult)!! as com.AiChlIrFace.FACE_DETECT_RESULT,
-                                feature!!
-                            )
-                            testTime_feature = System.currentTimeMillis() - start - testTime_face//测试时间
-                        }
+//                        if (isReadyGetFeature()) {
+//                            feature = ByteArray(AiFaceCore.AiChlIrFaceSize)
+//                            width = w[0]
+//                            height = h[0]
+//                            featureGetStatu = AiFaceOpt.FeatureGetIR_2(
+//                                RGB24!!,
+//                                width,
+//                                height,
+//                                (detectResult)!! as com.AiChlIrFace.FACE_DETECT_RESULT,
+//                                feature!!
+//                            )
+//                            testTime_feature = System.currentTimeMillis() - start - testTime_face//测试时间
+//                        }
                     }
                 }
             }
@@ -134,7 +134,7 @@ fun Observable<CameraData>.DetectFace_Feature(): Observable<FaceData> {
                 FaceRectEmitterCenter.sendFaceRect(it.imageColor, it.CameraID, detectResult!!)
             }
         }
-    }
+    }.FeatureGet()
 }
 
 

@@ -2,6 +2,8 @@ package com.leessy.aifacecore.opt
 
 import com.leessy.aifacecore.AiFaceCore.Compare.ComparList
 import com.leessy.aifacecore.datas.FaceData
+import com.leessy.aifacecore.datas.isColor
+import com.leessy.aifacecore.datas.isIr
 import com.leessy.aifacecore.datas.isReadyCompare
 import io.reactivex.Observable
 
@@ -15,28 +17,29 @@ import io.reactivex.Observable
  * 人脸库识别  彩色库
  */
 fun Observable<FaceData>.CompareListColor(): Observable<FaceData> {
-    return filter { it.isReadyCompare() }
-        .map {
-            //TODO 可根据类行自动选择彩色 或 红外库识别
+    return map {
+        if (it.isColor()) {
             var l = ComparList.ListCompare(it.nChannelNo.ordinal, it.feature!!)
             it.apply {
                 CompareDataID = l[0]
                 CompareRet = l[1]
             }
-        }
+        } else it
+    }
 }
 
 /**
- * 人脸库识别  红外库
+ * 人脸库识别  红外库(暂时不做实现)
  */
-fun Observable<FaceData>.CompareListIr(): Observable<FaceData> {
-    return filter { it.isReadyCompare() }
-        .map {
-            //TODO 可根据类行自动选择彩色 或 红外库识别
-            var l = ComparList.ListCompare(it.nChannelNo.ordinal, it.feature!!)
-            it.apply {
-                CompareDataID = l[0]
-                CompareRet = l[1]
-            }
-        }
-}
+//fun Observable<FaceData>.CompareListIr(): Observable<FaceData> {
+//    return filter { it.isReadyCompare() }
+//        .map {
+//            if (it.isIr()) {
+//                var l = ComparList.ListCompare(it.nChannelNo.ordinal, it.feature!!)
+//                it.apply {
+//                    CompareDataID = l[0]
+//                    CompareRet = l[1]
+//                }
+//            } else it
+//        }
+//}
