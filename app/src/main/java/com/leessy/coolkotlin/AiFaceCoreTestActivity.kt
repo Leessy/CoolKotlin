@@ -1,17 +1,15 @@
 package com.leessy.coolkotlin
 
-import android.graphics.*
+import android.graphics.Matrix
+import android.graphics.RectF
+import android.graphics.SurfaceTexture
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.TextureView
-import android.widget.Button
-import com.AiChlFace.AiChlFace
-import com.AiChlFace.FACE_DETECT_RESULT
 import com.jakewharton.rxbinding2.view.RxView
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
+import com.leessy.aifacecore.opt.CompareListColor
 import com.leessy.aifacecore.opt.DetectFace
-import com.leessy.aifacecore.opt.DetectFace_Feature
 import com.leessy.aifacecore.opt.FeatureGet
 import com.leessy.aifacecore.opt.ImageColor
 import com.leessy.camera.Camera
@@ -23,10 +21,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_ai_face_core_test.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.io.File
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
@@ -105,6 +99,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 Log.d("----", "--   onSurfaceTextureDestroyed")
                 c?.stopSecede()
 //                c?.stopPreview()
+//                c?.destroyCamera()
                 return true
             }
         })
@@ -128,6 +123,8 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 Log.d("----", "--   onSurfaceTextureDestroyed")
                 c2?.stopSecede()
 //                c2?.stopPreview()
+//                c2?.destroyCamera()
+
                 return true
             }
         })
@@ -203,6 +200,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             .observeOn(Schedulers.newThread())
             .sample(200, TimeUnit.MILLISECONDS)
             .FeatureGet()
+            .CompareListColor()
 //            .DetectFace_Feature()
             .subscribe {
                 Log.d("----", "-*----------彩色 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}")
@@ -214,6 +212,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         AiFaceCore.Follows(ImageColor.IR)
             .compose(this.bindUntilEvent(ActivityEvent.STOP))
             .DetectFace()
+
 //            .observeOn(Schedulers.newThread())
 //            .sample(200, TimeUnit.MILLISECONDS)
 //            .FeatureGet()

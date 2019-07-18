@@ -18,18 +18,11 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
     internal var uvcCamera: UVCCamera? = null
     private var previewSurfaceTexture: SurfaceTexture? = null
     internal var call: IFrameCall? = null
-
     internal var isPreview = false
-
-    private var Width: Int = 0//相机实际启动宽
-    private var Height: Int = 0//相机实际启动高
-
-    var n = 0L
+    private var Width: Int = 0//相机实际启动宽  可能出现预览宽高与回调数据宽高不一致
+    private var Height: Int = 0//相机实际启动高  可能出现预览宽高与回调数据宽高不一致
 
     private val iFrameCallback = IFrameCallback {
-        if (n++ % 20 == 0L) {
-            Log.d("------", "iFrameCallback     $devName   $Width   $Height  ${it.capacity()}")
-        }
         call?.run {
             call(it, Width, Height)
         }
@@ -68,23 +61,15 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
 
     /**
      * 设置预览宽高
-     *
-     *
-     *目前问题:1.红外相机在mjpeg模式下，有些分辨率设置失效，但是回调的数据分辨率是正确的
+     * 目前问题:1.红外相机在mjpeg模式下，有些分辨率设置失效，但是回调的数据分辨率是正确的
      */
     @Synchronized
     fun setPreviewSize(w: Int, h: Int): Boolean {
         if (!isOpen()) return false
-        Log.d("------", "setPreviewSize $w  $h ")
-
         val list = uvcCamera?.getSupportedSizeList()
         var size: Size? = null//查询是否支持预设值=宽高
-        list?.forEach {
-            Log.d("------", "$devName setPreviewSize F:  ${it} ")
-            if (it.width == w && it.height == h) size = it
-        }
+        list?.forEach { if (it.width == w && it.height == h) size = it }
         Log.d("------", "$devName setPreviewSize *-****:  ${size} ")
-
         return if (size != null) {
             try {
                 uvcCamera?.let {
@@ -99,7 +84,6 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
                     it.updateCameraParams()
                 }
             } catch (e: IllegalArgumentException) {
-                Log.d("------", "setPreviewSize erro:  ${e} ")
                 return false
             }
             true
@@ -148,7 +132,6 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
                 isPreview = true
             }
         } else Log.d("------", "open  faild ")
-
     }
 
     //假关闭，从相机中脱离，相机逻辑不变，应用不再使用相机数据
@@ -167,9 +150,7 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
         if (!isPreview) return
         isPreview = false
         call = null
-        Log.d("------", "stopPreview  111")
         uvcCamera?.stopPreview()
-        Log.d("------", "stopPreview 222 ")
         previewSurfaceTexture = null
     }
 

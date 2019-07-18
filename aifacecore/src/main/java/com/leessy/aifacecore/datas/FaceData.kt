@@ -58,8 +58,22 @@ fun FaceData.isReadyCompare(): Boolean {
 /**
  * 检查数据是否可以提取特征码
  */
-fun FaceData.isReadyFeature(): Boolean {
+fun FaceData.isReadyGetFeature(): Boolean {
     return detectResult != null
             && RGB24 != null
             && faceNum > 0
+}
+
+/**
+ * 判断数据是否为彩色
+ */
+fun FaceData.isColor(): Boolean {
+    return imageColor == ImageColor.COLOR
+}
+
+/**
+ * 判断数据是否为红外
+ */
+fun FaceData.isIr(): Boolean {
+    return imageColor == ImageColor.IR
 }
