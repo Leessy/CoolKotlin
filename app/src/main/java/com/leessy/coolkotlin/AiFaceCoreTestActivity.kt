@@ -104,7 +104,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             }
         })
         textureview2.rotation = -90F
-        textureview2.setSurfaceTextureListener(object : TextureView.SurfaceTextureListener {
+        textureview2.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(surface: SurfaceTexture?, width: Int, height: Int) {
                 Log.d("----", "--   onSurfaceTextureAvailable")
                 MatrixView(textureview2, width, height)
@@ -116,18 +116,18 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             }
 
             override fun onSurfaceTextureUpdated(surface: SurfaceTexture?) {
-//                Log.d("----", "--   onSurfaceTextureUpdated")
+    //                Log.d("----", "--   onSurfaceTextureUpdated")
             }
 
             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?): Boolean {
                 Log.d("----", "--   onSurfaceTextureDestroyed")
-                c2?.stopSecede()
+                    c2?.stopSecede()
 //                c2?.stopPreview()
-//                c2?.destroyCamera()
+    //                c2?.destroyCamera()
 
                 return true
             }
-        })
+        }
 
         test()//其他测试
 
@@ -180,7 +180,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 }
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribe({
                 //                Log.d("---- 人脸框", "${it.imageColor}  ${it.nFaceBottom}")
                 //画彩色人脸框或者红外人脸框
                 when (it.imageColor) {
@@ -190,7 +190,9 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                         faceview2.setFaces(it.rect, 480, 640)
                 }
 
-            }
+            }, {
+
+            })
 
 
         //彩色人脸数据处理
@@ -200,13 +202,15 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             .observeOn(Schedulers.newThread())
             .sample(200, TimeUnit.MILLISECONDS)
             .FeatureGet()
-            .CompareListColor()
+//            .CompareListColor()
 //            .DetectFace_Feature()
-            .subscribe {
+            .subscribe({
                 Log.d("----", "-*----------彩色 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}")
                 Log.d("----", "-*----------彩色 检测时间     ${it.testTime_face}")
                 Log.d("----", "-*----------彩色 特征时间     ${it.testTime_feature}")
-            }
+            }, {
+                Log.d("----", "-*----------彩色 异常了     ${it}")
+            })
 
         //红外人脸数据处理
         AiFaceCore.Follows(ImageColor.IR)
@@ -218,11 +222,13 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 //            .FeatureGet()
 //            .DetectFace_Feature()
 
-            .subscribe {
+            .subscribe({
                 Log.d("----", "-*----------红外 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}")
                 Log.d("----", "-*----------红外 检测时间     ${it.testTime_face}")
                 Log.d("----", "-*----------红外 特征时间     ${it.testTime_feature}")
-            }
+            }, {
+                Log.d("----", "-*----------彩色 异常了     ${it}")
+            })
     }
 
     //视图转换  镜像

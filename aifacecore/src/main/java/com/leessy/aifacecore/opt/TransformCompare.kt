@@ -18,8 +18,8 @@ import io.reactivex.Observable
  */
 fun Observable<FaceData>.CompareListColor(): Observable<FaceData> {
     return map {
-        if (it.isColor()) {
-            var l = ComparList.ListCompare(it.nChannelNo.ordinal, it.feature!!)
+        if (it.isColor() && it.isReadyCompare()) {
+            val l = ComparList.ListCompare(it.nChannelNo.ordinal, it.feature!!)
             it.apply {
                 CompareDataID = l[0]
                 CompareRet = l[1]

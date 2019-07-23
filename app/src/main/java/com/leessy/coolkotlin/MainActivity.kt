@@ -1,9 +1,13 @@
 package com.leessy.coolkotlin
 
+import android.app.KeyguardManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import android.view.WindowManager
 import android.widget.Toast
 import com.blankj.utilcode.util.FileIOUtils
 import com.jakewharton.rxbinding2.view.RxView
@@ -24,6 +28,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileReader
+import java.lang.reflect.Method
 import java.util.concurrent.TimeUnit
 
 class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
@@ -102,7 +107,7 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
             }
         )
 
-
+//        setKeyguardEnable()
     }
 
     var isAuto = false
@@ -127,5 +132,25 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
             })
     }
 
+    override fun onKeyMultiple(keyCode: Int, repeatCount: Int, event: KeyEvent?): Boolean {
+        Log.d("----", "keyCode：${keyCode}")
+        return super.onKeyMultiple(keyCode, repeatCount, event)
 
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        Log.d("----", "onKeyDown：${event?.keyCode}")
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        Log.d("----", "onKeyUp：${event?.keyCode}")
+        return super.onKeyUp(keyCode, event)
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
+        Log.d("----", "dispatchKeyEvent：${event?.keyCode}")
+        return super.dispatchKeyEvent(event)
+
+    }
 }

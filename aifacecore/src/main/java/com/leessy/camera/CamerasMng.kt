@@ -32,6 +32,7 @@ object CamerasMng {
         isInit = true
         defaultPreviewWidth = w
         defaultPreviewHeight = h
+        mUSBMonitor?.let { it.destroy() }
         mUSBMonitor = USBMonitor(c, object : USBMonitor.OnDeviceConnectListener {
             override fun onAttach(device: UsbDevice?) {
                 device?.let {

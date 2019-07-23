@@ -1,15 +1,11 @@
 package com.leessy
 
-import android.util.Log
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 
-import java.io.BufferedReader
 import java.io.BufferedWriter
-import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
@@ -29,11 +25,22 @@ object F602SystemTool {
     private val redled602 = "/sys/devices/platform/gpioport/gpioport/led_blue"//红led
     private val greled602 = "/sys/devices/platform/gpioport/gpioport/led_gre"//绿灯
     private val blueled602 = "/sys/devices/platform/gpioport/gpioport/led_red"//蓝灯
+    private val DISMANTLE_KEY = "/sys/devices/platform/gpioport/gpioport/forbid"     //防拆
+    private val INDUCTION_KEY = "/sys/devices/platform/gpioport/gpioport/mandet"     //感应
 
+    //感应主题
     private val induction: PublishSubject<String> by lazy {
         PublishSubject.create<String>()
     }
-    var readDis: Disposable? = null//读文件控制器
+
+    private var readDisInduction: Disposable? = null//读感应文件控制器
+    private var readDisDismantle: Disposable? = null//读防拆文件控制器
+
+
+    //防拆主题
+    private val dismantle: PublishSubject<String> by lazy {
+        PublishSubject.create<String>()
+    }
 
     //写文件
     private fun writeSysFile(sys_path: String, value: String) {
@@ -48,33 +55,65 @@ object F602SystemTool {
     }
 
 
-    //开始  结束
-    fun startRead(b: Boolean) {
+    //开始 结束 读取感应数据
+    private fun startInductionRead(b: Boolean) {
         if (b) {
-            readDis?.let { it.dispose() }
-            readDis = Observable.interval(100, TimeUnit.MILLISECONDS, Schedulers.io())
+            readDisInduction?.let { it.dispose() }
+            readDisInduction = Observable.interval(100, TimeUnit.MILLISECONDS, Schedulers.io())
                 .subscribe({
-                    val o = FileReader("/sys/devices/platform/gpioport/gpioport/mandet")
+                    val o = FileReader(INDUCTION_KEY)
                     induction.onNext(o.readText())
                     o.close()
                 }, {
                     induction.onNext("0")//读文件异常
                 })
         } else {
-            readDis?.dispose()
+            readDisInduction?.dispose()
         }
     }
 
-    //开放感应接口
+    //开始 结束 读取防拆数据读取
+    private fun startDismantleRead(b: Boolean) {
+        if (b) {
+            readDisDismantle?.let { it.dispose() }
+            readDisDismantle = Observable.interval(1000, TimeUnit.MILLISECONDS, Schedulers.io())
+                .subscribe({
+                    val o = FileReader(DISMANTLE_KEY)
+                    dismantle.onNext(o.readText())
+                    o.close()
+                }, {
+                    dismantle.onNext("0")//读文件异常
+                })
+        } else {
+            readDisDismantle?.dispose()
+        }
+    }
+
+    /**
+     * 活体感应监听器
+     */
     fun ObjectInduction(): Observable<String> {
         return induction.distinctUntilChanged { s, s2 ->
             s == s2
         }.doOnSubscribe {
-            startRead(true)
+            startInductionRead(true)
         }.doOnDispose {
-            startRead(false)
+            startInductionRead(false)
         }.doFinally {
         }
+    }
+
+    /**
+     * 防拆开关状态监听器
+     */
+    fun dismantle(): Observable<String> {
+        return dismantle
+            .doOnSubscribe {
+                startDismantleRead(true)
+            }.doOnDispose {
+                startDismantleRead(false)
+            }.doFinally {
+            }
     }
 
     /**

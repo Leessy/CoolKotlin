@@ -5,7 +5,7 @@
           android:sharedUserId="android.uid.system">
 
     <uses-feature android:name="android.hardware.camera"/>
-
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
     <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>

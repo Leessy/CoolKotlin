@@ -1,14 +1,10 @@
 package com.leessy.aifacecore.opt
 
-import android.util.Log
-import com.AiChlFace.AiChlFace
-import com.AiChlIrFace.AiChlIrFace
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.datas.CameraData
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
-import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -20,6 +16,11 @@ object DataEmitterCenter {
     /**
      * 统一人脸数据分发 构建中心
      */
+    private var faceSubjectColor1Dp: Disposable? = null
+    private var faceSubjectColor2Dp: Disposable? = null
+    private var faceSubjectIr1Dp: Disposable? = null
+    private var faceSubjectIr2Dp: Disposable? = null
+
     private val faceSubjectColor1 = PublishSubject.create<CameraData>()
     private val faceSubjectColor2 = PublishSubject.create<CameraData>()
     private val faceSubjectIr1 = PublishSubject.create<CameraData>()
@@ -33,14 +34,34 @@ object DataEmitterCenter {
     private fun checkout(imageColor: ImageColor, CameraID: Int): Observable<CameraData> {
         return when (imageColor) {
             ImageColor.COLOR -> if (CameraID == 0) {
-                faceSubjectColor1
+                faceSubjectColor1.doOnSubscribe {
+                    faceSubjectColor1Dp = if (faceSubjectColor1Dp != null) {
+                        faceSubjectColor1Dp!!.dispose()
+                        it
+                    } else it
+                }
             } else {
-                faceSubjectColor2
+                faceSubjectColor2.doOnSubscribe {
+                    faceSubjectColor2Dp = if (faceSubjectColor2Dp != null) {
+                        faceSubjectColor2Dp!!.dispose()
+                        it
+                    } else it
+                }
             }
             ImageColor.IR -> if (CameraID == 0) {
-                faceSubjectIr1
+                faceSubjectIr1.doOnSubscribe {
+                    faceSubjectIr1Dp = if (faceSubjectIr1Dp != null) {
+                        faceSubjectIr1Dp!!.dispose()
+                        it
+                    } else it
+                }
             } else {
-                faceSubjectIr2
+                faceSubjectIr2.doOnSubscribe {
+                    faceSubjectIr2Dp = if (faceSubjectIr2Dp != null) {
+                        faceSubjectIr2Dp!!.dispose()
+                        it
+                    } else it
+                }
             }
         }
     }
