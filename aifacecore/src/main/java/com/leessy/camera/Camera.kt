@@ -28,7 +28,6 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
         }
     }
 
-
     /**
      * 启动相机
      */
@@ -64,7 +63,7 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
      * 目前问题:1.红外相机在mjpeg模式下，有些分辨率设置失效，但是回调的数据分辨率是正确的
      */
     @Synchronized
-    fun setPreviewSize(w: Int, h: Int): Boolean {
+    fun setPreviewSize(w: Int, h: Int, max_fps: Int = 15, frameType: Int = UVCCamera.FRAME_FORMAT_MJPEG): Boolean {
         if (!isOpen()) return false
         val list = uvcCamera?.getSupportedSizeList()
         var size: Size? = null//查询是否支持预设值=宽高
@@ -77,8 +76,8 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
                         size!!.width,
                         size!!.height,
                         1,
-                        15,
-                        UVCCamera.FRAME_FORMAT_MJPEG, //此格式设置15帧生效  -----  UVCCamera.FRAME_FORMAT_YUYV,
+                        max_fps,
+                        frameType, //此格式设置15帧生效  -----  UVCCamera.FRAME_FORMAT_YUYV,
                         0.4f
                     )
                     it.updateCameraParams()
@@ -178,6 +177,15 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
             }
         }
     }
+
+    /**
+     * 设置电源频率
+     */
+    fun setPowerlineFrequency(powerline: Int) {
+        uvcCamera?.powerlineFrequency = powerline
+    }
+
+    fun getPowerlineFrequency(): Int = uvcCamera?.powerlineFrequency!!
 }
 
 fun Camera.isOpen(): Boolean {

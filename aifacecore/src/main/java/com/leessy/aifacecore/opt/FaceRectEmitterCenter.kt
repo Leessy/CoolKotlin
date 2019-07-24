@@ -4,6 +4,7 @@ import com.AiChlFace.FACE_DETECT_RESULT
 import com.leessy.aifacecore.datas.RectData
 import io.reactivex.Observable
 import io.reactivex.Scheduler
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 
@@ -14,6 +15,10 @@ import io.reactivex.subjects.PublishSubject
  */
 
 object FaceRectEmitterCenter {
+    var dsp: Disposable? = null
+    var lastFaceisNullColor = true//最后一个不是空人脸数据
+    var lastFaceisNullIr = true//最后一个不是空人脸数据
+
     /**
      * 统一人脸分发中心
      */
@@ -23,14 +28,35 @@ object FaceRectEmitterCenter {
      * 发送人框
      */
     internal fun sendFaceRect(mageColor: ImageColor, cameraId: Int, faceresult: Any) {
+        if (mageColor == ImageColor.COLOR) lastFaceisNullColor = true else lastFaceisNullIr = true
         faceSubject.onNext(RectData(mageColor, cameraId).apply {
             transf(this, faceresult)
         })
     }
 
+    /**
+     * 发送一个空人脸框
+     */
+    internal fun sendFaceRect(mageColor: ImageColor, cameraId: Int) {
+        if (mageColor == ImageColor.COLOR) {
+            if (lastFaceisNullColor) {
+                lastFaceisNullColor = false
+                faceSubject.onNext(RectData(mageColor, cameraId))
+            }
+        } else {
+            if (lastFaceisNullIr) {
+                lastFaceisNullIr = false
+                faceSubject.onNext(RectData(mageColor, cameraId))
+            }
+        }
+
+    }
 
     fun getEmitter(): Observable<RectData> {
-        return faceSubject
+        return faceSubject.doOnSubscribe {
+            if (dsp != null) dsp!!.dispose()
+            dsp = it
+        }
     }
 
     /**

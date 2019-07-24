@@ -31,3 +31,10 @@ class RectData(var imageColor: ImageColor, var cameraId: Int = 0) {
     var nQuality: Int = 0 // 人脸质量
     var rect: RectF? = null
 }
+
+/**
+ * 没有人脸的数据
+ */
+fun RectData.isNoneFace(): Boolean {
+    return nFaceLeft == 0 && nFaceRight == 0
+}
