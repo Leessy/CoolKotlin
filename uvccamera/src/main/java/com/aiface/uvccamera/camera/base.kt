@@ -1,4 +1,4 @@
-package com.leessy.camera
+package com.aiface.uvccamera.camera
 
 import android.graphics.SurfaceTexture
 import android.opengl.GLES11Ext

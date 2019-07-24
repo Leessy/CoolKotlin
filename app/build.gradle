@@ -90,7 +90,10 @@ dependencies {
     //基础库 + 读卡 + 相机
     implementation 'com.github.Leessy:AiFace:1.3.2'
     implementation project(path: ':aifacecore')
-//        implementation 'com.github.Leessy:CoolKotlin:0.1.2'
+//    implementation 'com.github.Leessy:CoolKotlin:0.1.2'
+    implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.1.5'
+    implementation 'com.github.Leessy.CoolKotlin:uvccamera:0.1.5'
+
 
     implementation files('libs/BaiduLBS_Android.jar')
 

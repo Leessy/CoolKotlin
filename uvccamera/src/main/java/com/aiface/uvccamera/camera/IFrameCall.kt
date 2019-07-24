@@ -1,4 +1,4 @@
-package com.leessy.camera
+package com.aiface.uvccamera.camera
 
 import java.nio.ByteBuffer
 

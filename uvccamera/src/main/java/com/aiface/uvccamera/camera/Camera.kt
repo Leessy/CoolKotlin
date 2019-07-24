@@ -1,12 +1,9 @@
-package com.leessy.camera
+package com.aiface.uvccamera.camera
 
 import android.graphics.SurfaceTexture
 import android.util.Log
 import android.view.Surface
 import com.serenegiant.usb.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.nio.ByteBuffer
 
 
 /**

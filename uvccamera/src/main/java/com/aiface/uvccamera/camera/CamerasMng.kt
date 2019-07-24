@@ -1,9 +1,8 @@
-package com.leessy.camera
+package com.aiface.uvccamera.camera
 
 import android.content.Context
 import android.hardware.usb.UsbDevice
 import android.util.Log
-import com.leessy.aifacecore.R
 import com.serenegiant.usb.DeviceFilter
 import com.serenegiant.usb.USBMonitor
 import kotlinx.coroutines.GlobalScope
@@ -71,8 +70,8 @@ object CamerasMng {
                 }
             }
         }).apply {
-            val filters = DeviceFilter.getDeviceFilters(c, R.xml.device_filter)
-            setDeviceFilter(filters)
+//            val filters = DeviceFilter.getDeviceFilters(c, R.xml.device_filter)
+//            setDeviceFilter(filters)
             register()
         }
     }
