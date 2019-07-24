@@ -95,5 +95,17 @@
                 android:layout_height="wrap_content"
                 android:text="关灯"/>
     </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <Button
+                android:id="@+id/bg_u"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="背景亮"/>
+        <Button
+                android:id="@+id/bg_d"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="背景暗"/>
+    </LinearLayout>
 
 </LinearLayout>

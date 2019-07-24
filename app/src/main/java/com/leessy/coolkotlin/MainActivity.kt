@@ -1,24 +1,24 @@
 package com.leessy.coolkotlin
 
-import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.os.SystemClock
+import android.provider.Settings
 import android.util.Log
 import android.view.KeyEvent
-import android.view.WindowManager
 import android.widget.Toast
-import com.blankj.utilcode.util.FileIOUtils
 import com.jakewharton.rxbinding2.view.RxView
-import com.leessy.LED
 import com.leessy.F602SystemTool
+import com.leessy.FileWatcher
+import com.leessy.LED
 import com.leessy.Loaction.LoactionActivity
+import com.leessy.PowerManagerUtil
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.AiFaceCore.AiFaceType
 import com.leessy.aifacecore.AiFaceCore.IAiFaceInitCall
 import com.leessy.camera.CamerasMng
-import com.leessy.xCrash.TestFileObserver
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.Observable
@@ -26,9 +26,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
-import java.io.File
-import java.io.FileReader
-import java.lang.reflect.Method
 import java.util.concurrent.TimeUnit
 
 class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
@@ -93,6 +90,32 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         }
         //灯光测试---------------------------
 
+        var window = getWindow()
+        //背景亮
+        RxView.clicks(bg_u).subscribe {
+            var lp = window.getAttributes()
+//            lp.screenBrightness = 1F
+            window.setAttributes(lp)
+
+//            val it = Intent(Settings.ACTION_WIFI_SETTINGS)
+//            val it = Intent( "android.settings.ETHERNET_SETTINGS")
+            val it = Intent( Settings.ACTION_HOME_SETTINGS)
+//            val it = Intent( "com.android.settings.ethernet.EthernetSettings")
+
+
+            it.putExtra("extra_prefs_show_button_bar", true)//是否显示button bar
+            it.putExtra("extra_prefs_set_next_text", "完成")
+            it.putExtra("extra_prefs_set_back_text", "返回")
+            //it.putExtra("wifi_enable_next_on_connect", true);
+            startActivity(it)
+        }
+        //背景暗
+        RxView.clicks(bg_d).subscribe {
+            var lp = window.getAttributes()
+//            lp.screenBrightness = 0F
+            window.setAttributes(lp)
+            goToSleep()
+        }
 
         CamerasMng.initCameras(application)
 
@@ -107,7 +130,19 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
             }
         )
 
-//        setKeyguardEnable()
+        ObjectInduction()
+//        PowerManagerUtil.wakeUp(application)
+        Log.d("----", ":onCreate ")
+
+    }
+
+
+    /**
+     *   关闭屏幕 ，其实是使系统休眠
+     *
+     */
+    public fun goToSleep() {
+        PowerManagerUtil.goToSleep(this)
     }
 
     var isAuto = false
@@ -115,18 +150,53 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
     override fun onResume() {
         super.onResume()
+        Log.d("----", ":onResume ")
         if (isAuto) {
             Observable.timer(2, TimeUnit.SECONDS, Schedulers.io()).compose(this.bindToLifecycle())
                 .subscribe {
                     startActivity(Intent(this, AiFaceCoreTestActivity::class.java))
                 }
         }
+    }
 
-        //人体感应触发
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("----", ":onDestroy ")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("----", ":onPause ")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("----", ":onStop ")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("----", ":onStart ")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Log.d("----", ":onRestart ")
+    }
+
+
+    //人体感应触发
+    private fun ObjectInduction() {
         F602SystemTool.ObjectInduction()
-            .compose(this.bindUntilEvent(ActivityEvent.PAUSE))
+            .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.d("----", "人体感应触发：${it}")
+                Log.d("----", "人体感应触发：${it}  ${it == "1"}")
+                var i = it.trim().toInt()
+                if (i == 1) {
+                    Log.d("----", "人体感应触发  wakeUp ")
+                    PowerManagerUtil.wakeUp(application)
+                }
             }, {
                 Log.d("----", "人体感应触发erro：${it}")
             })

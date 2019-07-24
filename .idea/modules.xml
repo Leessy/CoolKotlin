@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/arcface/arcface.iml" filepath="$PROJECT_DIR$/arcface/arcface.iml" />
       <module fileurl="file://$PROJECT_DIR$/myfacetest/myfacetest.iml" filepath="$PROJECT_DIR$/myfacetest/myfacetest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/uvccamera/uvccamera.iml" filepath="$PROJECT_DIR$/uvccamera/uvccamera.iml" />
     </modules>
   </component>
 </project>
