@@ -3,6 +3,7 @@ package com.leessy.aifacecore.AiFaceCore
 import android.content.Context
 import com.AiChlFace.AiChlFace
 import com.AiChlIrFace.AiChlIrFace
+import com.kaer.sdk.otg.OtgReadClient
 import com.leessy.aifacecore.datas.CameraData
 import com.leessy.aifacecore.datas.RectData
 import com.leessy.aifacecore.opt.DataEmitterCenter

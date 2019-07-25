@@ -8,8 +8,10 @@
       <module fileurl="file://$PROJECT_DIR$/arcface/arcface.iml" filepath="$PROJECT_DIR$/arcface/arcface.iml" />
       <module fileurl="file://$PROJECT_DIR$/jidacard/jidacard.iml" filepath="$PROJECT_DIR$/jidacard/jidacard.iml" />
       <module fileurl="file://$PROJECT_DIR$/jidacardusb/jidacardusb.iml" filepath="$PROJECT_DIR$/jidacardusb/jidacardusb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kaerreadsdk/kaerreadsdk.iml" filepath="$PROJECT_DIR$/kaerreadsdk/kaerreadsdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/myfacetest/myfacetest.iml" filepath="$PROJECT_DIR$/myfacetest/myfacetest.iml" />
       <module fileurl="file://$PROJECT_DIR$/uvccamera/uvccamera.iml" filepath="$PROJECT_DIR$/uvccamera/uvccamera.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yxcardsdk/yxcardsdk.iml" filepath="$PROJECT_DIR$/yxcardsdk/yxcardsdk.iml" />
     </modules>
   </component>
 </project>

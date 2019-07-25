@@ -1,1 +1,1 @@
-include ':app', ':myfacetest', ':aifacecore', ':arcface', ':uvccamera', ':jidacard', ':jidacardusb'
+include ':app', ':myfacetest', ':aifacecore', ':arcface', ':uvccamera', ':jidacard', ':jidacardusb', ':kaerreadsdk', ':yxcardsdk'

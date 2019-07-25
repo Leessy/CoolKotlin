@@ -32,16 +32,16 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    //基础库 + 读卡 + 相机
-    compileOnly 'com.github.Leessy:AiFace:1.3.2'
-
     // RxJava 2
     compileOnly 'io.reactivex.rxjava2:rxjava:2.2.2'
     compileOnly 'io.reactivex.rxjava2:rxandroid:2.1.0'
     //coroutines
     compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M2'
     compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0-M2'
+
+    //使用卡尔加密的时候需要 另外导入uvc库
+    compileOnly project(path: ':kaerreadsdk')
+//    compileOnly files('libs/cardsdk5.7.6.jar')
 }
