@@ -18,7 +18,7 @@ import com.leessy.PowerManagerUtil
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.AiFaceCore.AiFaceType
 import com.leessy.aifacecore.AiFaceCore.IAiFaceInitCall
-import com.leessy.camera.CamerasMng
+import com.aiface.uvccamera.camera.CamerasMng
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.Observable

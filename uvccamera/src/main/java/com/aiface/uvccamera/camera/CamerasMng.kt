@@ -17,11 +17,19 @@ object CamerasMng {
     internal var defaultPreviewWidth = 640
     internal var defaultPreviewHeight = 480
 
-    private val USB4G_PID = 293//相机pid<由于接入系统的类型是uvc设备,默认过滤次设备>
     private var isInit: Boolean = false
     private var mUSBMonitor: USBMonitor? = null
     var cameraList: ArrayList<Camera> = arrayListOf()
 
+    //PID:293为602的4G模块
+    private var pidFilter = arrayListOf(293)//相机pid
+
+    /**
+     * 新增pid过滤设备
+     */
+    fun addPIDfilters(vararg pid: Int) {
+        pidFilter.addAll(pid.toList())
+    }
 
     /**
      *初始化相机管理工具,可选传入相机默认分辨率
@@ -31,19 +39,20 @@ object CamerasMng {
         isInit = true
         defaultPreviewWidth = w
         defaultPreviewHeight = h
-        mUSBMonitor?.let { it.destroy() }
+        destroy()//防止重复初始化
         mUSBMonitor = USBMonitor(c, object : USBMonitor.OnDeviceConnectListener {
             override fun onAttach(device: UsbDevice?) {
                 device?.let {
-                    if (it.deviceClass == 239 && it.deviceSubclass == 2 && USB4G_PID != it.productId) {
-                        Log.d("CamerasMng", "on Attach ${device.deviceName}  ${device.vendorId}  ${device.productId}")
+                    if (pidFilter.contains(it.productId)) return//过滤指定pid设备
+                    if (it.deviceClass == 239 && it.deviceSubclass == 2) {
+//                        Log.d("CamerasMng", "on Attach ${device.deviceName}  ${device.vendorId}  ${device.productId}")
                         mUSBMonitor?.requestPermission(device)
                     }
                 }
             }
 
             override fun onConnect(device: UsbDevice?, controlBlock: USBMonitor.UsbControlBlock?, createNew: Boolean) {
-                Log.d("CamerasMng", "onConnect ${controlBlock?.busNum}    ${controlBlock?.devNum}   $createNew")
+//                Log.d("CamerasMng", "onConnect ${controlBlock?.busNum}    ${controlBlock?.devNum}   $createNew")
                 if (!createNew) return
                 device?.let {
                     GlobalScope.launch {
@@ -53,24 +62,24 @@ object CamerasMng {
             }
 
             override fun onDisconnect(device: UsbDevice?, controlBlock: USBMonitor.UsbControlBlock?) {
-                Log.d("CamerasMng", "on Disconnect ${device?.deviceName}")
+//                Log.d("CamerasMng", "on Disconnect ${device?.deviceName}")
                 GlobalScope.launch {
                     disconnect(device!!, controlBlock!!)
                 }
             }
 
             override fun onCancel(device: UsbDevice?) {
-                Log.d("CamerasMng", "on onCancel ${device?.deviceName}")
+//                Log.d("CamerasMng", "on onCancel ${device?.deviceName}")
             }
 
             override fun onDettach(device: UsbDevice?) {
-                Log.d("CamerasMng", "on onDettach ${device?.deviceName}")
+//                Log.d("CamerasMng", "on onDettach ${device?.deviceName}")
                 GlobalScope.launch {
                     dettach(device!!)
                 }
             }
         }).apply {
-//            val filters = DeviceFilter.getDeviceFilters(c, R.xml.device_filter)
+            //            val filters = DeviceFilter.getDeviceFilters(c, R.xml.device_filter)
 //            setDeviceFilter(filters)
             register()
         }
@@ -93,7 +102,7 @@ object CamerasMng {
             }
         }
         c?.stopPreview()//释放相机资源
-        Log.d("CamerasMng", "disconnect ---设备个数   ${cameraList.size}")
+//        Log.d("CamerasMng", "disconnect ---设备个数   ${cameraList.size}")
     }
 
     //USB设备移除处理
@@ -106,7 +115,7 @@ object CamerasMng {
         }
         c?.destroyCamera()//释放相机资源
         cameraList.remove(c)
-        Log.d("CamerasMng", "dettach --- 设备个数   ${cameraList.size}")
+//        Log.d("CamerasMng", "dettach --- 设备个数   ${cameraList.size}")
     }
 
 
@@ -119,7 +128,6 @@ object CamerasMng {
 
     //关闭相机管理器
     fun destroy() {
-        mUSBMonitor?.destroy()
         cameraList.forEach {
             it.destroyCamera()
         }

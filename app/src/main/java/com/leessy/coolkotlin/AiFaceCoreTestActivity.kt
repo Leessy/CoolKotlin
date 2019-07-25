@@ -12,9 +12,9 @@ import com.leessy.aifacecore.opt.CompareListColor
 import com.leessy.aifacecore.opt.DetectFace
 import com.leessy.aifacecore.opt.FeatureGet
 import com.leessy.aifacecore.opt.ImageColor
-import com.leessy.camera.Camera
-import com.leessy.camera.CamerasMng
-import com.leessy.camera.IFrameCall
+import com.aiface.uvccamera.camera.Camera
+import com.aiface.uvccamera.camera.CamerasMng
+import com.aiface.uvccamera.camera.IFrameCall
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.Observable
@@ -116,14 +116,14 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             }
 
             override fun onSurfaceTextureUpdated(surface: SurfaceTexture?) {
-    //                Log.d("----", "--   onSurfaceTextureUpdated")
+                //                Log.d("----", "--   onSurfaceTextureUpdated")
             }
 
             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?): Boolean {
                 Log.d("----", "--   onSurfaceTextureDestroyed")
-                    c2?.stopSecede()
+                c2?.stopSecede()
 //                c2?.stopPreview()
-    //                c2?.destroyCamera()
+                //                c2?.destroyCamera()
 
                 return true
             }
@@ -131,12 +131,6 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 
         test()//其他测试
 
-    }
-
-    override fun onStop() {
-        super.onStop()
-//        c?.destroyCamera()
-//        c2?.destroyCamera()
     }
 
     var bbb: ByteArray? = null
@@ -152,7 +146,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 val bytes = ByteArray(bf.capacity())
                 bf.get(bytes, 0, bytes.size)
 //                发送到算法库识别
-                AiFaceCore.dataEmitter(bytes, w, h, 0, ImageColor.COLOR, bMirror = 1, nRotate = 2)
+                AiFaceCore.dataEmitter(bytes, ImageColor.COLOR, w, h, bMirror = 1, nRotate = 2)
             }
         })
         c2?.setFrameCall(object : IFrameCall {
@@ -161,7 +155,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 val bytes = ByteArray(bf.capacity())
                 bf.get(bytes, 0, bytes.size)
 //                发送到算法库识别
-                AiFaceCore.dataEmitter(bytes, 640, 480, 0, ImageColor.IR, bMirror = 1, nRotate = 2)
+                AiFaceCore.dataEmitter(bytes, ImageColor.IR, 640, 480, bMirror = 1, nRotate = 2)
             }
         })
 

@@ -111,10 +111,10 @@ object AiFaceCore {
      */
     fun dataEmitter(
         byteArray: ByteArray,
+        imageColor: ImageColor,
         width: Int,
         height: Int,
         CameraID: Int = 0,
-        imageColor: ImageColor,
         stream: Int = 2,
         bMirror: Int = 0,
         nRotate: Int = 0
