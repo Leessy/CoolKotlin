@@ -3,9 +3,12 @@ package com.leessy
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.os.Vibrator
 import android.support.multidex.MultiDex
 import android.util.Log
+import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.ShellUtils
 import com.leessy.service.LocationService
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONObject
@@ -26,6 +29,10 @@ import java.nio.charset.Charset
 class App : Application() {
     private val TAG = javaClass.name
 
+    companion object {
+        lateinit var app: App
+    }
+
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         MultiDex.install(this)
@@ -33,6 +40,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        app = this
 //        initXcrash()
     }
 
@@ -166,10 +174,20 @@ class App : Application() {
         val pkg = context.packageName
         val atv = getActivities(context, pkg)
         Schedulers.io().scheduleDirect {
+            val command1 = "am force-stop $pkg\n" //force-stop;
+            val command2 = "am start -n $pkg/$atv\n" //am start -n 包名/包名.第一个Activity的名称";
+//
+            println("-------cmd  $command1  ")
+            println("-------cmd    $command2")
+//            var ret = ShellUtils.execCmd(arrayListOf<String>(command1, command2), false)
+//            println("-------cmd  $ret")
+
+
             var dataOutputStream: DataOutputStream? = null
             try {
                 // 申请su权限
-                val process = Runtime.getRuntime().exec("su")
+                val process = Runtime.getRuntime().exec("sh")
+//                val process = Runtime.getRuntime().exec("su")
                 dataOutputStream = DataOutputStream(process.outputStream)
                 // 执行pm install命令
                 val command1 = "am force-stop $pkg\n" //force-stop;

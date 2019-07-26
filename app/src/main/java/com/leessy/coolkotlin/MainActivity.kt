@@ -130,26 +130,16 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 //            lp.screenBrightness = 1F
             window.setAttributes(lp)
 
-//            val it = Intent(Settings.ACTION_WIFI_SETTINGS)
-//            val it = Intent( "android.settings.ETHERNET_SETTINGS")
-            val it = Intent(Settings.ACTION_HOME_SETTINGS)
-//            val it = Intent( "com.android.settings.ethernet.EthernetSettings")
-
-
-            it.putExtra("extra_prefs_show_button_bar", true)//是否显示button bar
-            it.putExtra("extra_prefs_set_next_text", "完成")
-            it.putExtra("extra_prefs_set_back_text", "返回")
-            //it.putExtra("wifi_enable_next_on_connect", true);
-            startActivity(it)
-
         }
         //背景暗
         RxView.clicks(bg_d).subscribe {
-            var lp = window.getAttributes()
+//            var lp = window.getAttributes()
 //            lp.screenBrightness = 0F
-            window.setAttributes(lp)
-            goToSleep()
+//            window.setAttributes(lp)
+//            goToSleep()
+            App.app.restartApp(application)
         }
+
 
         CamerasMng.initCameras(application)
 
