@@ -1,6 +1,7 @@
 package com.leessy.KotlinExtension
 
 import android.view.View
+import com.leessy.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
@@ -14,11 +15,36 @@ import kotlinx.coroutines.launch
 fun View.onClick(action: suspend (View) -> Unit) {
     setOnClickListener {
         GlobalScope.launch(Dispatchers.Main) {
-            println("View 1 $it")
             action(it)
-            println("View 2 $it")
         }
     }
+}
+
+
+fun View.onClickss(action: (View) -> Unit) = this.setOnClickListener { action(it) }
+
+fun View.onClicksssd(action: (View) -> String) = this.setOnClickListener {
+}
+
+//    {
+//    setOnClickListener {
+//        GlobalScope.launch(Dispatchers.Main) {
+//            action(it)
+//        }
+//    }
+//}
+
+fun App.Test(print: (App, Int, String) -> String): String {
+    return print(this, 1, "hhh")
+}
+
+fun App.getapp(print: (App) -> Unit) {
+    print(this)
+}
+
+fun App.getapp2(print: (App) -> Unit, print2: (String) -> Unit) {
+    print(this)
+    print2("sdf")
 }
 
 

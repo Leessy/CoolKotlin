@@ -101,6 +101,7 @@ public class CheckLicense {
     }
 
     /**
+     * 修改节点读写权限
      * dm2016
      */
     private static void dm2016() {

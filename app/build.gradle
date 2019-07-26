@@ -51,6 +51,8 @@ android {
     }
 }
 
+repositories { flatDir { dirs 'libs' } }//指定aar文件路劲
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -91,10 +93,12 @@ dependencies {
 
     implementation project(path: ':aifacecore')
     implementation project(path: ':uvccamera')
+
+//    implementation 'com.github.Leessy.CoolKotlin:uvccamera:0.1.7'//相机库
 //    implementation 'com.github.Leessy:CoolKotlin:0.1.6'
 
 //    implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.1.6'
-//    implementation 'com.github.Leessy.CoolKotlin:uvccamera:0.1.6'
+//    implementation 'com.github.Leessy.CoolKotlin:uvccamera:0.1.7'
 
 
     implementation files('libs/BaiduLBS_Android.jar')

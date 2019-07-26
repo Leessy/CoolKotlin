@@ -4,17 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.PowerManager
-import android.os.SystemClock
 import android.provider.Settings
 import android.util.Log
 import android.view.KeyEvent
 import android.widget.Toast
 import com.jakewharton.rxbinding2.view.RxView
-import com.leessy.F602SystemTool
-import com.leessy.FileWatcher
-import com.leessy.LED
 import com.leessy.Loaction.LoactionActivity
-import com.leessy.PowerManagerUtil
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.AiFaceCore.AiFaceType
 import com.leessy.aifacecore.AiFaceCore.IAiFaceInitCall
@@ -27,12 +22,50 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
+import com.leessy.*
+import com.leessy.KotlinExtension.*
+
 
 class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        var s = "sd"
+
+//        RxIo_Main({
+//            Log.d("----", "``````测试线程11！！！！！！  ${Thread.currentThread().name}")
+//            Thread.sleep(10000)
+//            "ss"
+//        }, {
+//            Log.d("----", "```````测试线程222！！！！！！  ${Thread.currentThread().name}")
+//            Log.d("----", "```````测试线程222！！！！！！  ${it}")
+//        })
+//
+        Observable.just(0)
+            .observeOn(Schedulers.io())
+            .map {
+                Thread.sleep(10000)
+            }
+            .compose(this.bindToLifecycle())
+            .subscribe({
+                Log.d("----", "```````333333测试线程222！！！！！！  ${Thread.currentThread().name}")
+            }, {
+                Log.d("----", "```````33333344444测试线程222！！！！！！  ${Thread.currentThread().name}")
+            })
+        s.RxIo_Main({
+            Log.d("----", "测试线程11！！！！！！  ${Thread.currentThread().name}")
+            Thread.sleep(10000)
+            "ss"
+        }, {
+            Log.d("----", "测试线程222！！！！！！  ${Thread.currentThread().name}")
+            Log.d("----", "测试线程222！！！！！！  ${it}")
+        })
+
+        Log.d("----", "测试线程333333！！！！！！  ${Thread.currentThread().name}")
+
 //        RxView.clicks(functionList1).observeOn(AndroidSchedulers.mainThread())
 //                .subscribe { startActivity(Intent(this, ScrollingActivity::class.java)) }
 //
@@ -99,7 +132,7 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
 //            val it = Intent(Settings.ACTION_WIFI_SETTINGS)
 //            val it = Intent( "android.settings.ETHERNET_SETTINGS")
-            val it = Intent( Settings.ACTION_HOME_SETTINGS)
+            val it = Intent(Settings.ACTION_HOME_SETTINGS)
 //            val it = Intent( "com.android.settings.ethernet.EthernetSettings")
 
 
@@ -108,6 +141,7 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
             it.putExtra("extra_prefs_set_back_text", "返回")
             //it.putExtra("wifi_enable_next_on_connect", true);
             startActivity(it)
+
         }
         //背景暗
         RxView.clicks(bg_d).subscribe {
@@ -134,9 +168,11 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 //        PowerManagerUtil.wakeUp(application)
         Log.d("----", ":onCreate ")
 
+        pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val isScreenOn = pm?.isScreenOn//如果为true，则表示屏幕“亮”了，否则屏幕“暗”了。
     }
 
-
+    var pm: PowerManager? = null
     /**
      *   关闭屏幕 ，其实是使系统休眠
      *
@@ -191,11 +227,12 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
             .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.d("----", "人体感应触发：${it}  ${it == "1"}")
+                Log.d("----", "人体感应触发：${it}   屏幕状态${pm?.isScreenOn}")
                 var i = it.trim().toInt()
                 if (i == 1) {
                     Log.d("----", "人体感应触发  wakeUp ")
-                    PowerManagerUtil.wakeUp(application)
+                    if (!pm?.isScreenOn!!)
+                        PowerManagerUtil.wakeUp(application)
                 }
             }, {
                 Log.d("----", "人体感应触发erro：${it}")
