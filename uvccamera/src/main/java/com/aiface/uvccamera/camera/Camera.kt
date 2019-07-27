@@ -33,7 +33,8 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
         try {
             uvcCamera = UVCCamera()
             uvcCamera?.open(controlBlock)
-            setPreviewSize(CamerasMng.defaultPreviewWidth, CamerasMng.defaultPreviewHeight)//设置预览参数
+//            setPreviewSize(CamerasMng.defaultPreviewWidth, CamerasMng.defaultPreviewHeight)//设置预览参数
+            uvcCamera?.setPreviewSize(CamerasMng.defaultPreviewWidth, CamerasMng.defaultPreviewHeight)
             uvcCamera?.setAutoFocus(true)
             return true
         } catch (e: Exception) {
@@ -66,6 +67,7 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
         var size: Size? = null//查询是否支持预设值=宽高
         list?.forEach { if (it.width == w && it.height == h) size = it }
         Log.d("------", "$devName setPreviewSize *-****:  ${size} ")
+        Log.d("------", "max_fps $max_fps  frameType ${frameType} ")
         return if (size != null) {
             try {
                 uvcCamera?.let {
@@ -80,6 +82,7 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
                     it.updateCameraParams()
                 }
             } catch (e: IllegalArgumentException) {
+                Log.d("------", "相机参数设置失败 $e")
                 return false
             }
             true

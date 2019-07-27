@@ -90,9 +90,9 @@ dependencies {
     api 'com.blankj:utilcode:1.22.7'
 
 //    implementation project(path: ':aifacecore')
-//    implementation project(path: ':uvccamera')
+    implementation project(path: ':uvccamera')
 
-    implementation 'com.github.Leessy.CoolKotlin:uvccamera:0.1.8'//相机库
+//    implementation 'com.github.Leessy.CoolKotlin:uvccamera:0.1.8'//相机库
     implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.1.7'
 
 

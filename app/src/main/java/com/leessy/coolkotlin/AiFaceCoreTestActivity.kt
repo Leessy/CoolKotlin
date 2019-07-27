@@ -43,10 +43,12 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 
         //获取设备列表
         CamerasMng.cameraList.forEach {
-            if (it.pid == 33073) {
+            if (it.pid == 37424) {//33073
                 c = it
+                c?.openCamera()
+                c?.setPreviewSize(640, 480, max_fps = 25,frameType = 1)
             } else if (it.pid == 25446) {
-                c2 = it
+//                c2 = it
             }
         }
 
