@@ -18,6 +18,7 @@ object CamerasMng {
     internal var defaultPreviewHeight = 480
 
     private var isInit: Boolean = false
+    internal var usingDfSize: Boolean = false
     private var mUSBMonitor: USBMonitor? = null
     var cameraList: ArrayList<Camera> = arrayListOf()
 
@@ -34,9 +35,10 @@ object CamerasMng {
     /**
      *初始化相机管理工具,可选传入相机默认分辨率
      */
-    fun initCameras(c: Context, w: Int = 640, h: Int = 480) {
+    fun initCameras(c: Context, w: Int = 640, h: Int = 480, usingDfSize: Boolean = false) {
         if (isInit) return
         isInit = true
+        this.usingDfSize = usingDfSize
         defaultPreviewWidth = w
         defaultPreviewHeight = h
         destroy()//防止重复初始化

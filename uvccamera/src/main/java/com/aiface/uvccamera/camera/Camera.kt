@@ -32,10 +32,15 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
         if (isOpen()) return true
         try {
             uvcCamera = UVCCamera()
+            Log.d("------", "1  uvcCamera?.open(controlBlock)")
             uvcCamera?.open(controlBlock)
+            Log.d("------", "2  uvcCamera?.open(controlBlock)")
+
 //            setPreviewSize(CamerasMng.defaultPreviewWidth, CamerasMng.defaultPreviewHeight)//设置预览参数
-            uvcCamera?.setPreviewSize(CamerasMng.defaultPreviewWidth, CamerasMng.defaultPreviewHeight)
-            uvcCamera?.setAutoFocus(true)
+            if (CamerasMng.usingDfSize && CamerasMng.defaultPreviewWidth != 0 && CamerasMng.defaultPreviewHeight != 0) {
+                uvcCamera?.setPreviewSize(CamerasMng.defaultPreviewWidth, CamerasMng.defaultPreviewHeight)
+                uvcCamera?.setAutoFocus(true)
+            }
             return true
         } catch (e: Exception) {
             uvcCamera = null
@@ -101,6 +106,8 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
         surface: Surface? = null,
         w: Int = 0,
         h: Int = 0,
+        max_fps: Int = 15,
+        frameType: Int = UVCCamera.FRAME_FORMAT_MJPEG,
         previewcall: IFrameCall? = null
     ) {
         if (openCamera()) {
@@ -117,7 +124,7 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
                     setPreviewTexture(SURFACE_TEXTURE)
                 }
                 if (w != 0 && h != 0) {
-                    this@Camera.setPreviewSize(w, h)
+                    this@Camera.setPreviewSize(w, h, max_fps = max_fps, frameType = frameType)
                 }
                 setFrameCallback(iFrameCallback, UVCCamera.PIXEL_FORMAT_YUV420SP)// uvcCamera.PIXEL_FORMAT_NV21
                 previewSize?.let {
