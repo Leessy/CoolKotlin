@@ -65,9 +65,10 @@ public class CheckLicense {
         boolean result = false;
         DataOutputStream dataOutputStream = null;
         BufferedReader errorStream = null;
+        String mod = android.os.Build.MODEL;//设备型号  ZTAC-F702     rk3399-mid
         try {
-            // 申请su权限
-            Process process = Runtime.getRuntime().exec("su");
+            Process process = Runtime.getRuntime().exec(!TextUtils.isEmpty(mod)
+                    && mod.contains("3399") ? "sh" : "su");//3399执行su异常
             dataOutputStream = new DataOutputStream(process.getOutputStream());
             // 执行pm install命令
             String command1 = "chmod 777 " + dr1 + "\n";
@@ -106,8 +107,10 @@ public class CheckLicense {
      */
     private static void dm2016() {
         DataOutputStream dataOutputStream = null;
+        String mod = android.os.Build.MODEL;//设备型号  ZTAC-F702     rk3399-mid
         try {
-            Process process = Runtime.getRuntime().exec("su");
+            Process process = Runtime.getRuntime().exec(!TextUtils.isEmpty(mod)
+                    && mod.contains("3399") ? "sh" : "su");//3399执行su异常
             dataOutputStream = new DataOutputStream(process.getOutputStream());
             String command1 = "chmod 777 dev/dm2016\n";
             dataOutputStream.write(command1.getBytes(Charset.forName("utf-8")));

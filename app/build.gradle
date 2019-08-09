@@ -89,14 +89,16 @@ dependencies {
     //utils
     api 'com.blankj:utilcode:1.22.7'
 
-//    implementation project(path: ':aifacecore')
+    implementation project(path: ':aifacecore')
     implementation project(path: ':uvccamera')
 
 //    implementation 'com.github.Leessy.CoolKotlin:uvccamera:0.1.10'//相机库
-    implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.1.7'
+//    implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.1.7'
 
 
     implementation files('libs/BaiduLBS_Android.jar')
+    //Gson
+    api 'com.google.code.gson:gson:2.8.5'
 
-//    implementation 'com.anggrayudi:android-hidden-api:28.1'
+//    implementation 'com.anggrayudi:android-hidden-ApiService:28.1'
 }

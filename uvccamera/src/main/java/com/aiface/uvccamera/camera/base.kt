@@ -10,5 +10,4 @@ abstract class base {
     var pid = 0
     var mBusNum = 0
     var mDevNum = 0
-
 }

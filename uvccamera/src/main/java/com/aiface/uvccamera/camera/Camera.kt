@@ -32,10 +32,7 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
         if (isOpen()) return true
         try {
             uvcCamera = UVCCamera()
-            Log.d("------", "1  uvcCamera?.open(controlBlock)")
             uvcCamera?.open(controlBlock)
-            Log.d("------", "2  uvcCamera?.open(controlBlock)")
-
 //            setPreviewSize(CamerasMng.defaultPreviewWidth, CamerasMng.defaultPreviewHeight)//设置预览参数
             if (CamerasMng.usingDfSize && CamerasMng.defaultPreviewWidth != 0 && CamerasMng.defaultPreviewHeight != 0) {
                 uvcCamera?.setPreviewSize(CamerasMng.defaultPreviewWidth, CamerasMng.defaultPreviewHeight)
@@ -66,7 +63,12 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
      * 目前问题:1.红外相机在mjpeg模式下，有些分辨率设置失效，但是回调的数据分辨率是正确的
      */
     @Synchronized
-    fun setPreviewSize(w: Int, h: Int, max_fps: Int = 15, frameType: Int = UVCCamera.FRAME_FORMAT_MJPEG): Boolean {
+    fun setPreviewSize(
+        w: Int,
+        h: Int,
+        max_fps: Int = DEFAULT_PREVIEW_MAX_FPS,
+        frameType: Int = UVCCamera.FRAME_FORMAT_MJPEG
+    ): Boolean {
         if (!isOpen()) return false
         val list = uvcCamera?.getSupportedSizeList()
         var size: Size? = null//查询是否支持预设值=宽高
@@ -79,7 +81,7 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
                     it.setPreviewSize(//设置预览尺寸 根据设备自行设置
                         size!!.width,
                         size!!.height,
-                        1,
+                        DEFAULT_PREVIEW_MIN_FPS,
                         max_fps,
                         frameType, //此格式设置15帧生效  -----  UVCCamera.FRAME_FORMAT_YUYV,
                         0.4f
@@ -193,6 +195,24 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
     }
 
     fun getPowerlineFrequency(): Int = uvcCamera?.powerlineFrequency!!
+
+
+    /**
+     * 相机参数相关常量
+     */
+    companion object {
+        val DEFAULT_PREVIEW_MIN_FPS = 1
+        val DEFAULT_PREVIEW_MAX_FPS = 15//30
+        val FRAME_FORMAT_YUYV = 0
+        val FRAME_FORMAT_MJPEG = 1
+
+        val PIXEL_FORMAT_RAW = 0
+        val PIXEL_FORMAT_YUV = 1
+        val PIXEL_FORMAT_RGB565 = 2
+        val PIXEL_FORMAT_RGBX = 3
+        val PIXEL_FORMAT_YUV420SP = 4
+        val PIXEL_FORMAT_NV21 = 5
+    }
 }
 
 fun Camera.isOpen(): Boolean {

@@ -129,8 +129,8 @@ public class AiChlFace {
     public static int InitDebug(Context context, int nMaxChannelNum) {
         SetAuth(100, 0);
         String strCacheDir = context.getCacheDir().getAbsolutePath();
-        return Init(nMaxChannelNum, strCacheDir);
-
+        inits = Init(nMaxChannelNum, strCacheDir);
+        return inits;
     }
 
     public static int InitNet(Context context, int nMaxChannelNum) {

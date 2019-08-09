@@ -6,6 +6,7 @@ import android.graphics.SurfaceTexture
 import android.os.Bundle
 import android.util.Log
 import android.view.TextureView
+import com.AiChlFace.AiChlFace
 import com.jakewharton.rxbinding2.view.RxView
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.opt.CompareListColor
@@ -32,7 +33,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ai_face_core_test)
         Log.d("----", "**************************???")
-
+        AiChlFace.Ver()
         Observable.timer(5000, TimeUnit.MILLISECONDS, Schedulers.io())
             .compose(this.bindToLifecycle())
             .subscribe({
@@ -40,13 +41,12 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             }, {
             })
 
-
         //获取设备列表
         CamerasMng.cameraList.forEach {
             if (it.pid == 37424) {//33073
                 c = it
                 c?.openCamera()
-                c?.setPreviewSize(640, 480, max_fps = 25,frameType = 1)
+                c?.setPreviewSize(640, 480, max_fps = 25, frameType = Camera.FRAME_FORMAT_YUYV)
             } else if (it.pid == 25446) {
 //                c2 = it
             }

@@ -52,6 +52,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="算法核心库测试"/>
+    <Button
+            android:id="@+id/ofm1000test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ofm1000接口测试"/>
 
 
     <LinearLayout

@@ -1,18 +1,19 @@
 package com.leessy.aifacecore.AiFaceCore
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.AiChlFace.AiChlFace
+import com.AiChlFace.FACE_DETECT_RESULT
 import com.AiChlIrFace.AiChlIrFace
-import com.kaer.sdk.otg.OtgReadClient
 import com.leessy.aifacecore.datas.CameraData
+import com.leessy.aifacecore.datas.FaceData
 import com.leessy.aifacecore.datas.RectData
 import com.leessy.aifacecore.opt.DataEmitterCenter
 import com.leessy.aifacecore.opt.FaceRectEmitterCenter
 import com.leessy.aifacecore.opt.ImageColor
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 
@@ -52,6 +53,9 @@ object AiFaceCore {
     }
 
 
+    /**
+     * 初始化 算法相关
+     */
     private fun init(mContext: Context) {
         Schedulers.io().scheduleDirect {
             if (!AiFaceSDK) {
@@ -60,6 +64,7 @@ object AiFaceCore {
                     ret = AiChlFace.InitDebug(mContext, channelNum)
                 } else if (initMode == AiFaceType.MODE_DM2016) {
                     ret = AiChlFace.InitDm2016License(mContext, channelNum)
+                    println("************---- $ret")
                 } else if (initMode == AiFaceType.MODE_CARD) {
                     ret = AiChlFace.InitCardLicense(mContext, channelNum)
                 }
@@ -74,6 +79,7 @@ object AiFaceCore {
                     ret = AiChlIrFace.InitDebug(mContext, channelNum)
                 } else if (initMode == AiFaceType.MODE_DM2016) {
                     ret = AiChlIrFace.InitDm2016License(mContext, channelNum)
+                    println("************---- $ret")
                 } else if (initMode == AiFaceType.MODE_CARD) {
                     ret = AiChlIrFace.InitCardLicense(mContext, channelNum)
                 }
@@ -151,17 +157,73 @@ object AiFaceCore {
     }
 
 //    /**
-//     * 获取全部数据人脸框数据
-//     */
-//    fun FollowFaceRectAll(): Observable<RectData> {
-//        return FaceRectEmitterCenter.getEmitter()
-//    }
-//
-//    /**
 //     * 使用读卡模块授权时 设置读取
 //     */
 //    fun setCardReader() {
 //        //todo 待实现读卡授权的逻辑
 //    }
+
+
+    /**
+     * 模板1：1对比返回对比值
+     *
+     * @param face1 特征码
+     * @param face2 特征码
+     * @return -1000 模板无效
+     * @return 1--100 对比值
+     * @return 其他错误码对照算法
+     * @see AiChlFace.FeatureCompare
+     */
+    fun compare11(face1: ByteArray, face2: ByteArray): Int {
+        if (face1.size == AiChlFaceSize && face2.size == AiChlFaceSize) {
+            return AiChlFace.FeatureCompare(0, face1, face2)
+        }
+        return -1000
+    }
+
+
+    /**
+     * 检测图片人脸
+     */
+    fun detectFaceFile(f: String): Observable<FaceData> {
+        val bitmap = BitmapFactory.decodeFile(f)
+        if (bitmap != null) {
+            return detectFaceBmp(bitmap)
+        }
+        return Observable.just(FaceData())
+    }
+
+    /**
+     * 检测图片人脸
+     */
+    fun detectFaceBmp(bmp: Bitmap): Observable<FaceData> {
+        return Observable.just(bmp)
+            .observeOn(Schedulers.io())
+            .map {
+                var faceData = FaceData()
+                val yuv = ImageUtils.BitmapToYUV420SP(it)//转换yuv
+                val rgb24 = ByteArray(it.getWidth() * it.getHeight() * 3)
+                val face_detect_result = FACE_DETECT_RESULT()
+                val w = IntArray(1)
+                val h = IntArray(1)
+
+                faceData.faceNum = AiChlFace.DetectFaceEx(
+                    0, 2, yuv,
+                    it.getWidth(), it.getHeight(),
+                    0, 0, 0, 0, 0, 0,
+                    rgb24, w, h, face_detect_result
+                )
+                if (faceData.faceNum > 0) {
+                    faceData.detectResult = face_detect_result
+                    faceData.feature = ByteArray(AiChlFace.FeatureSize())
+                    faceData.RGB24 = rgb24
+                    faceData.width = w[0]
+                    faceData.height = h[0]
+                    faceData.featureGetStatu =
+                        AiChlFace.FeatureGet(0, rgb24, w[0], h[0], face_detect_result, faceData.feature)
+                }
+                faceData
+            }
+    }
 }
 

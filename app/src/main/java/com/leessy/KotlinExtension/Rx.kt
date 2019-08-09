@@ -1,9 +1,5 @@
 package com.leessy.KotlinExtension
 
-import android.arch.lifecycle.Lifecycle
-import com.trello.rxlifecycle2.LifecycleProvider
-import com.trello.rxlifecycle2.android.ActivityEvent
-import com.trello.rxlifecycle2.components.RxActivity
 import com.trello.rxlifecycle2.components.support.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,35 +16,55 @@ import kotlinx.coroutines.withContext
  * --深圳市尚美欣辰科技有限公司.
  */
 
-fun <T> Observable<T>.toMain(): Observable<T> {
+fun <T> Observable<T>.observeOnMain(): Observable<T> {
     return this.observeOn(AndroidSchedulers.mainThread())
 }
 
-fun <T> Observable<T>.toComputation(): Observable<T> {
+fun <T> Observable<T>.observeOnCpt(): Observable<T> {
     return this.observeOn(Schedulers.computation())
 }
 
-fun <T> Observable<T>.toIo(): Observable<T> {
+fun <T> Observable<T>.observeOnIo(): Observable<T> {
     return this.observeOn(Schedulers.io())
 }
 
-fun <T> Observable<T>.toNewThread(): Observable<T> {
+fun <T> Observable<T>.observeOnNew(): Observable<T> {
     return this.observeOn(Schedulers.newThread())
 }
 
+fun <T> Observable<T>.subscribeOnMain(): Observable<T> {
+    return this.subscribeOn(AndroidSchedulers.mainThread())
+}
+
+fun <T> Observable<T>.subscribeOnCpt(): Observable<T> {
+    return this.subscribeOn(Schedulers.computation())
+}
+
+fun <T> Observable<T>.subscribeOnIo(): Observable<T> {
+    return this.subscribeOn(Schedulers.io())
+}
+
+fun <T> Observable<T>.subscribeOnNew(): Observable<T> {
+    return this.subscribeOn(Schedulers.newThread())
+}
+
+/**************************************************************************************/
+
 /**在子线程执行一些逻辑*/
-fun <T> T.toIo(action: suspend (T) -> Unit) {
+fun <T> T.runIo(action: suspend (T) -> Unit) {
     GlobalScope.launch(Dispatchers.IO) {
-        action(this@toIo)
+        action(this@runIo)
     }
 }
 
 /**在main线程执行一些逻辑*/
-fun <T> T.toMain(action: suspend (T) -> Unit) {
+fun <T> T.runMain(action: suspend (T) -> Unit) {
     GlobalScope.launch(Dispatchers.Main) {
-        action(this@toMain)
+        action(this@runMain)
     }
 }
+
+/**************************************************************************************/
 
 
 /**Observable 绑定 Compose */
@@ -73,14 +89,14 @@ fun <T, R> T.RxIo_Main(
     actionMain: (R) -> Unit
 ) {
     val o = Observable.just(0)
-        .toIo().map { actionIO(this@RxIo_Main) }
+        .observeOnIo().map { actionIO(this@RxIo_Main) }
     when (this) {
-        is RxAppCompatActivity -> o.compose(this.bindToLifecycle()).toMain()
-        is RxAppCompatDialogFragment -> o.compose(this.bindToLifecycle()).toMain()
-        is RxFragment -> o.compose(this.bindToLifecycle()).toMain()
-        is RxFragmentActivity -> o.compose(this.bindToLifecycle()).toMain()
-        is RxDialogFragment -> o.compose(this.bindToLifecycle()).toMain()
-        else -> o.toMain()
+        is RxAppCompatActivity -> o.compose(this.bindToLifecycle()).observeOnMain()
+        is RxAppCompatDialogFragment -> o.compose(this.bindToLifecycle()).observeOnMain()
+        is RxFragment -> o.compose(this.bindToLifecycle()).observeOnMain()
+        is RxFragmentActivity -> o.compose(this.bindToLifecycle()).observeOnMain()
+        is RxDialogFragment -> o.compose(this.bindToLifecycle()).observeOnMain()
+        else -> o.observeOnMain()
     }.subscribe({
         actionMain(it)
     }, {})
@@ -93,11 +109,11 @@ fun <T, R> T.RxIo_Main(
     actionMain: (R) -> Unit
 ) {
     compose(Observable.just(this))
-        .toIo()
+        .observeOnIo()
         .map {
             actionIO(this@RxIo_Main)
         }
-        .toMain()
+        .observeOnMain()
         .subscribe {
             actionMain(it)
         }

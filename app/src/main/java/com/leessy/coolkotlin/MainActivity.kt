@@ -24,6 +24,7 @@ import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
 import com.leessy.*
 import com.leessy.KotlinExtension.*
+import com.leessy.ofm1000test.ofm1000testActivity
 
 
 class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
@@ -31,40 +32,6 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-
-        var s = "sd"
-
-//        RxIo_Main({
-//            Log.d("----", "``````测试线程11！！！！！！  ${Thread.currentThread().name}")
-//            Thread.sleep(10000)
-//            "ss"
-//        }, {
-//            Log.d("----", "```````测试线程222！！！！！！  ${Thread.currentThread().name}")
-//            Log.d("----", "```````测试线程222！！！！！！  ${it}")
-//        })
-//
-        Observable.just(0)
-            .observeOn(Schedulers.io())
-            .map {
-                Thread.sleep(10000)
-            }
-            .compose(this.bindToLifecycle())
-            .subscribe({
-                Log.d("----", "```````333333测试线程222！！！！！！  ${Thread.currentThread().name}")
-            }, {
-                Log.d("----", "```````33333344444测试线程222！！！！！！  ${Thread.currentThread().name}")
-            })
-        s.RxIo_Main({
-            Log.d("----", "测试线程11！！！！！！  ${Thread.currentThread().name}")
-            Thread.sleep(10000)
-            "ss"
-        }, {
-            Log.d("----", "测试线程222！！！！！！  ${Thread.currentThread().name}")
-            Log.d("----", "测试线程222！！！！！！  ${it}")
-        })
-
-        Log.d("----", "测试线程333333！！！！！！  ${Thread.currentThread().name}")
 
 //        RxView.clicks(functionList1).observeOn(AndroidSchedulers.mainThread())
 //                .subscribe { startActivity(Intent(this, ScrollingActivity::class.java)) }
@@ -101,6 +68,12 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
                 startActivity(Intent(this, AiFaceCoreTestActivity::class.java))
             }
 
+        RxView.clicks(ofm1000test).observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                isAuto = true
+                startActivity(Intent(this, ofm1000testActivity::class.java))
+            }
+
 
         //灯光测试---------------------------
         RxView.clicks(w_led).subscribe {
@@ -133,7 +106,7 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         }
         //背景暗
         RxView.clicks(bg_d).subscribe {
-//            var lp = window.getAttributes()
+            //            var lp = window.getAttributes()
 //            lp.screenBrightness = 0F
 //            window.setAttributes(lp)
 //            goToSleep()
@@ -143,8 +116,12 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
         CamerasMng.initCameras(application)
 
+
+        Log.d("----", "厂商     ${android.os.Build.BRAND}")
+        Log.d("----", "厂商     ${android.os.Build.MODEL}")
+
         AiFaceCore.initAiFace(
-            application, AiFaceType.MODE_DEBUG, object : IAiFaceInitCall {
+            application, AiFaceType.MODE_DM2016, object : IAiFaceInitCall {
                 override fun call(colorsInit: Boolean, irInit: Boolean) {
                     Log.d("----", "算法初始化    $colorsInit   $irInit")
                     GlobalScope.launch(Dispatchers.Main) {
