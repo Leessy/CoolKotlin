@@ -49,6 +49,10 @@ android {
             jni.srcDirs = []    //disable automatic ndk-build
         }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 }
 
 repositories { flatDir { dirs 'libs' } }//指定aar文件路劲

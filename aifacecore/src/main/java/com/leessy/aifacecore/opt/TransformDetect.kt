@@ -2,10 +2,8 @@ package com.leessy.aifacecore.opt
 
 import android.util.Log
 import com.AiChlFace.FACE_DETECT_RESULT
-import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.datas.CameraData
 import com.leessy.aifacecore.datas.FaceData
-import com.leessy.aifacecore.datas.isReadyGetFeature
 import io.reactivex.Observable
 
 /**
@@ -161,6 +159,13 @@ fun Observable<CameraData>.DetectFace(): Observable<FaceData> {
 /**
  * 人脸检测 并过滤无人脸的数据
  */
-fun Observable<CameraData>.DetectFaceAndFilter(cd: Observable<CameraData>): Observable<FaceData>? {
+fun Observable<CameraData>.DetectFaceAndFilter(): Observable<FaceData> {
     return DetectFace()?.filter { it.faceNum > 0 }
+}
+
+/**
+ * 过滤无人脸的数据
+ */
+fun Observable<FaceData>.filterNoneface(): Observable<FaceData> {
+    return filter { it.faceNum > 0 }
 }

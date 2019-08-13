@@ -13,11 +13,11 @@ import java.util.concurrent.TimeUnit
 
 object F602SystemTool {
     //502机器
-    private val GPIO0_PATH = "/sys/bus/platform/devices/gpio_port/gpioport/irled"//红外补光
-    private val ledred = "/sys/bus/platform/devices/gpio_port/gpioport/ledred"//红色灯
-    private val ledgre = "/sys/bus/platform/devices/gpio_port/gpioport/ledgre"//绿
-    private val dsled3 = "/sys/bus/platform/devices/gpio_port/gpioport/dsled3"//白光补光灯2（dsled3）
-    private val dsled2 = "/sys/bus/platform/devices/gpio_port/gpioport/dsled2"//白光补光灯1（dsled2）
+//    private val GPIO0_PATH = "/sys/bus/platform/devices/gpio_port/gpioport/irled"//红外补光
+//    private val ledred = "/sys/bus/platform/devices/gpio_port/gpioport/ledred"//红色灯
+//    private val ledgre = "/sys/bus/platform/devices/gpio_port/gpioport/ledgre"//绿
+//    private val dsled3 = "/sys/bus/platform/devices/gpio_port/gpioport/dsled3"//白光补光灯2（dsled3）
+//    private val dsled2 = "/sys/bus/platform/devices/gpio_port/gpioport/dsled2"//白光补光灯1（dsled2）
 
     //602机器
     private val irled602 = "/sys/devices/platform/gpioport/gpioport/ir_led"//红外 602
@@ -25,8 +25,18 @@ object F602SystemTool {
     private val redled602 = "/sys/devices/platform/gpioport/gpioport/led_blue"//红led
     private val greled602 = "/sys/devices/platform/gpioport/gpioport/led_gre"//绿灯
     private val blueled602 = "/sys/devices/platform/gpioport/gpioport/led_red"//蓝灯
-    private val DISMANTLE_KEY = "/sys/devices/platform/gpioport/gpioport/forbid"     //防拆
-    private val INDUCTION_KEY = "/sys/devices/platform/gpioport/gpioport/mandet"     //感应
+//    private val DISMANTLE_KEY = "/sys/devices/platform/gpioport/gpioport/forbid"     //防拆
+//    private val INDUCTION_KEY = "/sys/devices/platform/gpioport/gpioport/mandet"     //感应
+
+    //防拆
+    val DISMANTLE_KEY = "/sys/bus/platform/devices/gpioport/gpioport/forbid"
+    //人体感应
+    val INDUCTION_KEY = "/sys/bus/platform/devices/gpioport/gpioport/mandet"
+    val gpio1 = "/sys/bus/platform/devices/gpioport/gpioport/gpio1"
+    val gpio2 = "/sys/bus/platform/devices/gpioport/gpioport/gpio2"
+    val gpio3 = "/sys/bus/platform/devices/gpioport/gpioport/gpio3"
+    val gpio4 = "/sys/bus/platform/devices/gpioport/gpioport/gpio4"
+
 
     //感应主题
     private val induction: PublishSubject<String> by lazy {

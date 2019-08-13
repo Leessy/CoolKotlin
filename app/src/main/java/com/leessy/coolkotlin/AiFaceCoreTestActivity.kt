@@ -1,27 +1,30 @@
 package com.leessy.coolkotlin
 
-import android.graphics.Matrix
-import android.graphics.RectF
-import android.graphics.SurfaceTexture
+import android.graphics.*
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.TextureView
 import com.AiChlFace.AiChlFace
 import com.jakewharton.rxbinding2.view.RxView
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
-import com.leessy.aifacecore.opt.CompareListColor
-import com.leessy.aifacecore.opt.DetectFace
-import com.leessy.aifacecore.opt.FeatureGet
-import com.leessy.aifacecore.opt.ImageColor
 import com.aiface.uvccamera.camera.Camera
 import com.aiface.uvccamera.camera.CamerasMng
 import com.aiface.uvccamera.camera.IFrameCall
+import com.leessy.MyBitmapFactory
+import com.leessy.aifacecore.datas.isIr
+import com.leessy.aifacecore.opt.*
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
+import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_ai_face_core_test.*
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
@@ -29,56 +32,38 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
     var c: Camera? = null
     var c2: Camera? = null
 
+    val cameraColorW = 640
+    val cameraColorH = 480
+    val cameraIrW = 640
+    val cameraIrH = 480
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ai_face_core_test)
         Log.d("----", "**************************???")
         AiChlFace.Ver()
-        Observable.timer(5000, TimeUnit.MILLISECONDS, Schedulers.io())
+        Observable.timer(10 * 5000, TimeUnit.MILLISECONDS, Schedulers.io())
             .compose(this.bindToLifecycle())
             .subscribe({
                 finish()
             }, {
             })
+        AiChlFace.SetLiveFaceThreshold(30)
+
 
         //获取设备列表
         CamerasMng.cameraList.forEach {
-            if (it.pid == 37424) {//33073
+            if (it.pid == 33073) {//33073
                 c = it
                 c?.openCamera()
-                c?.setPreviewSize(640, 480, max_fps = 25, frameType = Camera.FRAME_FORMAT_YUYV)
+                c?.setPreviewSize(cameraColorW, cameraColorH)
             } else if (it.pid == 25446) {
-//                c2 = it
+                c2 = it
+                c?.setPreviewSize(cameraIrW, cameraIrH)
             }
         }
 
         initAiFAce()//算法
-
-
-        //点击开
-        RxView.clicks(button).subscribe {
-            //获取设备列表
-            CamerasMng.cameraList.forEach {
-                if (it.pid == 33073) {//8976
-                    c = it
-                    Log.d("----", "点击开``  ${textureview.isAvailable}")
-                    c?.startPreview(textureview.surfaceTexture)
-                } else if (it.pid == 25446) {
-                    c2 = it
-                    c2?.startPreview(textureview.surfaceTexture)
-                }
-            }
-        }
-
-        //点击关
-        RxView.clicks(button2).subscribe {
-            //            CamerasMng.cameraList.forEach { it.destroyCamera() }
-            c?.destroyCamera()
-        }
-        //点击停止预览
-        RxView.clicks(button3).subscribe {
-            c?.stopPreview()
-        }
 
 
         textureview.rotation = -90F
@@ -148,7 +133,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 val bytes = ByteArray(bf.capacity())
                 bf.get(bytes, 0, bytes.size)
 //                发送到算法库识别
-                AiFaceCore.dataEmitter(bytes, ImageColor.COLOR, w, h, bMirror = 1, nRotate = 2)
+                AiFaceCore.dataEmitter(bytes, ImageColor.COLOR, cameraColorW, cameraColorH, bMirror = 1, nRotate = 2)
             }
         })
         c2?.setFrameCall(object : IFrameCall {
@@ -157,7 +142,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 val bytes = ByteArray(bf.capacity())
                 bf.get(bytes, 0, bytes.size)
 //                发送到算法库识别
-                AiFaceCore.dataEmitter(bytes, ImageColor.IR, 640, 480, bMirror = 1, nRotate = 2)
+//                AiFaceCore.dataEmitter(bytes, ImageColor.IR, cameraIrW, cameraIrH, bMirror = 1, nRotate = 2)
             }
         })
 
@@ -181,9 +166,11 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 //画彩色人脸框或者红外人脸框
                 when (it.imageColor) {
                     ImageColor.COLOR ->
-                        faceview.setFaces(it.rect, 480, 640)
+//                        faceview.setFaces(it.rect, 480, 640)
+                        faceview.setFaces(it.rect, cameraColorH, cameraColorW)
                     ImageColor.IR ->
-                        faceview2.setFaces(it.rect, 480, 640)
+//                        faceview2.setFaces(it.rect, 480, 640)
+                        faceview2.setFaces(it.rect, cameraIrH, cameraIrW)
                 }
 
             }, {
@@ -194,9 +181,13 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         //彩色人脸数据处理
         AiFaceCore.Follows(ImageColor.COLOR)
             .compose(this.bindUntilEvent(ActivityEvent.STOP))
+            .sample(300, TimeUnit.MILLISECONDS)
             .DetectFace()
+            .Livings()
             .observeOn(Schedulers.newThread())
+            .compose(this.bindUntilEvent(ActivityEvent.STOP))
             .sample(200, TimeUnit.MILLISECONDS)
+//            .sample(200, TimeUnit.MILLISECONDS)
             .FeatureGet()
 //            .CompareListColor()
 //            .DetectFace_Feature()
@@ -204,6 +195,27 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 Log.d("----", "-*----------彩色 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}")
                 Log.d("----", "-*----------彩色 检测时间     ${it.testTime_face}")
                 Log.d("----", "-*----------彩色 特征时间     ${it.testTime_feature}")
+                Log.d("----", "-*----------彩色 活体结果     ${it.Livings}")
+
+//                try {
+//                    var fileName = System.currentTimeMillis().toString() + ".jpg"
+//                    val targetFile = File("/storage/emulated/0/DCIM", fileName)
+//                    val outputStream = FileOutputStream(targetFile)
+//
+//                    var bitmap = MyBitmapFactory.createMyBitmap(it.RGB24, cameraColorH, cameraColorW)
+////                    bitmap = BitmapFactory.decodeByteArray(it.RGB24, 0, it.RGB24!!.size)
+//                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+////                    outputStream.write(it.RGB24)
+//                    outputStream.flush()
+//                    //确保图片保存后不会出现0kb
+//                    outputStream.fd.sync()
+//                    outputStream.close()
+//                } catch (e: FileNotFoundException) {
+//                    e.printStackTrace()
+//                } catch (e: IOException) {
+//                    e.printStackTrace()
+//                }
+
             }, {
                 Log.d("----", "-*----------彩色 异常了     ${it}")
             })
@@ -211,19 +223,21 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         //红外人脸数据处理
         AiFaceCore.Follows(ImageColor.IR)
             .compose(this.bindUntilEvent(ActivityEvent.STOP))
+            .sample(300, TimeUnit.MILLISECONDS)
             .DetectFace()
-
+            .LivingsIr()
 //            .observeOn(Schedulers.newThread())
 //            .sample(200, TimeUnit.MILLISECONDS)
 //            .FeatureGet()
 //            .DetectFace_Feature()
-
             .subscribe({
                 Log.d("----", "-*----------红外 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}")
                 Log.d("----", "-*----------红外 检测时间     ${it.testTime_face}")
                 Log.d("----", "-*----------红外 特征时间     ${it.testTime_feature}")
+                Log.d("----", "-*----------红外 活体结果     ${it.Livings}")
+
             }, {
-                Log.d("----", "-*----------彩色 异常了     ${it}")
+                Log.d("----", "-*----------红外 异常了     ${it}")
             })
     }
 

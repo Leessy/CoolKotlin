@@ -51,8 +51,10 @@ class MainActivity : RxAppCompatActivity() {
 //        val s = AiFace.InitDebug(this)
 //        val s2 = AiChlIrFace.InitDebug(this, 4)
 
-        val s = AiChlFace.InitDebug(this, 4)
-        val s2 = AiChlIrFace.InitDebug(this, 4)
+//        val s = AiChlFace.InitDebug(this, 4)
+//        val s2 = AiChlIrFace.InitDebug(this, 4)
+        val s = AiChlFace.InitDm2016License(this, 4)
+        val s2 = AiChlIrFace.InitDm2016License(this, 4)
         text.text = "初始化=$s"
 //        text.append("\n使用内存根目录图片aaaa.jpg")
         facesize = AiChlFace.FeatureSize()
@@ -275,14 +277,6 @@ class MainActivity : RxAppCompatActivity() {
                     2, bytes, w, h, 0, 0, 0, 0,
                     0, 0, rgb24, w1, h1, result
                 )
-
-//                单通道版本
-//                val result1 = com.AiFace.FACE_DETECT_RESULT()
-//                val ret = AiFace.AiFaceDetectFaceEx(
-//                    2, bytes, w, h, 0, 0, 0, 0,
-//                    0, 0, rgb24, w1, h1, result1
-//                )
-
                 if (ret > 0) {
                     num[it]++
                     val startTime2 = System.currentTimeMillis()

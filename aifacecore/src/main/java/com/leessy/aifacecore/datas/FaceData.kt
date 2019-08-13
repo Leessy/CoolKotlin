@@ -58,7 +58,7 @@ fun FaceData.isReadyCompare(): Boolean {
 /**
  * 检查数据是否可以提取特征码
  */
-fun FaceData.isReadyGetFeature(): Boolean {
+fun FaceData.haveFaceData(): Boolean {
     return detectResult != null
             && RGB24 != null
             && faceNum > 0

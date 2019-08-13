@@ -3,7 +3,7 @@ package com.leessy.aifacecore.opt
 import com.AiChlFace.FACE_DETECT_RESULT
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.datas.FaceData
-import com.leessy.aifacecore.datas.isReadyGetFeature
+import com.leessy.aifacecore.datas.haveFaceData
 import io.reactivex.Observable
 
 /**
@@ -19,7 +19,7 @@ import io.reactivex.Observable
  */
 fun Observable<FaceData>.FeatureGet(): Observable<FaceData> {
     return map {
-        if (it.isReadyGetFeature()) {
+        if (it.haveFaceData()) {
             val start = System.currentTimeMillis()//开始时间
             when (it.nChannelNo) {
                 AiFaceChannelNo.IRNo0 -> {

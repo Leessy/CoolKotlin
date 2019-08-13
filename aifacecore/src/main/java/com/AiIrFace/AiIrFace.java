@@ -11,87 +11,6 @@ import com.leessy.liuc.aiface.DebugL;
 public class AiIrFace {
     public static int inits = -100;//初始化状态记录
 
-    // 获取SDK版本（可不调用）
-    // 返回：SDK版本号
-    // 备注：可不调用，任何时候均可调用
-    public static native int AiFaceVer();
-
-    // 设置认证方式
-    // 输入参数：
-    //     nAuthType ---- 认证方式：0-USB加密狗认证，2-板载加密芯片认证，3-读卡器加密芯片认证，其它-保留
-    //     nUsbDogHandle ---- USB加密狗认证时指定加密狗设备句柄，需据此才能操作USB加密狗设备（可参考DEMO例程请求权限并获取设备句柄）
-    //                        非USB加密狗认证时本参数无意义，可指定任何值
-    // 备注：必须在SDK初始化前调用才有效
-    public static native void AiFaceSetAuth(int nAuthType, int nUsbDogHandle);
-
-
-    // 手持机通过授权供应服务器获取本设备的授权(设备出厂前调用)
-    // 输入参数： strIP ---- 云授权服务器IP地址
-    //            nPort ---- 云授权服务器工作端口（授权供应服务器默认工作端口为6490）
-    // 输出参数：无
-    // 返回：获取的注册码
-    // 备注：1. 如果本设备已有授权，不得重复申请（因服务器记录丢失等原因，重复申请或被视为新设备申请授权从而浪费授权个数）
-    //      2.  必须关闭身份证读卡模块才能调用，建议在加载身份证模块前调用
-    //      3. 本接口会自动对手持机身份证模块供电，完成后自动断开
-    public static String AiFaceGetLicenseCode(Activity activity, String strIP, int nPort) {
-//        Context ctx = activity.getApplicationContext();
-
-        // 对身份证模块供电
-//        WtWdPowerUtils.setIDPower(ctx);
-
-        // 向授权服务供应服务器申请授权
-        String str = GetLicense(activity, strIP, nPort);
-
-        // 关闭身份证模块电源，如果接下来需要加载身份证模块开始读卡，建议这里不要关电
-//        WtWdPowerUtils.closeIDPower(ctx);
-
-        return str;
-    }
-
-    // 手持机验证本设备的授权
-    // 输入参数： strLicense ---- 本设备的授权
-    // 输出参数：无
-    // 返回：0：验证授权成功，-1：授权无效，-2：非手持机或手持机身份证模块未供电
-    // 备注：1. 本接口必须在初始化前调用，并且不与 AiFaceSetAuth 同时调用
-    //      2.  必须关闭身份证读卡模块才能调用，建议在加载身份证模块前初始化算法
-    //      3. 本接口会自动对手持机身份证模块供电，完成后自动断开
-    public static int AiFaceVerifyLicenseCode(Activity activity, String strLicense) {
-
-        // 对身份证模块供电
-//        WtWdPowerUtils.setIDPower(ctx);
-
-        // 验证授权
-        int ret = VerifyLicense(activity, strLicense);
-
-        // 关闭身份证模块电源，如果接下来需要加载身份证模块开始读卡，建议这里不要关电
-//        WtWdPowerUtils.closeIDPower(ctx);
-
-        return ret;
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //                                                                                                               //
-    //  以下为手持机内部接口，必须在手持机身份证模块已供电时调用，外部建议调用AiFaceGetLicense / AiFaceVerifyLicense     //
-    //                                                                                                               //
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // 手持机通过授权供应服务器获取本设备的授权
-    // 输入参数： strIP ---- 云授权服务器IP地址
-    //            nPort ---- 云授权服务器工作端口（云授权服务器默认工作端口为6389）
-    // 输出参数：无
-    // 返回：获取的注册码
-    // 备注：1. 如果本设备已有授权，不得重复申请（因服务器记录丢失等原因，重复申请或被视为新设备申请授权从而浪费授权个数）
-    //       2. 调用本接口前必须对手持机身份证模块供电
-    public static native String GetLicense(Context activity, String strIP, int nPort);
-
-    // 手持机验证本设备的授权
-    // 输入参数： strLicense ---- 本设备的授权
-    // 输出参数：无
-    // 返回：0：验证授权成功，-1：授权无效，-2：非手持机或手持机身份证模块未供电
-    // 备注：调用本接口前必须对手持机身份证模块供电
-    public static native int VerifyLicense(Context activity, String strLicense);
-
     /**
      * 封装初始化接口
      *
@@ -149,25 +68,75 @@ public class AiIrFace {
     }
 
 
-    // SDK初始化
-    // 输入参数： strCachePath ---- 本APP的cache目录，需要此目录有可读写权限，且能根据上级目录找到lib目录加载模型文件（可参考DEMO例程获取cache目录）
-    // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
-    // 备注：附获取SDK版本外的任何接口都必须在SDK初始化成功后才能调用
-    private static native int AiFaceInit(String strCacheDir);
+    /***************************************以下原内容**************************************/
 
-    // 带调试信息的初始化函数
-    private static native int AiFaceInitDebug(String strCacheDir);
+// 获取SDK版本（可不调用）
+    // 返回：SDK版本号
+    // 备注：可不调用，任何时候均可调用
+    public static native int AiFaceVer();
+
+    // 手持机通过授权供应服务器获取本设备的授权(设备出厂前调用)
+    // 输入参数： strIP ---- 云授权服务器IP地址
+    //            nPort ---- 云授权服务器工作端口（授权供应服务器默认工作端口为6490）
+    // 输出参数：无
+    // 返回：获取的注册码
+    // 备注：1. 如果本设备已有授权，不得重复申请（因服务器记录丢失等原因，重复申请或被视为新设备申请授权从而浪费授权个数）
+    //      2.  必须关闭身份证读卡模块才能调用，建议在加载身份证模块前调用
+    //      3. 本接口会自动对手持机身份证模块供电，完成后自动断开
+    public static String AiFaceGetLicenseCode(Activity activity, String strIP, int nPort) {
+        Context ctx = activity.getApplicationContext();
+        // 对身份证模块供电
+//        WtWdPowerUtils.setIDPower(ctx);
+        // 向授权服务供应服务器申请授权
+        String str = GetLicense(activity, strIP, nPort);
+        // 关闭身份证模块电源，如果接下来需要加载身份证模块开始读卡，建议这里不要关电
+//        WtWdPowerUtils.closeIDPower(ctx);
+        return str;
+    }
+
+    // 手持机验证本设备的授权
+    // 输入参数： strLicense ---- 本设备的授权
+    // 输出参数：无
+    // 返回：0：验证授权成功，-1：授权无效，-2：非手持机或手持机身份证模块未供电
+    // 备注：1. 本接口必须在初始化前调用，并且不与 AiFaceSetAuth 同时调用
+    //      2.  必须关闭身份证读卡模块才能调用，建议在加载身份证模块前初始化算法
+    //      3. 本接口会自动对手持机身份证模块供电，完成后自动断开
+    public static int AiFaceVerifyLicenseCode(Activity activity, String strLicense) {
+        Context ctx = activity.getApplicationContext();
+        // 对身份证模块供电
+//        WtWdPowerUtils.setIDPower(ctx);
+        // 验证授权
+        int ret = VerifyLicense(activity, strLicense);
+        // 关闭身份证模块电源，如果接下来需要加载身份证模块开始读卡，建议这里不要关电
+//        WtWdPowerUtils.closeIDPower(ctx);
+        return ret;
+    }
+
+    // 设置认证方式
+    // 输入参数：
+    //     nAuthType ---- 认证方式：0-红色或灰色USB加密狗或USB加密芯片，2-板载I2C加密芯片，3-读卡器I2C加密芯片，其它-保留
+    //     nUsbDogHandle ---- USB加密狗认证时指定加密狗设备句柄，需据此才能操作USB加密狗设备（可参考DEMO例程请求权限并获取设备句柄）
+    //                        非USB加密狗认证时本参数无意义，可指定任何值
+    // 备注：必须在SDK初始化前调用才有效
+    public static native void AiFaceSetAuth(int nAuthType, int nUsbDogHandle);
+
+    // SDK初始化
+    // 输入参数：
+    //     strCachePath ---- 本APP的cache目录，需要此目录有可读写权限，且能根据上级目录找到lib目录加载模型文件（可参考DEMO例程获取cache目录）
+    // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
+    // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
+    public static native int AiFaceInit(String strCacheDir);
 
     // SDK反初始化
     // 备注：必须在初始化成功后调用，反初始化后不能再调用除获取SDK版本及SDK初始化外的任何接口
     public static native void AiFaceUninit();
 
-    // 检测人脸
+    // 检测单个（最大的）人脸
     // 输入参数：bRgb24 ---- RGB24格式的图象数据
     //           nWidth ---- 图象数据宽度（象素单位）
     //           nHeight ---- 图象数据高度（象素单位）
     // 输出参数：sFaceResult ---- 结构体存放检测到的人脸参数（人脸及眼睛等坐标位置及角度等，调用前必须分配有效的空间）
-    // 返回：返回1表示检测到人脸，0表示无人脸，-1表示检测失败
+    // 返回：返回1表示检测到人脸，0表示无人脸，-1表示未授权，-2表示参数错误，其它表示内部错误
     public static native int AiFaceDetectFace(byte[] bRgb24, int nWidth, int nHeight, FACE_DETECT_RESULT sFaceResult);
 
     // 检测单个（最大的）人脸, 支持NV21格式，支持旋转与镜象，支持中间区域检测以加快检测速度
@@ -187,7 +156,7 @@ public class AiIrFace {
     //     nNewWidth ---- 输出图象的宽度(裁减、旋转和镜象后的图象宽度)
     //     nNewHeight ---- 输出图象的高度(裁减、旋转和镜象后的图象宽度)
     //     sFaceResult ---- 检测到的人脸参数（人脸及眼睛等坐标位置及角度等，相对于裁减、旋转和镜象后的图象，调用前必须分配有效的空间）
-    // 返回：返回1表示检测到人脸，0表示无人脸，< 0 表示检测失败
+    // 返回：返回1表示检测到人脸，0表示无人脸，-1表示未授权，-2表示参数错误，其它表示内部错误
     // 备注：1. 使用此接口的检测结果来提取特征或检测活体时，必须使用这里的输出图象、输出图象的宽高和检测到的人脸参数做为参数
     //       2. 界面上需要画人脸人眼等坐标时，需要对检测出的人脸坐标参数根据裁减、旋转和镜象情况进行校正
     public static native int AiFaceDetectFaceEx(int nFmt, byte[] bSrcImg, int nWidth, int nHeight, int nLeft, int nTop, int nRight, int nBottom, int nRotate, int bMirror, byte[] bRgb24, int[] nNewWidth, int[] nNewHeight, FACE_DETECT_RESULT sFaceResult);
@@ -197,17 +166,19 @@ public class AiIrFace {
     public static native int AiFaceFeatureSize();
 
     // 提取特征码
-    // 输入参数：bRgb24 ---- RGB24格式的图象数据
-    //           nWidth ---- 图象数据宽度
-    //           nHeight ---- 图象数据高度
-    //           sFaceResult ---- 检测到的人脸参数（必须将检测人脸返回的结果原样传入）
+    // 输入参数：
+    //     bRgb24 ---- RGB24格式的图象数据
+    //     nWidth ---- 图象数据宽度
+    //     nHeight ---- 图象数据高度
+    //     sFaceResult ---- 检测到的人脸参数（必须将检测人脸返回的结果原样传入）
     // 输出参数：bFeature ---- 特征码（调用前必须分配有效的空间）
-    // 成功返回0，失败返回-1
+    // 返回：成功返回0，未授权返回-1，参数错误返回-2，失败返回其它
     public static native int AiFaceFeatureGet(byte[] bRgb24, int nWidth, int nHeight, FACE_DETECT_RESULT sFaceResult, byte[] bFeature);
 
     // 一对一特征比对
-    // 输入参数：bFeature1 ---- 第1个人脸特征
-    //           bFeature2 ---- 第2个人脸特征
+    // 输入参数：
+    //     bFeature1 ---- 第1个人脸特征
+    //     bFeature2 ---- 第2个人脸特征
     // 返回：返回两个人脸特征对应的人脸的相似度（0-100）
     public static native int AiFaceFeatureCompare(byte[] bFeature1, byte[] bFeature2);
 
@@ -287,7 +258,7 @@ public class AiIrFace {
     //    0 ---- 本帧不确认是活体,需继续检测
     //   -1 ---- 活体检测功能未授权
     //   -2 ---- 参数错误
-    //   -3 ---- 内部错误
+    //   -X ---- 内部错误
     // 备注：
     //    1. AiFaceLiveDetect 需要同时对黑白图象和彩色图象进行人脸检测，并且都能检测到人脸，然后将检测结果传入（内部不需要再检测人脸直接判别是否活体）；如果只有一个图象能检测到活体，则视为非活体
     //    2. AiFaceLiveDetectColor / AiFaceLiveDetectColorEyes 只需要对彩色图象进行人脸检测，并能检测到人脸，然后将检测结果传入（内部会先对黑白图象检测人脸然后判别是否活体）；如果彩色图象不能检测到活体，则视为非活体
@@ -306,29 +277,45 @@ public class AiIrFace {
 
     public static native int AiFaceLiveDetectImg(int nWidth, int nHeight, byte[] bColorRgb24, byte[] bBwRgb24);
 
-    // 简化快速活体检测（只需要红外图象）
+    // 单目活体检测（只需要单路图象，彩色或红外均支持）
     // 输入参数：
+    //           nCameraType ---- 采集设备类型（0-彩色相机，1-黑白相机）
     //           nWidth ---- 图象数据宽度（象素单位）
     //           nHeight ---- 图象数据高度（象素单位）
-    //           bBwRgb24 ---- RGB24格式的黑白图象数据
-    //           sBwFaceResult ---- 黑白图象检测出的人脸参数（调用 AiFaceDetectFace 对黑白图象检测出的结果）
-    //           nBWLeftEyeX, nBWLeftEyeY, nBWRightEyeX, nBWRightEyeY ---- 黑白图象检测出的左右眼坐标（支持第三方人脸检测算法对黑白图象检测出的人眼坐标）
+    //           bRgb24 ---- RGB24格式的图象数据
+    //           sFaceResult ---- 图象检测出的人脸参数（调用 AiFaceDetectFace 对图象检测出的结果，传入此参数检测效率最高）
+    //           nLeftEyeX, nLeftEyeY, nRightEyeX, nRightEyeY ---- 图象检测出的左右眼坐标（支持第三方人脸检测算法对图象检测出的人眼坐标, 检测效率比传入sFaceResult略低）
     // 输出参数：无
     // 返回值：
     //    1 ---- 已确认是活体,本轮结果无需继续检测
     //    0 ---- 本帧不确认是活体,需继续检测
     //   -1 ---- 活体检测功能未授权
     //   -2 ---- 参数错误
-    //   -3 ---- 内部错误
+    //   -X ---- 内部错误
     // 备注：
-    //    1. AiFaceQuickLiveDetect / AiFaceQuickLiveDetectEyes 需要对黑白图象进行人脸检测，并能检测到人脸，然后将检测结果传入（内部不需要再检测人脸直接判别是否活体）；如果黑白图象不能检测到活体，则视为非活体
-    //    2. AiFaceQuickLiveImg 不需要对图象进行人脸检测，直接传入黑白图象（内部会先对黑白图象检测人脸然后判别是否活体）
+    //    1. AiFaceLiveDetectOneCamera / AiFaceLiveDetectEyesOneCamera 需要对图象进行人脸检测，并能检测到人脸，然后将检测结果传入（内部不需要再检测人脸直接判别是否活体）；如果图象不能检测到活体，则视为非活体
+    //    2. AiFaceLiveDetectImgOneCamera 不需要对图象进行人脸检测，直接传入图象（内部会先对图象检测人脸然后判别是否活体，检测效率最低）
     //    3. 过程中只要一次确认是活体，则本次结果确认为活体；如超时仍无一次确认是活体，则本次结果确认为非活体
-    public static native int AiFaceQuickLiveDetect(int nWidth, int nHeight, byte[] bBwRgb24, FACE_DETECT_RESULT sBwFaceResult);
+    public static native int AiFaceLiveDetectOneCamera(int nCameraType, int nWidth, int nHeight, byte[] bRgb24, FACE_DETECT_RESULT sFaceResult);
 
-    public static native int AiFaceQuickLiveDetectEyes(int nWidth, int nHeight, byte[] bBwRgb24, int nBwLeftEyeX, int nBWLeftEyeY, int nBwRightEyeX, int nBwRightEyeY);
+    public static native int AiFaceLiveDetectEyesOneCamera(int nCameraType, int nWidth, int nHeight, byte[] bRgb24, int nLeftEyeX, int nLeftEyeY, int nRightEyeX, int nRightEyeY);
 
-    public static native int AiFaceQuickLiveDetectImg(int nWidth, int nHeight, byte[] bBwRgb24);
+    public static native int AiFaceLiveDetectImgOneCamera(int nCameraType, int nWidth, int nHeight, byte[] bRgb24);
+
+    // 设置活体检测的判活阈值
+    // 输入参数：threshold ---- 想要设置的阈值,支持的阈值范围为 30~70，默认值为50.
+    // 输出参数：无
+    // 返回值：无
+    // 备注：设置过高的阈值则真人也难判别为活体，设置过低的阈值会导致照片也可能误判为活体。建议保持默认值或在默认值左右微调
+    //       任何时候调用均有效
+    public static native void AiFaceSetLiveFaceThreshold(int threshold);
+
+    // 获取判活阈值
+    // 输入参数：无
+    // 输出参数：无
+    // 返回值：返回当前活体检测的判活阈值（默认值为50）
+    // 备注：任何时候调用均有效
+    public static native int AiFaceGetLiveFaceThreshold();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                               //
@@ -393,13 +380,13 @@ public class AiIrFace {
     //                                                                                                               //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // 图象文件解析出原始图象数据（支持 BMP、JPEG 和 PNG 图象）
+    // 图象文件解码出原始图象数据，支持 JPEG、PNG 及 BMP 文件
     // 输入参数：
-    //        strFileName ---- 要解析的图象文件名
-    //        nBufferSize ---- 图象数据缓冲区长度，长度值小于原始数据所需空间时，解析失败只返回图象分辨率不返回数据
-    //        nDepth ---- 需要解析出来的RGB图象数据的位深度（支持8位、16位、24位和32位；需要24位彩色图象传入24，需要8位灰度图象传入8）
+    //        strFileName ---- 要解码的图象文件名
+    //        nBufferSize ---- 图象数据缓冲区长度，长度值小于解码数据所需空间时，解码失败只返回图象分辨率不返回数据
+    //        nDepth ---- 请求解码后的图象数据的颜色深度，要求灰度图象数据时真 8，要求RGB24格式的图象数据时填 24
     // 输出参数：
-    //        bBuffer ---- 解析出的原始图象数据，必须预先分配足够的缓冲区，或者传入空值表示只检测图象分辨率不返回数据
+    //        bBuffer ---- 解码出的图象数据，必须预先分配足够的缓冲区，或者传入空值表示只检测图象分辨率不返回数据
     //        nWidth ---- 返回图象宽度
     //        nHeight ---- 返回图象高度
     // 返回：0-成功 ，< 0 失败
@@ -432,14 +419,46 @@ public class AiIrFace {
     //        bYuv420P ---- YUV420P格式的图象数据（nFmt参数为0时，图象数据序列：Y Y Y Y ... U ... V ..., nFmt为1时，图象数据序列为：Y Y Y Y ... U V ...,nFmt为2时，图象数据序列为：Y Y Y Y ... V U ...）
     //        nWidth ---- 图象宽度
     //        nHeight ---- 图象高度
-    //        nFmt ---- 数据格式（0：YUV420P, 1: NV12，2: NV21）
+    //        nFmt ---- 图象数据格式（0：YUV420P, 1: NV12，2: NV21）
     // 输出参数：
     //        bRgb24 ---- RGB24格式的图象数据，必须预先分配足够的缓冲区
     // 返回：0-成功 ，< 0 失败
     public static native int YUV420P_TO_RGB24(byte[] bYuv420P, int nWidth, int nHeight, int nFmt, byte[] bRgb24);
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                                               //
+    //  以下为手持机内部接口，必须在手持机身份证模块已供电时调用，外部建议调用AiFaceGetLicense / AiFaceVerifyLicense     //
+    //                                                                                                               //
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // 手持机通过授权供应服务器获取本设备的授权
+    // 输入参数： strIP ---- 云授权服务器IP地址
+    //            nPort ---- 云授权服务器工作端口（云授权服务器默认工作端口为6389）
+    // 输出参数：无
+    // 返回：获取的注册码
+    // 备注：1. 如果本设备已有授权，不得重复申请（因服务器记录丢失等原因，重复申请或被视为新设备申请授权从而浪费授权个数）
+    //       2. 调用本接口前必须对手持机身份证模块供电
+    public static native String GetLicense(Activity activity, String strIP, int nPort);
+
+    // 手持机验证本设备的授权
+    // 输入参数： strLicense ---- 本设备的授权
+    // 输出参数：无
+    // 返回：0：验证授权成功，-1：授权无效，-2：非手持机或手持机身份证模块未供电
+    // 备注：调用本接口前必须对手持机身份证模块供电
+    public static native int VerifyLicense(Activity activity, String strLicense);
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                                               //
+    //  加载动态库，Android 5.0以上只需加需AiFace这个主动态库（其它会自动加载）                                         //
+    //                                                                                                               //
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     static {
         try {
+            if (android.os.Build.VERSION.RELEASE.compareTo("5.0") < 0) {
+                System.loadLibrary("THIrFaceImage");
+                System.loadLibrary("THIrFeature");
+                System.loadLibrary("THFaceLive");
+            }
             System.loadLibrary("AiIrFace");
         } catch (Throwable e) {
         }
