@@ -4,6 +4,9 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 import java.io.BufferedWriter
 import java.io.FileReader
@@ -37,6 +40,8 @@ object F602SystemTool {
     val gpio3 = "/sys/bus/platform/devices/gpioport/gpioport/gpio3"
     val gpio4 = "/sys/bus/platform/devices/gpioport/gpioport/gpio4"
 
+    val hubrst = "/sys/bus/platform/devices/gpioport/gpioport/hubrst"
+
 
     //感应主题
     private val induction: PublishSubject<String> by lazy {
@@ -61,6 +66,20 @@ object F602SystemTool {
             bufWriter.close()
         } catch (e: IOException) {
             e.printStackTrace()
+        }
+    }
+
+    fun restUsb() {
+        GlobalScope.launch {
+            writeSysFile(
+                hubrst,
+                "0"
+            )
+            delay(800)
+            writeSysFile(
+                hubrst,
+                "1"
+            )
         }
     }
 
@@ -102,15 +121,15 @@ object F602SystemTool {
     /**
      * 活体感应监听器
      */
-    fun ObjectInduction(): Observable<String> {
-        return induction.distinctUntilChanged { s, s2 ->
-            s == s2
-        }.doOnSubscribe {
-            startInductionRead(true)
-        }.doOnDispose {
-            startInductionRead(false)
-        }.doFinally {
-        }
+    fun induction(): Observable<String> {
+        return induction.distinctUntilChanged { s, s2 -> s == s2 }
+//            .skip(1)
+            .doOnSubscribe {
+                startInductionRead(true)
+            }.doOnDispose {
+                startInductionRead(false)
+            }.doFinally {
+            }
     }
 
     /**
@@ -136,15 +155,24 @@ object F602SystemTool {
                     LED.IR_LED_LIGHT -> irled602
                     LED.WHITE_LED_LIGHT -> dsled602
                     LED.BLUE_LED -> {
-                        closeLed(LED.RED_LED, LED.GRE_LED)
+                        closeLed(
+                            LED.RED_LED,
+                            LED.GRE_LED
+                        )
                         blueled602
                     }
                     LED.GRE_LED -> {
-                        closeLed(LED.RED_LED, LED.BLUE_LED)
+                        closeLed(
+                            LED.RED_LED,
+                            LED.BLUE_LED
+                        )
                         greled602
                     }
                     LED.RED_LED -> {
-                        closeLed(LED.BLUE_LED, LED.GRE_LED)
+                        closeLed(
+                            LED.BLUE_LED,
+                            LED.GRE_LED
+                        )
                         redled602
                     }
                 }, "1"

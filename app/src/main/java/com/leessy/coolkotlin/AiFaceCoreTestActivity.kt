@@ -1,30 +1,26 @@
 package com.leessy.coolkotlin
 
-import android.graphics.*
+import android.graphics.Matrix
+import android.graphics.RectF
+import android.graphics.SurfaceTexture
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.TextureView
 import com.AiChlFace.AiChlFace
-import com.jakewharton.rxbinding2.view.RxView
-import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.aiface.uvccamera.camera.Camera
 import com.aiface.uvccamera.camera.CamerasMng
 import com.aiface.uvccamera.camera.IFrameCall
-import com.leessy.MyBitmapFactory
-import com.leessy.aifacecore.datas.isIr
-import com.leessy.aifacecore.opt.*
+import com.leessy.aifacecore.AiFaceCore.AiFaceCore
+import com.leessy.aifacecore.opt.DetectFace
+import com.leessy.aifacecore.opt.FeatureGet
+import com.leessy.aifacecore.opt.ImageColor
+import com.leessy.aifacecore.opt.Livings
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
-import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_ai_face_core_test.*
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
@@ -42,13 +38,14 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         setContentView(R.layout.activity_ai_face_core_test)
         Log.d("----", "**************************???")
         AiChlFace.Ver()
-        Observable.timer(10 * 5000, TimeUnit.MILLISECONDS, Schedulers.io())
+        Observable.timer(1 * 5000, TimeUnit.MILLISECONDS)
             .compose(this.bindToLifecycle())
             .subscribe({
                 finish()
             }, {
             })
-        AiChlFace.SetLiveFaceThreshold(30)
+
+//        AiChlFace.SetLiveFaceThreshold(30)
 
 
         //获取设备列表
@@ -59,7 +56,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 c?.setPreviewSize(cameraColorW, cameraColorH)
             } else if (it.pid == 25446) {
                 c2 = it
-                c?.setPreviewSize(cameraIrW, cameraIrH)
+                c2?.setPreviewSize(cameraIrW, cameraIrH)
             }
         }
 
@@ -84,8 +81,8 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 
             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?): Boolean {
                 Log.d("----", "--   onSurfaceTextureDestroyed")
-                c?.stopSecede()
-//                c?.stopPreview()
+//                c?.stopSecede()
+                c?.stopPreview()
 //                c?.destroyCamera()
                 return true
             }
@@ -108,8 +105,8 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 
             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?): Boolean {
                 Log.d("----", "--   onSurfaceTextureDestroyed")
-                c2?.stopSecede()
-//                c2?.stopPreview()
+//                c2?.stopSecede()
+                c2?.stopPreview()
                 //                c2?.destroyCamera()
 
                 return true
@@ -142,7 +139,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 val bytes = ByteArray(bf.capacity())
                 bf.get(bytes, 0, bytes.size)
 //                发送到算法库识别
-//                AiFaceCore.dataEmitter(bytes, ImageColor.IR, cameraIrW, cameraIrH, bMirror = 1, nRotate = 2)
+                AiFaceCore.dataEmitter(bytes, ImageColor.IR, cameraIrW, cameraIrH, bMirror = 1, nRotate = 2)
             }
         })
 
@@ -181,12 +178,11 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         //彩色人脸数据处理
         AiFaceCore.Follows(ImageColor.COLOR)
             .compose(this.bindUntilEvent(ActivityEvent.STOP))
-            .sample(300, TimeUnit.MILLISECONDS)
+//            .sample(300, TimeUnit.MILLISECONDS)
             .DetectFace()
             .Livings()
-            .observeOn(Schedulers.newThread())
-            .compose(this.bindUntilEvent(ActivityEvent.STOP))
-            .sample(200, TimeUnit.MILLISECONDS)
+//            .observeOn(Schedulers.newThread())
+//            .compose(this.bindUntilEvent(ActivityEvent.STOP))
 //            .sample(200, TimeUnit.MILLISECONDS)
             .FeatureGet()
 //            .CompareListColor()
@@ -223,12 +219,12 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         //红外人脸数据处理
         AiFaceCore.Follows(ImageColor.IR)
             .compose(this.bindUntilEvent(ActivityEvent.STOP))
-            .sample(300, TimeUnit.MILLISECONDS)
+            .sample(500, TimeUnit.MILLISECONDS)
             .DetectFace()
-            .LivingsIr()
+            .Livings()
 //            .observeOn(Schedulers.newThread())
 //            .sample(200, TimeUnit.MILLISECONDS)
-//            .FeatureGet()
+            .FeatureGet()
 //            .DetectFace_Feature()
             .subscribe({
                 Log.d("----", "-*----------红外 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}")

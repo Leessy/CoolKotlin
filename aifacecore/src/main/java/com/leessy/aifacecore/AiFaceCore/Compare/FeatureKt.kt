@@ -13,12 +13,12 @@ import com.leessy.aifacecore.AiFaceCore.AiFaceCore
  * 检测彩色特征码是否ok
  */
 fun ITemp.isColorComplete(): Boolean {
-    return getFeaturenNormalTemp() != null && getFeaturenNormalTemp().size == AiFaceCore.AiChlFaceSize
+    return getFeaturenNormalTemp().size == AiFaceCore.AiChlFaceSize
 }
 
 /**
  * 检测红外特征码是否ok
  */
 fun ITemp.isIrComplete(): Boolean {
-    return getFeaturenNormalTemp() != null && getFeaturenNormalTemp().size == AiFaceCore.AiChlFaceSize
+    return getFeaturenNormalTemp().size == AiFaceCore.AiChlFaceSize
 }

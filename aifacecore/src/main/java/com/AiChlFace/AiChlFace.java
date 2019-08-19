@@ -10,6 +10,21 @@ import com.leessy.liuc.aiface.DebugL;
 public class AiChlFace {
     public static int inits = -100;//初始化状态记录
 
+    // 获取可用的CPU核心数
+// 输入参数：无
+// 输出参数：无
+// 返回值：返回当前设备可用的CPU核心数
+// 备注：根据系统策略不同，安卓设备有时并非所有CPU核心都处于开启状态，插电工作的设备，应将策略调整为最高性能
+    public static native int GetCpuNum();
+
+    // 设置各功能的CPU核心数（多核CPU有效）
+// 输入参数： nFuncNo ---- 功能号（0-全部功能，1-人脸检测，2-特征提取，3-活体检测）
+//            nCoreNum ---- 该功能允许同时启用的CPU核心数
+// 输出参数：无
+// 返回：无
+// 备注：默认各功能同时启用的核心数为总核心数-1，初始化前调用有效
+    public static native int SetFuncCpuNum(int nFuncNo, int nCoreNum);
+
     /**
      * 封装初始化接口
      *

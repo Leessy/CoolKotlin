@@ -4,16 +4,20 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.PowerManager
-import android.provider.Settings
 import android.util.Log
 import android.view.KeyEvent
 import android.widget.Toast
+import com.AiChlFace.AiChlFace
+import com.aiface.uvccamera.camera.CamerasMng
 import com.jakewharton.rxbinding2.view.RxView
+import com.leessy.F602SystemTool
+import com.leessy.LED
 import com.leessy.Loaction.LoactionActivity
+import com.leessy.PowerManagerUtil
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.AiFaceCore.AiFaceType
 import com.leessy.aifacecore.AiFaceCore.IAiFaceInitCall
-import com.aiface.uvccamera.camera.CamerasMng
+import com.leessy.ofm1000test.ofm1000testActivity
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.Observable
@@ -22,9 +26,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
-import com.leessy.*
-import com.leessy.KotlinExtension.*
-import com.leessy.ofm1000test.ofm1000testActivity
 
 
 class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
@@ -99,10 +100,9 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         var window = getWindow()
         //背景亮
         RxView.clicks(bg_u).subscribe {
-            var lp = window.getAttributes()
+            //            var lp = window.getAttributes()
 //            lp.screenBrightness = 1F
-            window.setAttributes(lp)
-
+//            window.setAttributes(lp)
         }
         //背景暗
         RxView.clicks(bg_d).subscribe {
@@ -110,7 +110,7 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 //            lp.screenBrightness = 0F
 //            window.setAttributes(lp)
 //            goToSleep()
-            App.app.restartApp(application)
+            F602SystemTool.restUsb()
         }
 
 
@@ -119,6 +119,13 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
         Log.d("----", "厂商     ${android.os.Build.BRAND}")
         Log.d("----", "厂商     ${android.os.Build.MODEL}")
+        Log.d("----", "算法版本     ${AiChlFace.Ver()}")
+
+        Log.d("----****", "cpunum=     ${AiChlFace.GetCpuNum()}")
+//        AiChlFace.SetFuncCpuNum(0,2)
+        AiChlFace.SetFuncCpuNum(1, 1)
+        AiChlFace.SetFuncCpuNum(2, 1)
+        AiChlFace.SetFuncCpuNum(3, 1)
 
         AiFaceCore.initAiFace(
             application, AiFaceType.MODE_DM2016, object : IAiFaceInitCall {
@@ -190,7 +197,7 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
     //人体感应触发
     private fun ObjectInduction() {
-        F602SystemTool.ObjectInduction()
+        F602SystemTool.induction()
             .compose(this.bindUntilEvent(ActivityEvent.DESTROY))
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
