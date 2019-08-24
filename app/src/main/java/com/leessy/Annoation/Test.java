@@ -1,5 +1,7 @@
 package com.leessy.Annoation;
 
+import com.leessy.CRC;
+import com.leessy.CRC16Util;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.CRC32;
 
 /**
  * @author Created by 刘承. on 2019/8/1
@@ -23,39 +26,84 @@ import java.util.concurrent.TimeUnit;
 public class Test {
     @MyTest(name = "face", index = 0)
 //    byte[] bytes = new byte[11];
-//    private byte[] bytes = {1, 3, 13};
-    private byte[] bytes = null;
+    private byte[] bytenames = {1, 3, 13};
+//    private byte[] bytes = null;
 
+    /**
+     * 将int转换成byte数组，低位在前，高位在后
+     * 改变高低位顺序只需调换数组序号
+     */
+    private static byte[] intToBytes(int value) {
+        byte[] src = new byte[2];
+        src[1] = (byte) ((value >> 8) & 0xFF);
+        src[0] = (byte) (value & 0xFF);
+        return src;
+    }
+
+    public static byte[] shortToByteArray(short value) {
+//        byte[] targets = new byte[2];
+//        for (int i = 0; i < 2; i++) {
+//            int offset = (targets.length - 1 - i) * 8;
+//            targets[i] = (byte) ((s >>> offset) & 0xff);
+//        }
+
+        byte[] src = new byte[2];
+        src[1] = (byte) ((value >> 8) & 0xFF);
+        src[0] = (byte) (value & 0xFF);
+        return src;
+    }
+
+    private static byte[] bytescrc = {
+            0x01, 0x03, 0x14, 0x00, 0x03, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            (byte) 0xe7, 0x23
+    };
+
+    //01 03 14 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
     public static void main(String[] args) {
+
+        byte[] b = CRC16Util.getCrc16(bytescrc, bytescrc.length - 2);
+//        byte[] b = intToBytes(CRC.crc16_modbus(bytescrc, 0, (bytescrc.length - 2)));
+        System.out.println("---" + Arrays.toString(b));
+        System.out.println("---" + byteToHex(b));
+
+        int b2 = CRC16Util.getCrc16Int(bytescrc, bytescrc.length - 2);
+        System.out.println("---2 " + b2);
+
+
+        short s = CRC.crc16_modbus(bytescrc, 0, (bytescrc.length - 2));
+        System.out.println("---3 " + byteToHex(shortToByteArray(s)));
+
+
 //        AnnoationUtils.getInfo(MyStudent.class);
 
 
-        //获取Bean类所有公共成员变量
-//        Test test = new Test();
-//        Field[] fields = test.getClass().getDeclaredFields();
-//
-//        //遍历Bean类所有公共成员变量
-//        for (Field field : fields) {
-//            //判断成员变量的注解
-//            if (field.isAnnotationPresent(MyTest.class)) {
-//                //获取成员变量的注解
-//                MyTest myTarget = field.getAnnotation(MyTest.class);
-//                System.out.println(myTarget.name());
-//                System.out.println(myTarget);
-//                System.out.println(field.getName());
-//                try {
-//                    byte[] bb = (byte[]) field.get(test);
-//                    System.out.println(Arrays.toString(bb));
-//                } catch (IllegalAccessException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        }
+//        获取Bean类所有公共成员变量
+        Test test = new Test();
+        Field[] fields = test.getClass().getDeclaredFields();
+
+        //遍历Bean类所有公共成员变量
+        for (Field field : fields) {
+            //判断成员变量的注解
+            if (field.isAnnotationPresent(MyTest.class)) {
+                //获取成员变量的注解
+                MyTest myTarget = field.getAnnotation(MyTest.class);
+                System.out.println(myTarget.name());
+                System.out.println(myTarget);
+                System.out.println(field.getName());
+                try {
+                    byte[] bb = (byte[]) field.get(test);
+                    System.out.println(Arrays.toString(bb));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
 
 //        spi();
 
-        testSchedulers();
+//        testSchedulers();
     }
 
     static void testSchedulers() {
@@ -146,4 +194,19 @@ public class Test {
         }
     }
 
+    /**
+     * byte数组转hex
+     *
+     * @param bytes
+     * @return
+     */
+    public static String byteToHex(byte[] bytes) {
+        String strHex = "";
+        StringBuilder sb = new StringBuilder("");
+        for (int n = 0; n < bytes.length; n++) {
+            strHex = Integer.toHexString(bytes[n] & 0xFF);
+            sb.append((strHex.length() == 1) ? "0" + strHex : strHex); // 每个字节由两个字符表示，位数不够，高位补0
+        }
+        return sb.toString().trim();
+    }
 }

@@ -113,7 +113,7 @@ object AiFaceOpt {
 
 
     //可见光1  提取特征
-    @Synchronized
+
     fun FeatureGet_1(
         bRgb24: ByteArray,
         nWidth: Int,
@@ -125,7 +125,7 @@ object AiFaceOpt {
     }
 
     //可见光3  提取特征
-    @Synchronized
+
     fun FeatureGet_3(
         bRgb24: ByteArray,
         nWidth: Int,
@@ -137,7 +137,7 @@ object AiFaceOpt {
     }
 
     //红外0  提取特征
-    @Synchronized
+
     fun FeatureGetIR_0(
         bRgb24: ByteArray,
         nWidth: Int,
@@ -149,7 +149,7 @@ object AiFaceOpt {
     }
 
     //红外1  提取特征
-    @Synchronized
+
     fun FeatureGetIR_2(
         bRgb24: ByteArray,
         nWidth: Int,

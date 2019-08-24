@@ -32,6 +32,8 @@ object AiFaceCore {
     internal var AiChlFaceSize: Int = 0
     internal var AiChlIrFaceSize: Int = 0
 
+    var isV10 = false//是否使用v10算法版本
+
     fun isInit() = AiFaceSDK && AiIrFaceSDK
 
 //    fun getAiChlFaceSize(): Int {
@@ -61,12 +63,12 @@ object AiFaceCore {
             if (!AiFaceSDK) {
                 var ret = -100
                 if (initMode == AiFaceType.MODE_DEBUG) {
-                    ret = AiChlFace.InitDebug(mContext, channelNum)
+                    ret = AiChlFace.InitDebug(mContext, channelNum, isV10)
                 } else if (initMode == AiFaceType.MODE_DM2016) {
-                    ret = AiChlFace.InitDm2016License(mContext, channelNum)
+                    ret = AiChlFace.InitDm2016License(mContext, channelNum, isV10)
                     println("************---- $ret")
                 } else if (initMode == AiFaceType.MODE_CARD) {
-                    ret = AiChlFace.InitCardLicense(mContext, channelNum)
+                    ret = AiChlFace.InitCardLicense(mContext, channelNum, isV10)
                 }
                 AiFaceSDK = ret == 0
                 if (AiFaceSDK) AiChlFaceSize = AiChlFace.FeatureSize()
@@ -76,12 +78,12 @@ object AiFaceCore {
             if (!AiIrFaceSDK) {
                 var ret = -100
                 if (initMode == AiFaceType.MODE_DEBUG) {
-                    ret = AiChlIrFace.InitDebug(mContext, channelNum)
+                    ret = AiChlIrFace.InitDebug(mContext, channelNum, isV10)
                 } else if (initMode == AiFaceType.MODE_DM2016) {
-                    ret = AiChlIrFace.InitDm2016License(mContext, channelNum)
+                    ret = AiChlIrFace.InitDm2016License(mContext, channelNum, isV10)
                     println("************---- $ret")
                 } else if (initMode == AiFaceType.MODE_CARD) {
-                    ret = AiChlIrFace.InitCardLicense(mContext, channelNum)
+                    ret = AiChlIrFace.InitCardLicense(mContext, channelNum, isV10)
                 }
                 AiIrFaceSDK = ret == 0
                 if (AiIrFaceSDK) AiChlIrFaceSize = AiChlIrFace.FeatureSize()

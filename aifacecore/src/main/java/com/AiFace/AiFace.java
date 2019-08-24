@@ -17,11 +17,16 @@ public class AiFace {
      * @param context
      * @return
      */
-    public static int InitCardLicense(Context context) {
+    public static int InitCardLicense(Context context, boolean isV10) {
         AiFaceSetAuth(3, 0);
         String strCacheDir = context.getCacheDir().getAbsolutePath();
         CheckLicense.UpDateLicense(context, strCacheDir, 3);
         inits = AiFaceInit(strCacheDir);
+        if (isV10) {
+            inits = AiFaceInitV10(strCacheDir);
+        } else {
+            inits =AiFaceInit(strCacheDir);
+        }
         return inits;
     }
 
@@ -31,11 +36,15 @@ public class AiFace {
      * @param context
      * @return
      */
-    public static int InitDm2016License(Context context) {
+    public static int InitDm2016License(Context context, boolean isV10) {
         AiFaceSetAuth(2, 0);
         String strCacheDir = context.getCacheDir().getAbsolutePath();
         CheckLicense.UpDateLicense(context, strCacheDir, 2);
-        inits = AiFaceInit(strCacheDir);
+        if (isV10) {
+            inits = AiFaceInitV10(strCacheDir);
+        } else {
+            inits =AiFaceInit(strCacheDir);
+        }
         return inits;
     }
 
@@ -45,10 +54,15 @@ public class AiFace {
      * @param context
      * @return
      */
-    public static int InitDebug(Context context) {
+    public static int InitDebug(Context context, boolean isV10) {
         AiFaceSetAuth(100, 0);
         String strCacheDir = context.getCacheDir().getAbsolutePath();
-        return AiFaceInit(strCacheDir);
+        if (isV10) {
+            inits = AiFaceInitV10(strCacheDir);
+        } else {
+            inits =AiFaceInit(strCacheDir);
+        }
+        return inits;
     }
 
     public static int InitNet(Context context) {
@@ -76,7 +90,6 @@ public class AiFace {
     // 备注：可不调用，任何时候均可调用
     public static native int AiFaceVer();
 
-
     // 手持机通过授权供应服务器获取本设备的授权(设备出厂前调用)
     // 输入参数： strIP ---- 云授权服务器IP地址
     //            nPort ---- 云授权服务器工作端口（授权供应服务器默认工作端口为6490）
@@ -85,8 +98,9 @@ public class AiFace {
     // 备注：1. 如果本设备已有授权，不得重复申请（因服务器记录丢失等原因，重复申请或被视为新设备申请授权从而浪费授权个数）
     //      2.  必须关闭身份证读卡模块才能调用，建议在加载身份证模块前调用
     //      3. 本接口会自动对手持机身份证模块供电，完成后自动断开
-    public static String AiFaceGetLicenseCode(Activity activity, String strIP, int nPort) {
+    public static String GetLicenseCode(Activity activity, String strIP, int nPort) {
         Context ctx = activity.getApplicationContext();
+
         // 对身份证模块供电
 //        WtWdPowerUtils.setIDPower(ctx);
         // 向授权服务供应服务器申请授权
@@ -100,10 +114,10 @@ public class AiFace {
     // 输入参数： strLicense ---- 本设备的授权
     // 输出参数：无
     // 返回：0：验证授权成功，-1：授权无效，-2：非手持机或手持机身份证模块未供电
-    // 备注：1. 本接口必须在初始化前调用，并且不与 AiFaceSetAuth 同时调用
+    // 备注：1. 本接口必须在初始化前调用，并且不与 SetAuth同时调用
     //      2.  必须关闭身份证读卡模块才能调用，建议在加载身份证模块前初始化算法
     //      3. 本接口会自动对手持机身份证模块供电，完成后自动断开
-    public static int AiFaceVerifyLicenseCode(Activity activity, String strLicense) {
+    public static int VerifyLicenseCode(Activity activity, String strLicense) {
         Context ctx = activity.getApplicationContext();
         // 对身份证模块供电
 //        WtWdPowerUtils.setIDPower(ctx);
@@ -114,7 +128,6 @@ public class AiFace {
         return ret;
     }
 
-
     // 设置认证方式
     // 输入参数：
     //     nAuthType ---- 认证方式：0-红色或灰色USB加密狗或USB加密芯片，2-板载I2C加密芯片，3-读卡器I2C加密芯片，其它-保留
@@ -123,7 +136,21 @@ public class AiFace {
     // 备注：必须在SDK初始化前调用才有效
     public static native void AiFaceSetAuth(int nAuthType, int nUsbDogHandle);
 
-    // SDK初始化
+    // SDK(V7算法)初始化
+    // 输入参数：
+    //     strCachePath ---- 本APP的cache目录，需要此目录有可读写权限，且能根据上级目录找到lib目录加载模型文件（可参考DEMO例程获取cache目录）
+    // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
+    // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
+    public static native int AiFaceInit(String strCacheDir);
+
+    // SDK(V10算法)初始化
+    // 输入参数：
+    //     strCachePath ---- 本APP的cache目录，需要此目录有可读写权限，且能根据上级目录找到lib目录加载模型文件（可参考DEMO例程获取cache目录）
+    // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
+    // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
+    public static native int AiFaceInitV10(String strCacheDir);
+
+    // SDK(V7算法)初始化(允许指定独立的库文件及临时文件目录)
     // 输入参数： strLibPath ---- SDK依赖的LIB文件所在目录
     //            strCachePath ---- 临时文件目录，需要此目录有可读写权限（可参考DEMO例程获取cache目录）
     // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
@@ -131,12 +158,13 @@ public class AiFace {
     //       本接口支持LIB文件目录与临时文件目录任意指定
     public static native int AiFaceInitEx(String strLibDir, String strCacheDir);
 
-    // SDK初始化
-    // 输入参数：
-    //     strCachePath ---- 本APP的cache目录，需要此目录有可读写权限，且能根据上级目录找到lib目录加载模型文件（可参考DEMO例程获取cache目录）
+    // SDK(V10算法)初始化(允许指定独立的库文件及临时文件目录)
+    // 输入参数： strLibPath ---- SDK依赖的LIB文件所在目录
+    //            strCachePath ---- 临时文件目录，需要此目录有可读写权限（可参考DEMO例程获取cache目录）
     // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
     // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
-    public static native int AiFaceInit(String strCacheDir);
+    //       本接口支持LIB文件目录与临时文件目录任意指定
+    public static native int AiFaceInitExV10(String strLibDir, String strCacheDir);
 
     // SDK反初始化
     // 备注：必须在初始化成功后调用，反初始化后不能再调用除获取SDK版本及SDK初始化外的任何接口
@@ -224,7 +252,6 @@ public class AiFace {
     //       2. 使用此接口的检测结果来提取特征时，必须使用这里的输出图象、输出图象的宽高和检测到的人脸参数做为参数
     //       3. 界面上需要画人脸人眼等坐标时，需要对检测出的人脸坐标参数根据裁减、旋转和镜象情况进行校正
     public static native int AiFaceDetectAllFacesEx(int nFmt, byte[] bSrcImg, int nWidth, int nHeight, int nRotate, int bMirror, int nMaxFace, byte[] bRgb24, int[] nNewWidth, int[] nNewHeight, FACE_DETECT_RESULT[] sFaceResult);
-
 
     // 获取特征码大小
     // 返回：特征码大小
@@ -458,6 +485,21 @@ public class AiFace {
     // 返回：0-成功 ，< 0 失败
     public static native int YUV420P_TO_RGB24(byte[] bYuv420P, int nWidth, int nHeight, int nFmt, byte[] bRgb24);
 
+    // 获取可用的CPU核心总数
+    // 输入参数：无
+    // 输出参数：无
+    // 返回值：返回当前设备可用的CPU核心总数
+    // 备注：根据系统策略不同，安卓设备有时并非所有CPU核心都处于开启状态，插电工作的设备，应将策略调整为最高性能
+    public static native int GetCpuNum();
+
+    // 设置各功能的CPU核心数（多核CPU有效）
+    // 输入参数： nFuncNo ---- 功能号（0-全部功能，1-人脸检测，2-特征提取，3-活体检测）
+    //            nCoreNum ---- 该功能允许同时启用的CPU核心数
+    // 输出参数：无
+    // 返回：无
+    // 备注：默认各功能同时启用的核心数为总核心数-1，初始化前调用有效
+    public static native void SetFuncCpuNum(int nFuncNo, int nCoreNum);
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                               //
     //  以下为手持机内部接口，必须在手持机身份证模块已供电时调用，外部建议调用AiFaceGetLicense / AiFaceVerifyLicense     //
@@ -489,7 +531,6 @@ public class AiFace {
         try {
             if (android.os.Build.VERSION.RELEASE.compareTo("5.0") < 0) {
                 System.loadLibrary("THFaceImage");
-                System.loadLibrary("THFeature");
                 System.loadLibrary("THFaceLive");
             }
             System.loadLibrary("AiFace");
@@ -497,4 +538,5 @@ public class AiFace {
         }
     }
 }
+
 

@@ -1,5 +1,6 @@
 package com.leessy.aifacecore.datas
 
+import com.AiChlFace.FACE_DETECT_RESULT
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.opt.AiFaceChannelNo
 import com.leessy.aifacecore.opt.ImageColor
@@ -35,8 +36,14 @@ class FaceData {
 
     var testTime_face = 0L//测试时间用
     var testTime_feature = 0L//测试时间用
-}
 
+
+//    private fun getcolor() = detectResult as FACE_DETECT_RESULT
+//    private fun getir() = detectResult as com.AiChlIrFace.FACE_DETECT_RESULT
+//
+//    fun getFaceDetectResult() =
+//        if (imageColor == ImageColor.COLOR) getcolor() else getir()
+}
 
 /**
  * 判断是否活体检测通过

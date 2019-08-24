@@ -10,21 +10,6 @@ import com.leessy.liuc.aiface.DebugL;
 public class AiChlFace {
     public static int inits = -100;//初始化状态记录
 
-    // 获取可用的CPU核心数
-// 输入参数：无
-// 输出参数：无
-// 返回值：返回当前设备可用的CPU核心数
-// 备注：根据系统策略不同，安卓设备有时并非所有CPU核心都处于开启状态，插电工作的设备，应将策略调整为最高性能
-    public static native int GetCpuNum();
-
-    // 设置各功能的CPU核心数（多核CPU有效）
-// 输入参数： nFuncNo ---- 功能号（0-全部功能，1-人脸检测，2-特征提取，3-活体检测）
-//            nCoreNum ---- 该功能允许同时启用的CPU核心数
-// 输出参数：无
-// 返回：无
-// 备注：默认各功能同时启用的核心数为总核心数-1，初始化前调用有效
-    public static native int SetFuncCpuNum(int nFuncNo, int nCoreNum);
-
     /**
      * 封装初始化接口
      *
@@ -32,11 +17,15 @@ public class AiChlFace {
      * @param nMaxChannelNum
      * @return
      */
-    public static int InitCardLicense(Context context, int nMaxChannelNum) {
+    public static int InitCardLicense(Context context, int nMaxChannelNum, boolean isV10) {
         SetAuth(3, 0);
         String strCacheDir = context.getCacheDir().getAbsolutePath();
         CheckLicense.UpDateLicense(context, strCacheDir, 3);
-        inits = Init(nMaxChannelNum, strCacheDir);
+        if (isV10) {
+            inits = InitV10(nMaxChannelNum, strCacheDir);
+        } else {
+            inits = Init(nMaxChannelNum, strCacheDir);
+        }
         return inits;
     }
 
@@ -47,11 +36,15 @@ public class AiChlFace {
      * @param nMaxChannelNum
      * @return
      */
-    public static int InitDm2016License(Context context, int nMaxChannelNum) {
+    public static int InitDm2016License(Context context, int nMaxChannelNum, boolean isV10) {
         SetAuth(2, 0);
         String strCacheDir = context.getCacheDir().getAbsolutePath();
         CheckLicense.UpDateLicense(context, strCacheDir, 2);
-        inits = Init(nMaxChannelNum, strCacheDir);
+        if (isV10) {
+            inits = InitV10(nMaxChannelNum, strCacheDir);
+        } else {
+            inits = Init(nMaxChannelNum, strCacheDir);
+        }
         return inits;
     }
 
@@ -62,10 +55,14 @@ public class AiChlFace {
      * @param nMaxChannelNum
      * @return
      */
-    public static int InitDebug(Context context, int nMaxChannelNum) {
+    public static int InitDebug(Context context, int nMaxChannelNum, boolean isV10) {
         SetAuth(100, 0);
         String strCacheDir = context.getCacheDir().getAbsolutePath();
-        inits = Init(nMaxChannelNum, strCacheDir);
+        if (isV10) {
+            inits = InitV10(nMaxChannelNum, strCacheDir);
+        } else {
+            inits = Init(nMaxChannelNum, strCacheDir);
+        }
         return inits;
     }
 
@@ -93,15 +90,6 @@ public class AiChlFace {
     // 备注：可不调用，任何时候均可调用
     public static native int Ver();
 
-    // 设置认证方式
-    // 输入参数：
-    //     nAuthType ---- 认证方式：0-USB加密狗认证，2-板载加密芯片认证，3-读卡器加密芯片认证，其它-保留
-    //     nUsbDogHandle ---- USB加密狗认证时指定加密狗设备句柄，需据此才能操作USB加密狗设备（可参考DEMO例程请求权限并获取设备句柄）
-    //                        非USB加密狗认证时本参数无意义，可指定任何值
-    // 备注：必须在SDK初始化前调用才有效
-    public static native void SetAuth(int nAuthType, int nUsbDogHandle);
-
-
     // 手持机通过授权供应服务器获取本设备的授权(设备出厂前调用)
     // 输入参数： strIP ---- 云授权服务器IP地址
     //            nPort ---- 云授权服务器工作端口（授权供应服务器默认工作端口为6490）
@@ -115,13 +103,10 @@ public class AiChlFace {
 
         // 对身份证模块供电
 //        WtWdPowerUtils.setIDPower(ctx);
-
         // 向授权服务供应服务器申请授权
         String str = GetLicense(activity, strIP, nPort);
-
         // 关闭身份证模块电源，如果接下来需要加载身份证模块开始读卡，建议这里不要关电
 //        WtWdPowerUtils.closeIDPower(ctx);
-
         return str;
     }
 
@@ -134,42 +119,58 @@ public class AiChlFace {
     //      3. 本接口会自动对手持机身份证模块供电，完成后自动断开
     public static int VerifyLicenseCode(Activity activity, String strLicense) {
         Context ctx = activity.getApplicationContext();
-
-//        // 对身份证模块供电
+        // 对身份证模块供电
 //        WtWdPowerUtils.setIDPower(ctx);
-
         // 验证授权
         int ret = VerifyLicense(activity, strLicense);
-
-//        // 关闭身份证模块电源，如果接下来需要加载身份证模块开始读卡，建议这里不要关电
+        // 关闭身份证模块电源，如果接下来需要加载身份证模块开始读卡，建议这里不要关电
 //        WtWdPowerUtils.closeIDPower(ctx);
-
         return ret;
     }
 
+    // 设置认证方式
+    // 输入参数：
+    //     nAuthType ---- 认证方式：0-红色或灰色USB加密狗或USB加密芯片，2-板载I2C加密芯片，3-读卡器I2C加密芯片，其它-保留
+    //     nUsbDogHandle ---- USB加密狗认证时指定加密狗设备句柄，需据此才能操作USB加密狗设备（可参考DEMO例程请求权限并获取设备句柄）
+    //                        非USB加密狗认证时本参数无意义，可指定任何值
+    // 备注：必须在SDK初始化前调用才有效
+    public static native void SetAuth(int nAuthType, int nUsbDogHandle);
 
-    // SDK初始化
+    // SDK(V7算法)初始化
     // 输入参数：
     //     nMaxChannelNum ----  需要开启的最大通道数(受加密狗控制)
     //     strCachePath ---- 本APP的cache目录，需要此目录有可读写权限，且能根据上级目录找到lib目录加载模型文件（可参考DEMO例程获取cache目录）
     // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
     // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
-    private static native int Init(int nMaxChannelNum, String strCacheDir);
+    public static native int Init(int nMaxChannelNum, String strCacheDir);
 
-    // SDK初始化
+    // SDK(V7算法)初始化
     // 输入参数：
     //     nMaxChannelNum ----  需要开启的最大通道数(受加密狗控制)
-    //     strLibPath ---- SDK依赖的LIB文件所在目录
-    //     strCachePath ---- 临时文件目录，需要此目录有可读写权限（可参考DEMO例程获取cache目录）
+    //     strCachePath ---- 本APP的cache目录，需要此目录有可读写权限，且能根据上级目录找到lib目录加载模型文件（可参考DEMO例程获取cache目录）
+    // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
+    // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
+    public static native int InitV10(int nMaxChannelNum, String strCacheDir);
+
+    // SDK(V7算法)初始化(允许指定独立的库文件及临时文件目录)
+    // 输入参数： strLibPath ---- SDK依赖的LIB文件所在目录
+    //            strCachePath ---- 临时文件目录，需要此目录有可读写权限（可参考DEMO例程获取cache目录）
     // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
     // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
     //       本接口支持LIB文件目录与临时文件目录任意指定
     public static native int InitEx(int nMaxChannelNum, String strLibDir, String strCacheDir);
 
+    // SDK(V10算法)初始化(允许指定独立的库文件及临时文件目录)
+    // 输入参数： strLibPath ---- SDK依赖的LIB文件所在目录
+    //            strCachePath ---- 临时文件目录，需要此目录有可读写权限（可参考DEMO例程获取cache目录）
+    // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
+    // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
+    //       本接口支持LIB文件目录与临时文件目录任意指定
+    public static native int InitExV10(int nMaxChannelNum, String strLibDir, String strCacheDir);
+
     // SDK反初始化
     // 备注：必须在初始化成功后调用，反初始化后不能再调用除获取SDK版本及SDK初始化外的任何接口
     public static native void Uninit();
-
 
     // 设置检测人脸的图象压缩大小
     // 输入参数：nDetectSize ---- 检测图象的最大宽度或高度（象素单位），超过此大小则压缩至此大小以内，此参数为0表示采用原图检测不压缩
@@ -192,7 +193,6 @@ public class AiChlFace {
     //       不调用本接口时，SDK默认不检测身份证小照片的质量，适合一对一人证核验场景。如果用于1:N场景，请设置为检测质量，避免特别模糊的身份证小照片引起误识
     public static native void SetIdPhotoQuality(int bCheckQuality);
 
-
     // 检测单个（最大的）人脸
     // 输入参数：
     //     nChannelNo ----  通道号(0 ~ nMaxChannelNum - 1)
@@ -200,60 +200,61 @@ public class AiChlFace {
     //     nWidth ---- 图象数据宽度（象素单位）
     //     nHeight ---- 图象数据高度（象素单位）
     // 输出参数：sFaceResult ---- 结构体存放检测到的人脸参数（人脸及眼睛等坐标位置及角度等，调用前必须分配有效的空间）
-    // 返回：返回1表示检测到人脸，0表示无人脸，-1表示检测失败
+    // 返回：返回1表示检测到人脸，0表示无人脸，-1表示未授权，-2表示参数错误，其它表示内部错误
     public static native int DetectFace(int nChannelNo, byte[] bRgb24, int nWidth, int nHeight, FACE_DETECT_RESULT sFaceResult);
 
     // 检测单个（最大的）人脸, 支持NV21格式，支持旋转与镜象，支持中间区域检测以加快检测速度
     // 输入参数：
-    //        nChannelNo ----  通道号(0 ~ nMaxChannelNum - 1)
-    //        nFmt ---- 输入源图象数据格式（0：YUV420P, 1: NV12，2: NV21）
-    //        bSrcImg ---- 输入源图象数据
-    //        nWidth ---- 输入源图象的宽度（象素单位）
-    //        nHeight ---- 输入源图象的高度（象素单位）
-    //        nLeft ---- 检测区域左上角X坐标(相对于输入源图象，全图检测时填0)
-    //        nTop ---- 检测区域左上角Y坐标(相对于输入源图象，全图检测时填0)
-    //        nRight ---- 检测区域右下角X坐标(相对于输入源图象，全图检测时也可填0)
-    //        nBottom ---- 检测区域右下角Y坐标(相对于输入源图象，全图检测时也可填0)
-    //        nRotate ---- 旋转方式（对输入源图象旋转，0：不旋转，1：左旋90度，2：右旋90度）
-    //        bMirror ---- 左右镜象（相对于旋转后的图象，0：左右不镜象，1：左右镜象）
+    //     nChannelNo ----  通道号(0 ~ nMaxChannelNum - 1)
+    //     nFmt ---- 输入源图象数据格式（0：YUV420P, 1: NV12，2: NV21）
+    //     bSrcImg ---- 输入源图象数据
+    //     nWidth ---- 输入源图象的宽度（象素单位）
+    //     nHeight ---- 输入源图象的高度（象素单位）
+    //     nLeft ---- 检测区域左上角X坐标(相对于输入源图象，全图检测时填0)
+    //     nTop ---- 检测区域左上角Y坐标(相对于输入源图象，全图检测时填0)
+    //     nRight ---- 检测区域右下角X坐标(相对于输入源图象，全图检测时也可填0)
+    //     nBottom ---- 检测区域右下角Y坐标(相对于输入源图象，全图检测时也可填0)
+    //     nRotate ---- 旋转方式（对输入源图象旋转，0：不旋转，1：左旋90度，2：右旋90度）
+    //     bMirror ---- 左右镜象（相对于旋转后的图象，0：左右不镜象，1：左右镜象）
     // 输出参数:
-    //        bRgb24 ---- 输出的RGB24格式图象数据(裁减、旋转和镜象后的图象数据)
-    //        nNewWidth ---- 输出图象的宽度(裁减、旋转和镜象后的图象宽度)
-    //        nNewHeight ---- 输出图象的高度(裁减、旋转和镜象后的图象宽度)
-    //        sFaceResult ---- 检测到的人脸参数（人脸及眼睛等坐标位置及角度等，相对于裁减、旋转和镜象后的图象，调用前必须分配有效的空间）
-    // 返回：返回1表示检测到人脸，0表示无人脸，< 0 表示检测失败
+    //     bRgb24 ---- 输出的RGB24格式图象数据(裁减、旋转和镜象后的图象数据)
+    //     nNewWidth ---- 输出图象的宽度(裁减、旋转和镜象后的图象宽度)
+    //     nNewHeight ---- 输出图象的高度(裁减、旋转和镜象后的图象宽度)
+    //     sFaceResult ---- 检测到的人脸参数（人脸及眼睛等坐标位置及角度等，相对于裁减、旋转和镜象后的图象，调用前必须分配有效的空间）
+    // 返回：返回1表示检测到人脸，0表示无人脸，-1表示未授权，-2表示参数错误，其它表示内部错误
     // 备注：1. 使用此接口的检测结果来提取特征或检测活体时，必须使用这里的输出图象、输出图象的宽高和检测到的人脸参数做为参数
     //       2. 界面上需要画人脸人眼等坐标时，需要对检测出的人脸坐标参数根据裁减、旋转和镜象情况进行校正
     public static native int DetectFaceEx(int nChannelNo, int nFmt, byte[] bSrcImg, int nWidth, int nHeight, int nLeft, int nTop, int nRight, int nBottom, int nRotate, int bMirror, byte[] bRgb24, int[] nNewWidth, int[] nNewHeight, FACE_DETECT_RESULT sFaceResult);
 
     // 检测多人脸
     // 输入参数：
-    //        nChannelNo ----  通道号(0 ~ nMaxChannelNum - 1)
-    //        bRgb24 ---- RGB24格式的图象数据
-    //        nWidth ---- 图象数据宽度（象素单位）
-    //        nHeight ---- 图象数据高度（象素单位）
-    //        nMaxFace ---- 最多支持的人脸个数
-    // 输出参数：sFaceResult ---- 结构体存放检测到的人脸参数（人脸及眼睛等坐标位置及角度等，调用前必须分配有效的空间）
-    // 返回：返回检测到的人脸个数，0表示无人脸，< 0 表示检测失败
+    //     nChannelNo ----  通道号(0 ~ nMaxChannelNum - 1)
+    //     bRgb24 ---- RGB24格式的图象数据
+    //     nWidth ---- 图象数据宽度（象素单位）
+    //     nHeight ---- 图象数据高度（象素单位）
+    //     nMaxFace ---- 最多支持的人脸个数
+    // 输出参数：
+    //     sFaceResult ---- 结构体存放检测到的人脸参数（人脸及眼睛等坐标位置及角度等，调用前必须分配nMaxFace 个对象空间）
+    // 返回：返回检测到的人脸个数，0表示无人脸，-1表示未授权，-2表示参数错误，其它表示内部错误
     // 备注: sFaceResult 需分配不少于 nMaxFace 个对象空间，实际填充的人脸参数个数以返回的人脸个数为准
     public static native int DetectAllFaces(int nChannelNo, byte[] bRgb24, int nWidth, int nHeight, int nMaxFace, FACE_DETECT_RESULT[] sFaceResult);
 
     // 检测多人脸，支持NV21格式，支持旋转与镜象
     // 输入参数：
-    //        nChannelNo ----  通道号(0 ~ nMaxChannelNum - 1)
-    //        nFmt ---- 输入源图象数据格式（0：YUV420P, 1: NV12，2: NV21）
-    //        bSrcImg ---- 输入源图象数据
-    //        nWidth ---- 输入源图象的宽度（象素单位）
-    //        nHeight ---- 输入源图象的高度（象素单位）
-    //        nRotate ---- 旋转方式（对输入源图象旋转，0：不旋转，1：左旋90度，2：右旋90度）
-    //        bMirror ---- 左右镜象（相对于旋转后的图象，0：左右不镜象，1：左右镜象）
-    //        nMaxFace ---- 最多支持的人脸个数
+    //     nChannelNo ----  通道号(0 ~ nMaxChannelNum - 1)
+    //     nFmt ---- 输入源图象数据格式（0：YUV420P, 1: NV12，2: NV21）
+    //     bSrcImg ---- 输入源图象数据
+    //     nWidth ---- 输入源图象的宽度（象素单位）
+    //     nHeight ---- 输入源图象的高度（象素单位）
+    //     nRotate ---- 旋转方式（对输入源图象旋转，0：不旋转，1：左旋90度，2：右旋90度）
+    //     bMirror ---- 左右镜象（相对于旋转后的图象，0：左右不镜象，1：左右镜象）
+    //     nMaxFace ---- 最多支持的人脸个数
     // 输出参数:
-    //        bRgb24 ---- 输出的RGB24格式图象数据(裁减、旋转和镜象后的图象数据)
-    //        nNewWidth ---- 输出图象的宽度(裁减、旋转和镜象后的图象宽度)
-    //        nNewHeight ---- 输出图象的高度(裁减、旋转和镜象后的图象宽度)
-    //        sFaceResult ---- 检测到的人脸参数（人脸及眼睛等坐标位置及角度等，相对于裁减、旋转和镜象后的图象，调用前必须分配nMaxFace 个对象空间）
-    // 返回：返回检测到的人脸个数，0表示无人脸，< 0 表示检测失败
+    //     bRgb24 ---- 输出的RGB24格式图象数据(裁减、旋转和镜象后的图象数据)
+    //     nNewWidth ---- 输出图象的宽度(裁减、旋转和镜象后的图象宽度)
+    //     nNewHeight ---- 输出图象的高度(裁减、旋转和镜象后的图象宽度)
+    //     sFaceResult ---- 检测到的人脸参数（人脸及眼睛等坐标位置及角度等，相对于裁减、旋转和镜象后的图象，调用前必须分配nMaxFace 个对象空间）
+    // 返回：返回检测到的人脸个数，0表示无人脸，-1表示未授权，-2表示参数错误，其它表示内部错误
     // 备注：1. sFaceResult 需分配不少于 nMaxFace 个对象空间，实际填充的人脸参数个数以返回的人脸个数为准
     //       2. 使用此接口的检测结果来提取特征时，必须使用这里的输出图象、输出图象的宽高和检测到的人脸参数做为参数
     //       3. 界面上需要画人脸人眼等坐标时，需要对检测出的人脸坐标参数根据裁减、旋转和镜象情况进行校正
@@ -265,20 +266,20 @@ public class AiChlFace {
 
     // 提取特征码
     // 输入参数：
-    //        nChannelNo ----  通道号(0 ~ nMaxChannelNum - 1)
-    //        bRgb24 ---- RGB24格式的图象数据
-    //        nWidth ---- 图象数据宽度
-    //        nHeight ---- 图象数据高度
-    //        sFaceResult ---- 检测到的人脸参数（必须将检测人脸返回的结果原样传入）
+    //     nChannelNo ----  通道号(0 ~ nMaxChannelNum - 1)
+    //     bRgb24 ---- RGB24格式的图象数据
+    //     nWidth ---- 图象数据宽度
+    //     nHeight ---- 图象数据高度
+    //     sFaceResult ---- 检测到的人脸参数（必须将检测人脸返回的结果原样传入）
     // 输出参数：bFeature ---- 特征码（调用前必须分配有效的空间）
-    // 返回：成功返回0，失败返回-1
+    // 返回：成功返回0，未授权返回-1，参数错误返回-2，失败返回其它
     public static native int FeatureGet(int nChannelNo, byte[] bRgb24, int nWidth, int nHeight, FACE_DETECT_RESULT sFaceResult, byte[] bFeature);
 
     // 一对一特征比对
     // 输入参数：
-    //        nChannelNo ----  通道号(0 ~ nMaxChannelNum - 1)
-    //        bFeature1 ---- 第1个人脸特征
-    //        bFeature2 ---- 第2个人脸特征
+    //     nChannelNo ----  通道号(0 ~ nMaxChannelNum - 1)
+    //     bFeature1 ---- 第1个人脸特征
+    //     bFeature2 ---- 第2个人脸特征
     // 返回：返回两个人脸特征对应的人脸的相似度（0-100）
     public static native int FeatureCompare(int nChannelNo, byte[] bFeature1, byte[] bFeature2);
 
@@ -420,7 +421,6 @@ public class AiChlFace {
     // 备注：任何时候调用均有效
     public static native int GetLiveFaceThreshold();
 
-
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                               //
     //  以下为支持应用做二次加密开放接口                                                                                               //
@@ -445,7 +445,6 @@ public class AiChlFace {
     // 输出参数：bData ---- 返回读出的加密狗中的加密数据
     // 返回值：返回0表示读数据成功，其它表示读数据失败
     public static native int AiDogReadData(byte[] bData, int nReadLen);
-
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                               //
@@ -498,6 +497,20 @@ public class AiChlFace {
     // 返回：0-成功 ，< 0 失败
     public static native int YUV420P_TO_RGB24(byte[] bYuv420P, int nWidth, int nHeight, int nFmt, byte[] bRgb24);
 
+    // 获取可用的CPU核心总数
+    // 输入参数：无
+    // 输出参数：无
+    // 返回值：返回当前设备可用的CPU核心总数
+    // 备注：根据系统策略不同，安卓设备有时并非所有CPU核心都处于开启状态，插电工作的设备，应将策略调整为最高性能
+    public static native int GetCpuNum();
+
+    // 设置各功能的CPU核心数（多核CPU有效）
+    // 输入参数： nFuncNo ---- 功能号（0-全部功能，1-人脸检测，2-特征提取，3-活体检测）
+    //            nCoreNum ---- 该功能允许同时启用的CPU核心数
+    // 输出参数：无
+    // 返回：无
+    // 备注：默认各功能同时启用的核心数为总核心数-1，初始化前调用有效
+    public static native void SetFuncCpuNum(int nFuncNo, int nCoreNum);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                               //
@@ -530,7 +543,6 @@ public class AiChlFace {
         try {
             if (android.os.Build.VERSION.RELEASE.compareTo("5.0") < 0) {
                 System.loadLibrary("THFaceImage");
-                System.loadLibrary("THFeature");
                 System.loadLibrary("THFaceLive");
             }
             System.loadLibrary("AiChlFace");

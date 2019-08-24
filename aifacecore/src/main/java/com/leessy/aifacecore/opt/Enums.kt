@@ -13,3 +13,10 @@ enum class ImageColor {
 enum class AiFaceChannelNo {
     IRNo0, COLORNo1, IRNo2, COLORNo3
 }
+
+/**
+ * 人脸过滤未通过类型
+ */
+enum class AiFaceFilter {
+    FACE_ANGLE, FACE_WIDTH_MINI, FACE_WIDTH_MAX, FACE_QUALITY, FACE_EDGE
+}

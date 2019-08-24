@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.os.PowerManager
 import android.util.Log
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.widget.Toast
 import com.AiChlFace.AiChlFace
 import com.aiface.uvccamera.camera.CamerasMng
+import com.blankj.utilcode.util.ShellUtils
 import com.jakewharton.rxbinding2.view.RxView
 import com.leessy.F602SystemTool
 import com.leessy.LED
@@ -25,6 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 
@@ -100,17 +103,29 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         var window = getWindow()
         //背景亮
         RxView.clicks(bg_u).subscribe {
-            //            var lp = window.getAttributes()
-//            lp.screenBrightness = 1F
-//            window.setAttributes(lp)
+            //            window.apply {
+//                attributes = attributes.apply {
+//                    screenBrightness = 0.9F
+//                }
+//            }
+            launch {
+            F602SystemTool.openLed(LED.GRE_LED)
+            delay(200)
+            F602SystemTool.closeAll()
+            delay(200)
+            F602SystemTool.openLed(LED.GRE_LED)
+            delay(1000)
+            F602SystemTool.openLed(LED.BLUE_LED)}
         }
         //背景暗
         RxView.clicks(bg_d).subscribe {
-            //            var lp = window.getAttributes()
-//            lp.screenBrightness = 0F
-//            window.setAttributes(lp)
+            window.apply {
+                attributes = attributes.apply {
+                    screenBrightness = 0.5F
+                }
+            }
 //            goToSleep()
-            F602SystemTool.restUsb()
+//            F602SystemTool.restUsb()
         }
 
 
@@ -127,10 +142,13 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         AiChlFace.SetFuncCpuNum(2, 1)
         AiChlFace.SetFuncCpuNum(3, 1)
 
+//        AiFaceCore.isV10 = true
         AiFaceCore.initAiFace(
             application, AiFaceType.MODE_DM2016, object : IAiFaceInitCall {
                 override fun call(colorsInit: Boolean, irInit: Boolean) {
                     Log.d("----", "算法初始化    $colorsInit   $irInit")
+                    Log.d("----", "算法版本size     ${AiChlFace.FeatureSize()}")
+
                     GlobalScope.launch(Dispatchers.Main) {
                         Toast.makeText(application, "算法初始化    $colorsInit   $irInit", Toast.LENGTH_LONG).show()
                     }
@@ -144,6 +162,8 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
         pm = getSystemService(Context.POWER_SERVICE) as PowerManager
         val isScreenOn = pm?.isScreenOn//如果为true，则表示屏幕“亮”了，否则屏幕“暗”了。
+
+        textdm2016()
     }
 
     var pm: PowerManager? = null
@@ -233,5 +253,25 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         Log.d("----", "dispatchKeyEvent：${event?.keyCode}")
         return super.dispatchKeyEvent(event)
 
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        Log.d("----", "onTouchEvent：${event?.pointerCount}")
+        Log.d("----", "onTouchEvent：${event?.getSize(0)}")
+        Log.d("----", "onTouchEvent：${if (event?.pointerCount!! > 1) event?.getSize(1) else ""}")
+        return super.onTouchEvent(event)
+    }
+
+    fun textdm2016() {
+//        var f = File("dev/test_chip1")
+//        f.mkdirs()
+//        f.outputStream().apply {
+//            write("aaaaaaa".toByteArray())
+//            flush()
+//            close()
+//        }
+
+        var s = ShellUtils.execCmd("dev/test_chip", false)
+        Log.d("----", "textdm2016：${s.toString()}")
     }
 }

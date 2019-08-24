@@ -47,14 +47,14 @@ object CamerasMng {
                 device?.let {
                     if (pidFilter.contains(it.productId)) return//过滤指定pid设备
                     if (it.deviceClass == 239 && it.deviceSubclass == 2) {
-//                        Log.d("CamerasMng", "on Attach ${device.deviceName}  ${device.vendorId}  ${device.productId}")
+                        Log.d("CamerasMng", "on Attach ${device.deviceName}  ${device.vendorId}  ${device.productId}")
                         mUSBMonitor?.requestPermission(device)
                     }
                 }
             }
 
             override fun onConnect(device: UsbDevice?, controlBlock: USBMonitor.UsbControlBlock?, createNew: Boolean) {
-//                Log.d("CamerasMng", "onConnect ${controlBlock?.busNum}    ${controlBlock?.devNum}   $createNew")
+                Log.d("CamerasMng", "onConnect ${controlBlock?.busNum}    ${controlBlock?.devNum}   $createNew")
                 if (!createNew) return
                 device?.let {
                     GlobalScope.launch {

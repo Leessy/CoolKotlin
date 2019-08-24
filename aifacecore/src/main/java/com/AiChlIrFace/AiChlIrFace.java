@@ -2,8 +2,6 @@ package com.AiChlIrFace;
 
 import android.app.Activity;
 import android.content.Context;
-import com.AiChlIrFace.AutoRegListener;
-import com.AiChlIrFace.FACE_DETECT_RESULT;
 import com.leessy.liuc.aiface.CheckLicense;
 import com.leessy.liuc.aiface.DebugL;
 
@@ -18,11 +16,15 @@ public class AiChlIrFace {
      * @param nMaxChannelNum
      * @return
      */
-    public static int InitCardLicense(Context context, int nMaxChannelNum) {
+    public static int InitCardLicense(Context context, int nMaxChannelNum, boolean isV10) {
         SetAuth(3, 0);
         String strCacheDir = context.getCacheDir().getAbsolutePath();
         CheckLicense.UpDateLicense(context, strCacheDir, 3);
-        inits = Init(nMaxChannelNum, strCacheDir);
+        if (isV10) {
+            inits = InitV10(nMaxChannelNum, strCacheDir);
+        } else {
+            inits = Init(nMaxChannelNum, strCacheDir);
+        }
         return inits;
     }
 
@@ -33,11 +35,15 @@ public class AiChlIrFace {
      * @param nMaxChannelNum
      * @return
      */
-    public static int InitDm2016License(Context context, int nMaxChannelNum) {
+    public static int InitDm2016License(Context context, int nMaxChannelNum, boolean isV10) {
         SetAuth(2, 0);
         String strCacheDir = context.getCacheDir().getAbsolutePath();
         CheckLicense.UpDateLicense(context, strCacheDir, 2);
-        inits = Init(nMaxChannelNum, strCacheDir);
+        if (isV10) {
+            inits = Init(nMaxChannelNum, strCacheDir);
+        } else {
+            inits = Init(nMaxChannelNum, strCacheDir);
+        }
         return inits;
     }
 
@@ -48,10 +54,14 @@ public class AiChlIrFace {
      * @param nMaxChannelNum
      * @return
      */
-    public static int InitDebug(Context context, int nMaxChannelNum) {
+    public static int InitDebug(Context context, int nMaxChannelNum, boolean isV10) {
         SetAuth(100, 0);
         String strCacheDir = context.getCacheDir().getAbsolutePath();
-        inits = Init(nMaxChannelNum, strCacheDir);
+        if (isV10) {
+            inits = InitV10(nMaxChannelNum, strCacheDir);
+        } else {
+            inits = Init(nMaxChannelNum, strCacheDir);
+        }
         return inits;
     }
 
@@ -78,7 +88,6 @@ public class AiChlIrFace {
     // 备注：可不调用，任何时候均可调用
     public static native int Ver();
 
-
     // 手持机通过授权供应服务器获取本设备的授权(设备出厂前调用)
     // 输入参数： strIP ---- 云授权服务器IP地址
     //            nPort ---- 云授权服务器工作端口（授权供应服务器默认工作端口为6490）
@@ -88,15 +97,14 @@ public class AiChlIrFace {
     //      2.  必须关闭身份证读卡模块才能调用，建议在加载身份证模块前调用
     //      3. 本接口会自动对手持机身份证模块供电，完成后自动断开
     public static String GetLicenseCode(Activity activity, String strIP, int nPort) {
+        Context ctx = activity.getApplicationContext();
+
         // 对身份证模块供电
 //        WtWdPowerUtils.setIDPower(ctx);
-
         // 向授权服务供应服务器申请授权
         String str = GetLicense(activity, strIP, nPort);
-
         // 关闭身份证模块电源，如果接下来需要加载身份证模块开始读卡，建议这里不要关电
 //        WtWdPowerUtils.closeIDPower(ctx);
-
         return str;
     }
 
@@ -108,15 +116,13 @@ public class AiChlIrFace {
     //      2.  必须关闭身份证读卡模块才能调用，建议在加载身份证模块前初始化算法
     //      3. 本接口会自动对手持机身份证模块供电，完成后自动断开
     public static int VerifyLicenseCode(Activity activity, String strLicense) {
+        Context ctx = activity.getApplicationContext();
         // 对身份证模块供电
 //        WtWdPowerUtils.setIDPower(ctx);
-
         // 验证授权
         int ret = VerifyLicense(activity, strLicense);
-
         // 关闭身份证模块电源，如果接下来需要加载身份证模块开始读卡，建议这里不要关电
 //        WtWdPowerUtils.closeIDPower(ctx);
-
         return ret;
     }
 
@@ -135,6 +141,14 @@ public class AiChlIrFace {
     // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
     // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
     public static native int Init(int nMaxChannelNum, String strCacheDir);
+
+    // SDK(V7算法)初始化
+    // 输入参数：
+    //     nMaxChannelNum ----  需要开启的最大通道数(受加密狗控制)
+    //     strCachePath ---- 本APP的cache目录，需要此目录有可读写权限，且能根据上级目录找到lib目录加载模型文件（可参考DEMO例程获取cache目录）
+    // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
+    // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
+    public static native int InitV10(int nMaxChannelNum, String strCacheDir);
 
     // SDK反初始化
     // 备注：必须在初始化成功后调用，反初始化后不能再调用除获取SDK版本及SDK初始化外的任何接口
@@ -195,7 +209,6 @@ public class AiChlIrFace {
     //     bFeature2 ---- 第2个人脸特征
     // 返回：返回两个人脸特征对应的人脸的相似度（0-100）
     public static native int FeatureCompare(int nChannelNo, byte[] bFeature1, byte[] bFeature2);
-
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                               //
@@ -443,6 +456,21 @@ public class AiChlIrFace {
     // 返回：0-成功 ，< 0 失败
     public static native int YUV420P_TO_RGB24(byte[] bYuv420P, int nWidth, int nHeight, int nFmt, byte[] bRgb24);
 
+    // 获取可用的CPU核心总数
+    // 输入参数：无
+    // 输出参数：无
+    // 返回值：返回当前设备可用的CPU核心总数
+    // 备注：根据系统策略不同，安卓设备有时并非所有CPU核心都处于开启状态，插电工作的设备，应将策略调整为最高性能
+    public static native int GetCpuNum();
+
+    // 设置各功能的CPU核心数（多核CPU有效）
+    // 输入参数： nFuncNo ---- 功能号（0-全部功能，1-人脸检测，2-特征提取，3-活体检测）
+    //            nCoreNum ---- 该功能允许同时启用的CPU核心数
+    // 输出参数：无
+    // 返回：无
+    // 备注：默认各功能同时启用的核心数为总核心数-1，初始化前调用有效
+    public static native void SetFuncCpuNum(int nFuncNo, int nCoreNum);
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                                                                                               //
     //  以下为手持机内部接口，必须在手持机身份证模块已供电时调用，外部建议调用AiFaceGetLicense / AiFaceVerifyLicense     //
@@ -473,11 +501,6 @@ public class AiChlIrFace {
 
     static {
         try {
-            if (android.os.Build.VERSION.RELEASE.compareTo("5.0") < 0) {
-                System.loadLibrary("THIrFaceImage");
-                System.loadLibrary("THIrFeature");
-                System.loadLibrary("THFaceLive");
-            }
             System.loadLibrary("AiChlIrFace");
         } catch (Throwable e) {
         }
