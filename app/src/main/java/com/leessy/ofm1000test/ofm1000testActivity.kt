@@ -44,7 +44,7 @@ class ofm1000testActivity : AppCompatActivity() {
             EngineApiConfig.setDeviceName("asdf"); // 设备名称，此处的Config对象来自于F702设备安卓程序，具体请根据对应工程配置
             EngineApiConfig.setDeviceType("F702");   // 设备型号，此处的Config对象来自于F702设备安卓程序，具体请根据对应工程配置
             EngineApiConfig.setDeviceSn("123456");  // 设备序列号，设备出厂时使用[上传测试报告获取序列号](#%E4%B8%8A%E4%BC%A0%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A%E8%8E%B7%E5%8F%96%E5%BA%8F%E5%88%97%E5%8F%B7)接口获取，此字段值在设备终生应保持不变。
-            EngineApiConfig.setApiHostUri("http://192.168.18.101:7040/");   // 引擎服务器主机连接
+            EngineApiConfig.setApiHostUri("http://101.7040.ddns.thonnn.com:99/");   // 引擎服务器主机连接
 //            EngineApiConfig.setUseMqtt(true)    // 启用 MQTT 通道获取指令，以下 MQTT 配置和 Context 配置仅针对此项为 true 生效
 //            EngineApiConfig.setContext(getApplicationContext());    // 应用Context，用于使用SharedPreferences保存工程的一些记录信息
 //            EngineApiConfig.setMqttUrl("tcp://47.112.124.234:1883");    // MQTT 服务器主机连接

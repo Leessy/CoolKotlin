@@ -21,7 +21,7 @@ public class AiChlIrFace {
         String strCacheDir = context.getCacheDir().getAbsolutePath();
         CheckLicense.UpDateLicense(context, strCacheDir, 3);
         if (isV10) {
-            inits = InitV10(nMaxChannelNum, strCacheDir);
+            inits = Init(nMaxChannelNum, strCacheDir);
         } else {
             inits = Init(nMaxChannelNum, strCacheDir);
         }
@@ -58,7 +58,7 @@ public class AiChlIrFace {
         SetAuth(100, 0);
         String strCacheDir = context.getCacheDir().getAbsolutePath();
         if (isV10) {
-            inits = InitV10(nMaxChannelNum, strCacheDir);
+            inits = Init(nMaxChannelNum, strCacheDir);
         } else {
             inits = Init(nMaxChannelNum, strCacheDir);
         }
@@ -141,14 +141,6 @@ public class AiChlIrFace {
     // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
     // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
     public static native int Init(int nMaxChannelNum, String strCacheDir);
-
-    // SDK(V7算法)初始化
-    // 输入参数：
-    //     nMaxChannelNum ----  需要开启的最大通道数(受加密狗控制)
-    //     strCachePath ---- 本APP的cache目录，需要此目录有可读写权限，且能根据上级目录找到lib目录加载模型文件（可参考DEMO例程获取cache目录）
-    // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
-    // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
-    public static native int InitV10(int nMaxChannelNum, String strCacheDir);
 
     // SDK反初始化
     // 备注：必须在初始化成功后调用，反初始化后不能再调用除获取SDK版本及SDK初始化外的任何接口

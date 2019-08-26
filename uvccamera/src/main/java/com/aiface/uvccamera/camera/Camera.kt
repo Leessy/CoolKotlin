@@ -67,7 +67,8 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
         w: Int,
         h: Int,
         max_fps: Int = DEFAULT_PREVIEW_MAX_FPS,
-        frameType: Int = UVCCamera.FRAME_FORMAT_MJPEG
+        frameType: Int = UVCCamera.FRAME_FORMAT_MJPEG,
+        bandwidthFactor: Float = 0.5F
     ): Boolean {
         if (!isOpen()) return false
         val list = uvcCamera?.getSupportedSizeList()
@@ -84,7 +85,7 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
                         DEFAULT_PREVIEW_MIN_FPS,
                         max_fps,
                         frameType, //此格式设置15帧生效  -----  UVCCamera.FRAME_FORMAT_YUYV,
-                        0.4f
+                        bandwidthFactor
                     )
                     it.updateCameraParams()
                 }
