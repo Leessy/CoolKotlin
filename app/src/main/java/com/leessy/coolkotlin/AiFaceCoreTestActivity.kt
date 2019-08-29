@@ -57,6 +57,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             if (it.pid == 33073) {//33073
                 c = it
                 c?.openCamera()
+
                 c?.setPreviewSize(cameraColorW, cameraColorH)
             } else if (it.pid == 25446) {
                 c2 = it

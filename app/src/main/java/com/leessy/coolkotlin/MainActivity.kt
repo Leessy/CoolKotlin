@@ -7,18 +7,13 @@ import android.os.PowerManager
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
-import android.widget.Toast
-import com.AiChlFace.AiChlFace
-import com.aiface.uvccamera.camera.CamerasMng
 import com.blankj.utilcode.util.ShellUtils
 import com.jakewharton.rxbinding2.view.RxView
 import com.leessy.F602SystemTool
 import com.leessy.LED
 import com.leessy.Loaction.LoactionActivity
 import com.leessy.PowerManagerUtil
-import com.leessy.aifacecore.AiFaceCore.AiFaceCore
-import com.leessy.aifacecore.AiFaceCore.AiFaceType
-import com.leessy.aifacecore.AiFaceCore.IAiFaceInitCall
+import com.leessy.ofm1000test.ofm1000ServerTest
 import com.leessy.ofm1000test.ofm1000testActivity
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
@@ -27,7 +22,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 
@@ -75,7 +69,8 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         RxView.clicks(ofm1000test).observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 isAuto = true
-                startActivity(Intent(this, ofm1000testActivity::class.java))
+//                startActivity(Intent(this, ofm1000testActivity::class.java))
+                startActivity(Intent(this, ofm1000ServerTest::class.java))
             }
 
 
@@ -109,13 +104,14 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 //                }
 //            }
             launch {
-            F602SystemTool.openLed(LED.GRE_LED)
-            delay(200)
-            F602SystemTool.closeAll()
-            delay(200)
-            F602SystemTool.openLed(LED.GRE_LED)
-            delay(1000)
-            F602SystemTool.openLed(LED.BLUE_LED)}
+                F602SystemTool.openLed(LED.GRE_LED)
+                delay(200)
+                F602SystemTool.closeAll()
+                delay(200)
+                F602SystemTool.openLed(LED.GRE_LED)
+                delay(1000)
+                F602SystemTool.openLed(LED.BLUE_LED)
+            }
         }
         //背景暗
         RxView.clicks(bg_d).subscribe {
@@ -129,32 +125,32 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         }
 
 
-        CamerasMng.initCameras(application)
+//        CamerasMng.initCameras(application)
 
 
-        Log.d("----", "厂商     ${android.os.Build.BRAND}")
-        Log.d("----", "厂商     ${android.os.Build.MODEL}")
-        Log.d("----", "算法版本     ${AiChlFace.Ver()}")
-
-        Log.d("----****", "cpunum=     ${AiChlFace.GetCpuNum()}")
+//        Log.d("----", "厂商     ${android.os.Build.BRAND}")
+//        Log.d("----", "厂商     ${android.os.Build.MODEL}")
+//        Log.d("----", "算法版本     ${AiChlFace.Ver()}")
+//
+//        Log.d("----****", "cpunum=     ${AiChlFace.GetCpuNum()}")
 //        AiChlFace.SetFuncCpuNum(0,2)
-        AiChlFace.SetFuncCpuNum(1, 1)
-        AiChlFace.SetFuncCpuNum(2, 1)
-        AiChlFace.SetFuncCpuNum(3, 1)
+//        AiChlFace.SetFuncCpuNum(1, 1)
+//        AiChlFace.SetFuncCpuNum(2, 1)
+//        AiChlFace.SetFuncCpuNum(3, 1)
 
 //        AiFaceCore.isV10 = true
-        AiFaceCore.initAiFace(
-            application, AiFaceType.MODE_DM2016, object : IAiFaceInitCall {
-                override fun call(colorsInit: Boolean, irInit: Boolean) {
-                    Log.d("----", "算法初始化    $colorsInit   $irInit")
-                    Log.d("----", "算法版本size     ${AiChlFace.FeatureSize()}")
-
-                    GlobalScope.launch(Dispatchers.Main) {
-                        Toast.makeText(application, "算法初始化    $colorsInit   $irInit", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-        )
+//        AiFaceCore.initAiFace(
+//            application, AiFaceType.MODE_DM2016, object : IAiFaceInitCall {
+//                override fun call(colorsInit: Boolean, irInit: Boolean) {
+//                    Log.d("----", "算法初始化    $colorsInit   $irInit")
+//                    Log.d("----", "算法版本size     ${AiChlFace.FeatureSize()}")
+//
+//                    GlobalScope.launch(Dispatchers.Main) {
+//                        Toast.makeText(application, "算法初始化    $colorsInit   $irInit", Toast.LENGTH_LONG).show()
+//                    }
+//                }
+//            }
+//        )
 
         ObjectInduction()
 //        PowerManagerUtil.wakeUp(application)

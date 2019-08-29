@@ -1,26 +1,37 @@
 package com.leessy.ofm1000test.data.request
 
+import com.leessy.ofm1000test.Constans
 
 /**
- *
  * @author Created by 刘承. on 2019/7/31
  *
  * --深圳市尚美欣辰科技有限公司.
- *
- *
- *
  */
 
-public class Requests {
-    var namespace: String? = null
-    var name: String? = null
-    var sn: String? = null
-    var apiVersion: String? = null
-    var body: dataarray? = null
-
+class RequestDatas<T>(var body: T?) {
+    val namespace = Constans.Namespace
+    var name: String? = Constans.name
+    val sn = Constans.sn
+    val apiVersion = Constans.apiVersion
 }
 
-class dataarray(var value: ArrayList<uploadbody>? = null)
+//mqtt结束任务响应
+data class FinishData(var cmid: Int, var result: String? = null)
+
+//init
+data class InitData(var type: String?, var deviceName: String? = null)
+
+data class dataarray(var value: ArrayList<uploadbody>? = null)
+
+data class Record(
+    var name: String? = null,
+    var nation: String? = null,
+    var id_card: String? = null,
+    var image1: String? = null,
+    var image2: String? = null
+
+)
+
 
 class uploadbody {
     var name: String? = null
@@ -48,12 +59,3 @@ class uploadbody {
     var capPic: String? = null
 }
 
-//class recordData {
-//    "id_card": "422232200010214521",
-//    "device_sn": "SNVSJDG0000001",
-//    "cap_pic": "",
-//    "face_pic": "",
-//    "score": "72",
-//    "remark": "测试数据1",
-//    "create_time": "2019-07-25 10:37:22"
-//}

@@ -1,16 +1,19 @@
 package com.leessy.ofm1000test.data.respone
 
+import com.thonnn.cubeengine.engineapi.asset.CommandMsgBean
+
 /**
  *
  * @Author:  陈博
  * @create time:  2019/6/11  9:48
  */
 class ResponeBean<T> : ResponeBaseBean() {
-    var body: T? = null   //响应内容
-
+    var info: Any? = null
+    var body: T? = null
+    var call: CommandMsgBean? = null
 
     override fun toString(): String {
-        return "ResponeBean(errcode=$errcode,errmsg=$errmsg, body=$body)"
+        return "ResponeBean(info=$info, body=$body, call=$call)"
     }
 
 }
@@ -18,7 +21,7 @@ class ResponeBean<T> : ResponeBaseBean() {
 
 //人脸信息
 data class faceData(
-        val curPage: Int,
-        val offset: Int
+    val curPage: Int,
+    val offset: Int
 )
 

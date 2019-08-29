@@ -1,14 +1,20 @@
 package com.leessy.Annoation;
 
+import com.google.gson.Gson;
 import com.leessy.CRC;
 import com.leessy.CRC16Util;
+import com.leessy.ofm1000test.RetrofitHelper;
+import com.leessy.ofm1000test.data.respone.ResponeBaseBean;
+import com.leessy.ofm1000test.mqtt.MqttBody;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Scheduler;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.RequestBody;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -59,9 +65,9 @@ public class Test {
             (byte) 0xe7, 0x23
     };
 
+
     //01 03 14 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
     public static void main(String[] args) {
-
         byte[] b = CRC16Util.getCrc16(bytescrc, bytescrc.length - 2);
 //        byte[] b = intToBytes(CRC.crc16_modbus(bytescrc, 0, (bytescrc.length - 2)));
         System.out.println("---" + Arrays.toString(b));

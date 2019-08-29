@@ -135,6 +135,7 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
                     Height = previewSize.height
                     Width = previewSize.width
                 }
+
                 startPreview()
                 powerlineFrequency = 1
                 updateCameraParams()

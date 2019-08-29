@@ -34,11 +34,11 @@ object RetrofitHelper {
             synchronized(RetrofitHelper::class.java) {
                 if (retrofit == null) {
                     retrofit = Retrofit.Builder()
-                            .baseUrl("http://192.168.11.106:7040")  // baseUrl
-                            .client(getOkHttpClient())
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                            .build()
+                        .baseUrl("http://101.7040.ddns.thonnn.com:99/")  // baseUrl
+                        .client(getOkHttpClient())
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                        .build()
                 }
             }
         }
@@ -73,14 +73,14 @@ object RetrofitHelper {
             sslContext = SSLContext.getInstance("SSL")
             sslContext!!.init(null, arrayOf<TrustManager>(object : X509TrustManager {
                 override fun checkServerTrusted(
-                        chain: Array<out java.security.cert.X509Certificate>?,
-                        authType: String?
+                    chain: Array<out java.security.cert.X509Certificate>?,
+                    authType: String?
                 ) {
                 }
 
                 override fun checkClientTrusted(
-                        chain: Array<out java.security.cert.X509Certificate>?,
-                        authType: String?
+                    chain: Array<out java.security.cert.X509Certificate>?,
+                    authType: String?
                 ) {
                 }
 
