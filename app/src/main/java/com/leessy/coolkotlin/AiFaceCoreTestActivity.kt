@@ -214,23 +214,19 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         ss = AiFaceCore.Follows(ImageColor.COLOR)
             .compose(this.bindUntilEvent(ActivityEvent.STOP))
 //            .sample(300, TimeUnit.MILLISECONDS)
-            .DetectFace()
-            .filter {
-                Log.d("----", "彩色 过滤faceAngleFilter(10)  ${it.faceAngleFilter(10)}")
-                Log.d("----", "彩色 过滤faceWidthFilter(150)  ${it.faceWidthFilterMin(150)}")
-                Log.d("----", "彩色 过滤faceWidthFilter(150)  ${it.faceWidthFilterMax(350)}")
-                Log.d("----", "彩色 过滤faceQualityFilter(85)  ${it.faceQualityFilter(85)}")
-                Log.d("----", "彩色 过滤ffaceEdgeFilter(50,60)  ${it.faceEdgeFilter(50,60)}")
-                it.faceAngleFilter(10)
-                        && it.faceWidthFilterMin(200)
-                        && it.faceQualityFilter(85)
-            }
-            .faceFilter(15, 150, 350, 50, 60,85, fc)
-            .faceOffsetFilter(0.08F)
-            .filter {
-//                Log.d("----", "彩色 faceOffsetFilter  ")
-                true
-            }
+            .DetectFaceAndFilter()
+//            .filter {
+//                Log.d("----", "彩色 过滤faceAngleFilter(10)  ${it.faceAngleFilter(10)}")
+//                Log.d("----", "彩色 过滤faceWidthFilter(150)  ${it.faceWidthFilterMin(150)}")
+//                Log.d("----", "彩色 过滤faceWidthFilter(150)  ${it.faceWidthFilterMax(350)}")
+//                Log.d("----", "彩色 过滤faceQualityFilter(85)  ${it.faceQualityFilter(85)}")
+//                Log.d("----", "彩色 过滤ffaceEdgeFilter(50,60)  ${it.faceEdgeFilter(50,60)}")
+//                it.faceAngleFilter(10)
+//                        && it.faceWidthFilterMin(200)
+//                        && it.faceQualityFilter(85)
+//            }
+//            .faceFilter(15, 150, 350, 50, 60,85, fc)
+//            .faceOffsetFilter(0.08F)
             .observeOn(Schedulers.io())
             .compose(this.bindUntilEvent(ActivityEvent.STOP))
             .sample(200, TimeUnit.MILLISECONDS)

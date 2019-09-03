@@ -108,14 +108,14 @@ fun Observable<FaceData>.faceFilter(
     call: IFaceFitersCall? = null
 ): Observable<FaceData> {
     return filter {
-        it.faceAngleFilter(maxAngle).apply {
-            if (!this) {
-                call?.call(AiFaceFilter.FACE_ANGLE)
-            }
-        }
-                && it.faceWidthFilterMin(minWidth).apply {
+        it.faceWidthFilterMin(minWidth).apply {
             if (!this) {
                 call?.call(AiFaceFilter.FACE_WIDTH_MINI)
+            }
+        }
+                && it.faceAngleFilter(maxAngle).apply {
+            if (!this) {
+                call?.call(AiFaceFilter.FACE_ANGLE)
             }
         }
                 && it.faceWidthFilterMax(maxWidth).apply {

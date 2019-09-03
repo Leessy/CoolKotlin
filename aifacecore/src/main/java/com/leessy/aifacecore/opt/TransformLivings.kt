@@ -6,6 +6,7 @@ import com.AiChlFace.FACE_DETECT_RESULT
 import com.AiChlIrFace.AiChlIrFace
 import com.leessy.aifacecore.datas.FaceData
 import com.leessy.aifacecore.datas.haveFaceData
+import com.leessy.aifacecore.datas.isLivings
 import io.reactivex.Observable
 
 /**
@@ -17,13 +18,14 @@ import io.reactivex.Observable
 /**
  * 单彩色活体 检测 有一次通过后，后续默认为通过
  */
-fun Observable<FaceData>.LivingsSinglePass(): Observable<FaceData> {
+fun Observable<FaceData>.LivingsSinglePass(isOpen: Boolean = true): Observable<FaceData> {
+    if (!isOpen) return this
     var b = false
     return map {
         if (!it.haveFaceData()) {//没有人脸的数据
             return@map it
         }
-        Log.d("LLLLLbbbbb", "${b}")
+        Log.d("Livings", "${b}")
         if (b) {//本轮活体已经通过
             it.Livings = 1
             return@map it
@@ -39,10 +41,10 @@ fun Observable<FaceData>.LivingsSinglePass(): Observable<FaceData> {
                     RGB24,
                     detectResult as com.AiChlIrFace.FACE_DETECT_RESULT
                 )
-                Log.d("Livings", "活体时间 IR ： ${System.currentTimeMillis() - start}")
+                Log.d("Livings", "活体${Livings}  时间 IR ： ${System.currentTimeMillis() - start}")
 
             } else if (it.imageColor == ImageColor.COLOR) {
-                Log.d("Livings", "GetLiveFaceThreshold  ${AiChlFace.GetLiveFaceThreshold()}")
+//                Log.d("Livings", "GetLiveFaceThreshold  ${AiChlFace.GetLiveFaceThreshold()}")
                 val start = System.currentTimeMillis()
                 Livings = AiChlFace.LiveDetectOneCamera(
                     if (nChannelNo == AiFaceChannelNo.COLORNo1) 1 else 3,
@@ -52,7 +54,7 @@ fun Observable<FaceData>.LivingsSinglePass(): Observable<FaceData> {
                     RGB24,
                     detectResult as FACE_DETECT_RESULT
                 )
-                Log.d("Livings", "活体时间 ： ${System.currentTimeMillis() - start}")
+                Log.d("Livings", "活体${Livings}  时间 ： ${System.currentTimeMillis() - start}")
             }
             b = Livings == 1
         }
@@ -60,9 +62,17 @@ fun Observable<FaceData>.LivingsSinglePass(): Observable<FaceData> {
 }
 
 /**
+ * 单彩色活体 检测 有一次通过后，后续默认为通过( 是否启用活体功能)
+ */
+fun Observable<FaceData>.LivingsSinglePassFilter(isOpen: Boolean = true): Observable<FaceData> {
+    return if (isOpen) LivingsSinglePass().filter { it.isLivings() } else return this
+}
+
+/**
  * 单彩色活体 检测
  */
-fun Observable<FaceData>.Livings(): Observable<FaceData> {
+fun Observable<FaceData>.Livings(isOpen: Boolean = true): Observable<FaceData> {
+    if (!isOpen) return this
     return map {
         if (!it.haveFaceData()) {//没有人脸的数据
             return@map it
