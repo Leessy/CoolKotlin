@@ -34,7 +34,8 @@ object RetrofitHelper {
             synchronized(RetrofitHelper::class.java) {
                 if (retrofit == null) {
                     retrofit = Retrofit.Builder()
-                        .baseUrl("http://101.7040.ddns.thonnn.com:99/")  // baseUrl
+                        .baseUrl("http://101.50010.ddns.thonnn.com:99/")  // baseUrl
+//                        .baseUrl("http://101.7040.ddns.thonnn.com:99/")  // baseUrl
                         .client(getOkHttpClient())
                         .addConverterFactory(GsonConverterFactory.create())
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

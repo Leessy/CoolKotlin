@@ -41,7 +41,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         setContentView(R.layout.activity_ai_face_core_test)
         Log.d("----", "**************************???")
         AiChlFace.Ver()
-        Observable.timer(51 * 5000, TimeUnit.MILLISECONDS)
+        Observable.timer(200 * 5000, TimeUnit.MILLISECONDS)
             .compose(this.bindToLifecycle())
             .subscribe({
                 finish()
@@ -70,13 +70,21 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 
         textureview.rotation = -90F
         textureview.setSurfaceTextureListener(object : TextureView.SurfaceTextureListener {
-            override fun onSurfaceTextureAvailable(surface: SurfaceTexture?, width: Int, height: Int) {
+            override fun onSurfaceTextureAvailable(
+                surface: SurfaceTexture?,
+                width: Int,
+                height: Int
+            ) {
                 Log.d("----", "--   onSurfaceTextureAvailable")
                 MatrixView(textureview, width, height)
                 c?.startPreview(surface)
             }
 
-            override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture?, width: Int, height: Int) {
+            override fun onSurfaceTextureSizeChanged(
+                surface: SurfaceTexture?,
+                width: Int,
+                height: Int
+            ) {
                 Log.d("----", "--   onSurfaceTextureSizeChanged")
             }
 
@@ -94,13 +102,21 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         })
         textureview2.rotation = -90F
         textureview2.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
-            override fun onSurfaceTextureAvailable(surface: SurfaceTexture?, width: Int, height: Int) {
+            override fun onSurfaceTextureAvailable(
+                surface: SurfaceTexture?,
+                width: Int,
+                height: Int
+            ) {
                 Log.d("----", "--   onSurfaceTextureAvailable")
                 MatrixView(textureview2, width, height)
                 c2?.startPreview(surface)
             }
 
-            override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture?, width: Int, height: Int) {
+            override fun onSurfaceTextureSizeChanged(
+                surface: SurfaceTexture?,
+                width: Int,
+                height: Int
+            ) {
                 Log.d("----", "--   onSurfaceTextureSizeChanged")
             }
 
@@ -140,7 +156,14 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 val bytes = ByteArray(bf.capacity())
                 bf.get(bytes, 0, bytes.size)
 //                发送到算法库识别
-                AiFaceCore.dataEmitter(bytes, ImageColor.COLOR, cameraColorW, cameraColorH, bMirror = 1, nRotate = 2)
+                AiFaceCore.dataEmitter(
+                    bytes,
+                    ImageColor.COLOR,
+                    cameraColorW,
+                    cameraColorH,
+                    bMirror = 1,
+                    nRotate = 2
+                )
             }
         })
         c2?.setFrameCall(object : IFrameCall {
@@ -149,7 +172,14 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 val bytes = ByteArray(bf.capacity())
                 bf.get(bytes, 0, bytes.size)
 //                发送到算法库识别
-//                AiFaceCore.dataEmitter(bytes, ImageColor.IR, cameraIrW, cameraIrH, bMirror = 1, nRotate = 2)
+                AiFaceCore.dataEmitter(
+                    bytes,
+                    ImageColor.IR,
+                    cameraIrW,
+                    cameraIrH,
+                    bMirror = 1,
+                    nRotate = 2
+                )
             }
         })
 
@@ -188,14 +218,17 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         AiFaceCore.Follows(ImageColor.IR)
             .compose(this.bindUntilEvent(ActivityEvent.STOP))
 //            .sample(200, TimeUnit.MILLISECONDS)
-            .DetectFace()
+            .DetectFaceAndFilter()
 //            .Livings()
 //            .observeOn(Schedulers.io())
 //            .sample(200, TimeUnit.MILLISECONDS)
 //            .FeatureGet()
 //            .DetectFace_Feature()
             .subscribe({
-                Log.d("----", "-*----------红外 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}")
+                Log.d(
+                    "----",
+                    "-*----------红外 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}"
+                )
                 Log.d("----", "-*----------红外 检测时间     ${it.testTime_face}")
                 Log.d("----", "-*----------红外 特征时间     ${it.testTime_feature}")
                 Log.d("----", "-*----------红外 活体结果     ${it.Livings}")
@@ -236,7 +269,10 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 //            .CompareListColor()
 //            .DetectFace_Feature()
             .subscribe({
-                Log.d("----", "-*----------彩色 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}")
+                Log.d(
+                    "----",
+                    "-*----------彩色 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}"
+                )
                 Log.d("----", "-*----------彩色 检测时间     ${it.testTime_face}")
                 Log.d("----", "-*----------彩色 特征时间     ${it.testTime_feature}")
                 Log.d("----", "-*----------彩色 活体结果     ${it.Livings}")
@@ -264,9 +300,9 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 Log.d("----", "-*----------彩色 异常了     ${it}")
             })
 
-        Observable.timer(10, TimeUnit.SECONDS).subscribe {
-            startColorAiface()
-        }
+//        Observable.timer(10, TimeUnit.SECONDS).subscribe {
+//            startColorAiface()
+//        }
 
     }
 

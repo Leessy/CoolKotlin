@@ -1,7 +1,10 @@
 package com.leessy.ofm1000test
 
+import com.leessy.ofm1000test.data.respone.AppUpdate
+import com.leessy.ofm1000test.data.respone.FindSN
 import com.leessy.ofm1000test.data.respone.ResponeBean
 import io.reactivex.Observable
+import okhttp3.FormBody
 import okhttp3.RequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody
@@ -33,11 +36,38 @@ interface ApiService {
     @POST("/Api/Insert.do")
     fun Insert(@Body requestBody: RequestBody): Observable<ResponeBean<String>>
 
-    //上传记录
+    //init
     @POST("/Api/Init.do")
     fun Init(@Body requestBody: RequestBody): Observable<ResponeBean<Any>>
 
+
     /**********************************************************分割线*********************************************************************/
+
+    //上传测试记录/sn生产
+    @FormUrlEncoded
+    @POST("/Api/TestReport/Upload.do")
+    fun TestReport(
+        @Field("active") active: Boolean,
+        @Field("type") type: String,
+        @Field("testJson") testJson: String = ""
+    ): Observable<ResponeBean<String>>
+
+    //查询sn
+    @FormUrlEncoded
+    @POST("/Api/FindSn.do")
+    fun FindSn(@Field("deviceInfo") deviceInfo: String): Observable<ResponeBean<List<FindSN>>>
+
+    //检查升级
+    @FormUrlEncoded
+    @POST("/Api/Software/Check.do")
+    fun CheckUpdate(@Field("type") type: String): Observable<ResponeBean<AppUpdate>>
+
+    @GET
+    fun download(@Url url: String): Observable<ResponseBody>
+
+    /**********************************************************分割线*********************************************************************/
+
+
 //
 //    /**
 //     * 文件上传

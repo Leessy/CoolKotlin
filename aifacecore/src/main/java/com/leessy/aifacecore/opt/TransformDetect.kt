@@ -4,6 +4,7 @@ import android.util.Log
 import com.AiChlFace.FACE_DETECT_RESULT
 import com.leessy.aifacecore.datas.CameraData
 import com.leessy.aifacecore.datas.FaceData
+import com.leessy.logd
 import io.reactivex.Observable
 
 /**
@@ -150,7 +151,7 @@ fun Observable<CameraData>.DetectFace(): Observable<FaceData> {
             width = w[0]
             height = h[0]
             this.testTime_face = System.currentTimeMillis() - start
-            Log.d("---", "-**-人脸时间 ${this.testTime_face}   $imageColor    Thread=${Thread.currentThread().name}")
+            logd("---", "-**-人脸时间 ${this.testTime_face}   $imageColor    Thread=${Thread.currentThread().name}")
         }
     }
 }

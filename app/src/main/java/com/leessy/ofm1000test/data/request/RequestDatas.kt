@@ -32,25 +32,6 @@ data class Record(
 
 )
 
- class AppData {
-     /*******原数据*********/
-     var id: Int = 0
-    var apkName: String? = null
-    var path: String? = null//apk下载路径
-    var versionName: String? = null
-    var remark: String? = null
-    var createTime: String? = null
-    var versionCode: Int = 0//apk 版本号
-    var typeId: String? = null
-    var filekey: String? = null//下载下来的文件名称
-
-     /*******新增数据*********/
-     var apkfileMD5: String? = null//下载的apk文件md5
-     var forceCode: String? = null//强制升级的最小Code
-     var clearData: Boolean = false//升级前是否清除数据
- }
-
-
 class uploadbody {
     var name: String? = null
     var nation: String? = null

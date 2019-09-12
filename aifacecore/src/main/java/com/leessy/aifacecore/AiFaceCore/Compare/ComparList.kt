@@ -1,8 +1,8 @@
 package com.leessy.aifacecore.AiFaceCore.Compare
 
-import android.util.Log
 import com.AiChlFace.AiChlFace
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
+import com.leessy.logd
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.*
@@ -38,7 +38,7 @@ object ComparList {
         comparmax = max
         hList = AiChlFace.ListCreate(comparmax)//创建容纳列表
         nScores = ByteArray(comparmax)//返回的相似度参数顺序同列表
-        Log.d(TAG, "AifaceON: 创建列表返回值句柄=$hList")
+        logd(TAG, "AifaceON: 创建列表返回值句柄=$hList")
         isInit = hList != 0
         return isInit
     }
@@ -61,7 +61,7 @@ object ComparList {
         for (j in 0 until nScores.size) nScores[j] = 0  //重置列表值
 
         val ret = AiChlFace.ListCompare(nChannelNo, hList, temple, 0, 0, nScores)
-        Log.d(TAG, "comparison: 对比成功  列表总数=$pos   对比返回参与总数ret=$ret")
+        logd(TAG, "comparison: 对比成功  列表总数=$pos   对比返回参与总数ret=$ret")
         if (ret != pos) return rets
         for (i in 0 until pos) {
             if (nScores[i] > rets[1]) {

@@ -28,7 +28,11 @@ class FaceData {
     var CompareRet: Long = 0//对比值
     var CompareDataID: Long = 0//对比 数据库id
 
+    val faceResult by lazy {
+        FaceResult(if (imageColor == ImageColor.COLOR) detectResult as FACE_DETECT_RESULT else detectResult as com.AiChlIrFace.FACE_DETECT_RESULT)
+    }
     var Livings: Int = 0//活体结果
+
     override fun toString(): String {
         return "FaceData(featureGetStatu=$featureGetStatu, detectResult=$detectResult, width=$width, height=$height, faceNum=$faceNum, imageColor=$imageColor, CameraID=$CameraID, nChannelNo=$nChannelNo, CompareRet=$CompareRet, CompareDataID=$CompareDataID, Livings=$Livings)"
     }
@@ -38,11 +42,6 @@ class FaceData {
     var testTime_feature = 0L//测试时间用
 
 
-//    private fun getcolor() = detectResult as FACE_DETECT_RESULT
-//    private fun getir() = detectResult as com.AiChlIrFace.FACE_DETECT_RESULT
-//
-//    fun getFaceDetectResult() =
-//        if (imageColor == ImageColor.COLOR) getcolor() else getir()
 }
 
 /**

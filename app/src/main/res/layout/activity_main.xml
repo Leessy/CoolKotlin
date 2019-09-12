@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
     <!--<Button-->
     <!--android:id="@+id/functionList1"-->
@@ -43,74 +43,110 @@
     <!--android:text="xcrash异常捕获"/>-->
 
     <Button
-            android:id="@+id/loaction"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="定位测试"/>
+        android:id="@+id/loaction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="定位测试" />
+
     <Button
-            android:id="@+id/AiFaceCoreTest"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="算法核心库测试"/>
+        android:id="@+id/AiFaceCoreTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="算法核心库测试" />
+
     <Button
-            android:id="@+id/ofm1000test"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ofm1000接口测试"/>
+        android:id="@+id/ofm1000test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ofm1000接口测试" />
 
 
     <LinearLayout
-            android:layout_width="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="300dp">
+
+        <Button
+            android:id="@+id/w_led"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="300dp">
+            android:text="白补光灯" />
 
         <Button
-                android:id="@+id/w_led"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="白补光灯"/>
+            android:id="@+id/w_ir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="红补光灯" />
 
         <Button
-                android:id="@+id/w_ir"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="红补光灯"/>
+            android:id="@+id/led_r"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="红" />
 
         <Button
-                android:id="@+id/led_r"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="红"/>
+            android:id="@+id/led_g"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="绿" />
 
         <Button
-                android:id="@+id/led_g"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="绿"/>
+            android:id="@+id/led_b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="蓝" />
 
         <Button
-                android:id="@+id/led_b"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="蓝"/>
-
-        <Button
-                android:id="@+id/colse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="关灯"/>
+            android:id="@+id/colse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="关灯" />
     </LinearLayout>
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
         <Button
-                android:id="@+id/bg_u"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="背景亮"/>
+            android:id="@+id/bg_u"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="背景亮" />
+
         <Button
-                android:id="@+id/bg_d"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="背景暗"/>
+            android:id="@+id/bg_d"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="背景暗" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/alm1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开闹钟1" />
+
+        <Button
+            android:id="@+id/alm2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开闹钟2" />
+
+        <Button
+            android:id="@+id/alm11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="关闹钟1" />
+
+        <Button
+            android:id="@+id/alm22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="关闹钟2" />
     </LinearLayout>
 
 </LinearLayout>

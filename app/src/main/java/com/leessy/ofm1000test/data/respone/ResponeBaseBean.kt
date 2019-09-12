@@ -11,4 +11,6 @@ open class ResponeBaseBean {
     var errcode: Int = 0
     var errmsg: String? = null
 
+
+    var code: Int = 0//app升级数据兼容旧版 使用此字段
 }
