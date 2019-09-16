@@ -18,5 +18,5 @@ enum class AiFaceChannelNo {
  * 人脸过滤未通过类型
  */
 enum class AiFaceFilter {
-    FACE_ANGLE, FACE_WIDTH_MINI, FACE_WIDTH_MAX, FACE_QUALITY, FACE_EDGE
+    DEFAULT,FACE_ANGLE, FACE_WIDTH_MINI, FACE_WIDTH_MAX, FACE_QUALITY, FACE_EDGE
 }

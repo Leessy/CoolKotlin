@@ -114,13 +114,37 @@ fun Observable<CameraData>.DetectFace(): Observable<FaceData> {
                 ImageColor.COLOR -> {
                     faceNum = if (nChannelNo == AiFaceChannelNo.COLORNo1) {
                         AiFaceOpt.DetectFaceEx_1(
-                            it.stream, it.byteArray, it.width, it.height, 0, 0, 0, 0,
-                            it.nRotate, it.bMirror, RGB24!!, w, h, detectResult as FACE_DETECT_RESULT
+                            it.stream,
+                            it.byteArray,
+                            it.width,
+                            it.height,
+                            0,
+                            0,
+                            0,
+                            0,
+                            it.nRotate,
+                            it.bMirror,
+                            RGB24!!,
+                            w,
+                            h,
+                            detectResult as FACE_DETECT_RESULT
                         )
                     } else {
                         AiFaceOpt.DetectFaceEx_3(
-                            it.stream, it.byteArray, it.width, it.height, 0, 0, 0, 0,
-                            it.nRotate, it.bMirror, RGB24!!, w, h, detectResult as FACE_DETECT_RESULT
+                            it.stream,
+                            it.byteArray,
+                            it.width,
+                            it.height,
+                            0,
+                            0,
+                            0,
+                            0,
+                            it.nRotate,
+                            it.bMirror,
+                            RGB24!!,
+                            w,
+                            h,
+                            detectResult as FACE_DETECT_RESULT
                         )
                     }
                 }
@@ -144,14 +168,23 @@ fun Observable<CameraData>.DetectFace(): Observable<FaceData> {
             }
 
             if (faceNum > 0) {
-                FaceRectEmitterCenter.sendFaceRect(it.imageColor, it.CameraID, detectResult!!)
+                FaceRectEmitterCenter.sendFaceRect(
+                    it.imageColor,
+                    it.CameraID,
+                    it.width,
+                    it.height,
+                    detectResult!!
+                )
             } else {
                 FaceRectEmitterCenter.sendFaceRect(it.imageColor, it.CameraID)
             }
             width = w[0]
             height = h[0]
             this.testTime_face = System.currentTimeMillis() - start
-            logd("---", "-**-人脸时间 ${this.testTime_face}   $imageColor    Thread=${Thread.currentThread().name}")
+            logd(
+                "---",
+                "-**-人脸时间 ${this.testTime_face}   $imageColor    Thread=${Thread.currentThread().name}"
+            )
         }
     }
 }

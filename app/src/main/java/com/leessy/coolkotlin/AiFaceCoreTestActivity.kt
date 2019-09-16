@@ -12,6 +12,7 @@ import com.aiface.uvccamera.camera.CamerasMng
 import com.aiface.uvccamera.camera.IFrameCall
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.datas.isLivings
+import com.leessy.aifacecore.datas.isNoneFace
 import com.leessy.aifacecore.opt.*
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
@@ -189,6 +190,9 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             .observeOn(Schedulers.newThread())
             .map {
                 it.apply {
+//                    if (!isNoneFace()) {
+//                        FaceFilterCalculate(16, 250, 500, 30, 0, 85)
+//                    }
                     rect = RectF(
                         it.nFaceLeft.toFloat(),
                         it.nFaceTop.toFloat(),
@@ -197,9 +201,10 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                     )
                 }
             }
+            .FaceFilterCalculate(16, 250, 500, 30, 0, 85)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                //                Log.d("---- 人脸框", "${it.imageColor}  ${it.nFaceBottom}")
+                Log.d("---- 人脸框  过滤值=", "${it.faceFilterRet} ")
                 //画彩色人脸框或者红外人脸框
                 when (it.imageColor) {
                     ImageColor.COLOR ->

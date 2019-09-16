@@ -1,6 +1,7 @@
 package com.leessy.aifacecore.datas
 
 import android.graphics.RectF
+import com.leessy.aifacecore.opt.AiFaceFilter
 import com.leessy.aifacecore.opt.ImageColor
 
 /**
@@ -9,7 +10,7 @@ import com.leessy.aifacecore.opt.ImageColor
  * business@onfacemind.com
  * 人脸框数据
  */
-class RectData(var imageColor: ImageColor, var cameraId: Int = 0) {
+class RectData(var imageColor: ImageColor, var cameraId: Int = 0, var width: Int=0, var height: Int=0) {
     //人脸
     //相机id，或者数据分类值
 
@@ -30,11 +31,15 @@ class RectData(var imageColor: ImageColor, var cameraId: Int = 0) {
     var nAngleRoll: Int = 0 // 人脸偏转角度（左右，上下，水平方向）
     var nQuality: Int = 0 // 人脸质量
     var rect: RectF? = null
+
+//    var width: Int = 0//转换之后的宽高
+//    var height: Int = 0//转换之后的宽高
+    var faceFilterRet = AiFaceFilter.DEFAULT  // 人脸位置过滤计算结果
 }
 
 /**
  * 没有人脸的数据
  */
 fun RectData.isNoneFace(): Boolean {
-    return nFaceLeft == 0 && nFaceRight == 0
+    return nFaceBottom == 0 && nFaceRight == 0
 }

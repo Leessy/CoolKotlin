@@ -27,9 +27,15 @@ object FaceRectEmitterCenter {
     /**
      * 发送人框
      */
-    internal fun sendFaceRect(mageColor: ImageColor, cameraId: Int, faceresult: Any) {
+    internal fun sendFaceRect(
+        mageColor: ImageColor,
+        cameraId: Int,
+        w: Int,
+        h: Int,
+        faceresult: Any
+    ) {
         if (mageColor == ImageColor.COLOR) lastFaceisNullColor = true else lastFaceisNullIr = true
-        faceSubject.onNext(RectData(mageColor, cameraId).apply {
+        faceSubject.onNext(RectData(mageColor, cameraId = cameraId, width = w, height = h).apply {
             transf(this, faceresult)
         })
     }

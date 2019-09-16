@@ -144,7 +144,10 @@ object AiFaceCore {
      * @param CameraID      根据 (颜色 +id)   获取数据   不通颜色可以有相同id 默认id为0
      * @param imageColor    根据 (颜色 +id)   获取数据  不通颜色可以有相同id 默认id为0
      */
-    fun Follows(imageColor: ImageColor = ImageColor.COLOR, CameraID: Int = 0): Observable<CameraData> {
+    fun Follows(
+        imageColor: ImageColor = ImageColor.COLOR,
+        CameraID: Int = 0
+    ): Observable<CameraData> {
         return DataEmitterCenter.getEmitter(imageColor, CameraID)
             .observeOn(Schedulers.computation())
             .sample(160, TimeUnit.MILLISECONDS)
@@ -154,7 +157,10 @@ object AiFaceCore {
     /**
      *根据颜色类型+相机id 获取人脸数据
      */
-    fun FollowFaceRect(imageColor: ImageColor = ImageColor.COLOR, CameraID: Int = 0): Observable<RectData> {
+    fun FollowFaceRect(
+        imageColor: ImageColor = ImageColor.COLOR,
+        CameraID: Int = 0
+    ): Observable<RectData> {
         return FaceRectEmitterCenter.FaceRectObservableForID(imageColor, CameraID)
     }
 
@@ -222,7 +228,14 @@ object AiFaceCore {
                     faceData.width = w[0]
                     faceData.height = h[0]
                     faceData.featureGetStatu =
-                        AiChlFace.FeatureGet(0, rgb24, w[0], h[0], face_detect_result, faceData.feature)
+                        AiChlFace.FeatureGet(
+                            0,
+                            rgb24,
+                            w[0],
+                            h[0],
+                            face_detect_result,
+                            faceData.feature
+                        )
                 }
                 faceData
             }
