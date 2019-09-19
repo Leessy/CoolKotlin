@@ -172,11 +172,10 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         Log.d("----", "算法版本     ${AiChlFace.Ver()}")
 
         Log.d("----****", "cpunum=     ${AiChlFace.GetCpuNum()}")
-        AiChlFace.SetFuncCpuNum(0, 2)
+//        AiChlFace.SetFuncCpuNum(0, 2)
         AiChlFace.SetFuncCpuNum(1, 1)
         AiChlFace.SetFuncCpuNum(2, 1)
         AiChlFace.SetFuncCpuNum(3, 1)
-
         AiFaceCore.isV10 = true
         AiFaceCore.initAiFace(
             application, AiFaceType.MODE_DM2016, object : IAiFaceInitCall {
@@ -185,6 +184,7 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
                     Log.d("----", "算法版本size     ${AiChlFace.FeatureSize()}")
 
                     GlobalScope.launch(Dispatchers.Main) {
+//                        startActivity(Intent(this@MainActivity, FunctionTestActivity::class.java))
                         Toast.makeText(
                             application,
                             "算法初始化    $colorsInit   $irInit",
@@ -219,6 +219,10 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
     override fun onResume() {
         super.onResume()
+//        GlobalScope.launch(Dispatchers.Main) {
+//            delay(8000)
+//            startActivity(Intent(this@MainActivity, FunctionTestActivity::class.java))
+//        }
         Log.d("----", ":onResume ")
 //        if (isAuto) {
 //            Observable.timer(2, TimeUnit.SECONDS, Schedulers.io())

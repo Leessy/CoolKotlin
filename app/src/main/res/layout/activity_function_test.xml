@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FunctionTestActivity">
+
+    <FrameLayout
+        android:layout_width="360px"
+        android:layout_height="480px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextureView
+            android:id="@+id/textureview2"
+            android:layout_width="480px"
+            android:layout_height="360px"
+            android:layout_gravity="center" />
+
+        <com.leessy.View.FaceView
+            android:id="@+id/faceview2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="360px"
+        android:layout_height="480px"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextureView
+            android:id="@+id/textureview"
+            android:layout_width="480px"
+            android:layout_height="360px"
+            android:layout_gravity="center" />
+
+        <com.leessy.View.FaceView
+            android:id="@+id/faceview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>

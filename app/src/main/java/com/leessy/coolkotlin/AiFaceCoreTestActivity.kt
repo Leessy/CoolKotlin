@@ -41,16 +41,12 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ai_face_core_test)
         Log.d("----", "**************************???")
-        AiChlFace.Ver()
-        Observable.timer(200 * 5000, TimeUnit.MILLISECONDS)
-            .compose(this.bindToLifecycle())
-            .subscribe({
-                finish()
-            }, {
-            })
-
-//        AiChlFace.SetLiveFaceThreshold(30)
-
+//        Observable.timer(200 * 5000, TimeUnit.MILLISECONDS)
+//            .compose(this.bindToLifecycle())
+//            .subscribe({
+//                finish()
+//            }, {
+//            })
 
         //获取设备列表
         CamerasMng.cameraList.forEach {

@@ -9,6 +9,7 @@ import android.support.multidex.MultiDex
 import android.util.Log
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.ShellUtils
+import com.leessy.coolkotlin.MainActivity
 import com.leessy.service.LocationService
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONObject
@@ -41,7 +42,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         app = this
-//        initXcrash()
+        initXcrash()
     }
 
     //初始化 scrash
@@ -49,6 +50,12 @@ class App : Application() {
 
         // The callback when App process crashed.
         val callback = ICrashCallback { logPath, emergency ->
+
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            android.os.Process.killProcess(android.os.Process.myPid())
+
             if (emergency != null) {
                 Log.d(TAG, "异常了？1111")
                 debug(logPath, emergency)
