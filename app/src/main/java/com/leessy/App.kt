@@ -9,6 +9,7 @@ import android.support.multidex.MultiDex
 import android.util.Log
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.ShellUtils
+import com.didichuxing.doraemonkit.DoraemonKit
 import com.leessy.coolkotlin.MainActivity
 import com.leessy.service.LocationService
 import io.reactivex.schedulers.Schedulers
@@ -43,6 +44,7 @@ class App : Application() {
         super.onCreate()
         app = this
         initXcrash()
+        DoraemonKit.install(this)
     }
 
     //初始化 scrash

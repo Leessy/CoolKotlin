@@ -59,6 +59,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="ofm1000接口测试" />
+    <Button
+        android:id="@+id/F501Test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="F501镜头" />
 
 
     <LinearLayout

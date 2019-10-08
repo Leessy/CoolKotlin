@@ -7,11 +7,17 @@ apply plugin: 'kotlin-android-extensions'
 android {
     signingConfigs {
         config {
-            keyAlias 'yjraiface'
+            keyAlias 'samystar'
             keyPassword '123456'
-            storeFile file("../key/release.jks")
+            storeFile file("../key/release3288.keystore")
             storePassword '123456'
         }
+//        config {
+//            keyAlias 'yjraiface'
+//            keyPassword '123456'
+//            storeFile file("../key/release.jks")
+//            storePassword '123456'
+//        }
     }
     compileSdkVersion 28
     defaultConfig {
@@ -90,7 +96,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0-M2'
     //xcrash
-    implementation 'com.iqiyi.xcrash:xcrash-android-lib:2.1.8'
+    implementation 'com.iqiyi.xcrash:xcrash-android-lib:2.2.0'
     //utils
     api 'com.blankj:utilcode:1.22.7'
 
@@ -111,4 +117,7 @@ dependencies {
     //mqtt service
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1'
+
+    debugImplementation 'com.didichuxing.doraemonkit:doraemonkit:1.2.1'
+    releaseImplementation 'com.didichuxing.doraemonkit:doraemonkit-no-op:1.2.0'
 }

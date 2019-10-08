@@ -16,6 +16,7 @@ import com.aiface.uvccamera.camera.CamerasMng
 import com.blankj.utilcode.util.ShellUtils
 import com.jakewharton.rxbinding2.view.RxView
 import com.leessy.ActionBroadCast
+import com.leessy.F501ATest.F501ATestActivity
 import com.leessy.F602SystemTool
 import com.leessy.LED
 import com.leessy.Loaction.LoactionActivity
@@ -83,6 +84,11 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
                 isAuto = true
 //                startActivity(Intent(this, ofm1000testActivity::class.java))
                 startActivity(Intent(this, ofm1000ServerTest::class.java))
+            }
+        RxView.clicks(F501Test).observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                isAuto = true
+                startActivity(Intent(this, F501ATestActivity::class.java))
             }
 
 
@@ -178,13 +184,13 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         AiChlFace.SetFuncCpuNum(3, 1)
         AiFaceCore.isV10 = true
         AiFaceCore.initAiFace(
-            application, AiFaceType.MODE_DM2016, object : IAiFaceInitCall {
+            application, AiFaceType.MODE_DEBUG, object : IAiFaceInitCall {
                 override fun call(colorsInit: Boolean, irInit: Boolean) {
                     Log.d("----", "算法初始化    $colorsInit   $irInit")
                     Log.d("----", "算法版本size     ${AiChlFace.FeatureSize()}")
 
                     GlobalScope.launch(Dispatchers.Main) {
-//                        startActivity(Intent(this@MainActivity, FunctionTestActivity::class.java))
+                        //                        startActivity(Intent(this@MainActivity, FunctionTestActivity::class.java))
                         Toast.makeText(
                             application,
                             "算法初始化    $colorsInit   $irInit",
