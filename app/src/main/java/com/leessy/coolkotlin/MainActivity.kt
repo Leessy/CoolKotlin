@@ -184,7 +184,7 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         AiChlFace.SetFuncCpuNum(3, 1)
         AiFaceCore.isV10 = true
         AiFaceCore.initAiFace(
-            application, AiFaceType.MODE_DEBUG, object : IAiFaceInitCall {
+            application, AiFaceType.MODE_DM2016, object : IAiFaceInitCall {
                 override fun call(colorsInit: Boolean, irInit: Boolean) {
                     Log.d("----", "算法初始化    $colorsInit   $irInit")
                     Log.d("----", "算法版本size     ${AiChlFace.FeatureSize()}")
