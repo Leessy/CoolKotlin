@@ -8,9 +8,10 @@ import java.nio.FloatBuffer
 import java.nio.IntBuffer
 
 /**
- * 创建者     likunlun
- * 创建时间   2019/3/26 17:23
- * 描述	      desc
+ * desc
+ * @author Created by 刘承. on 2019/10/12
+ *
+ * --深圳市尚美欣辰科技有限公司.
  */
 class MyGLProgram {
     companion object {
@@ -34,27 +35,22 @@ class MyGLProgram {
 
     // 翻转顶点信息中的纹理坐标 因为纹理坐标的范围是0-1，所以翻转的话都统一用1去减   使Y轴翻转1-Y
     // whole-texture
-    private val mCoordVerticesY = floatArrayOf(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f)//Y轴翻转
-    private val mCoordVerticesX = floatArrayOf(1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f)//X轴翻转
-    private val mCoordVerticesXY = floatArrayOf(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f)//XY翻转
+//    private val mCoordVerticesY = floatArrayOf(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f)//Y轴翻转
+//    private val mCoordVerticesX = floatArrayOf(1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f)//X轴翻转
+//    private val mCoordVerticesXY = floatArrayOf(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f)//XY翻转
     private val mCoordVertices = floatArrayOf(0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f)//正常
 
-    private var mirrorX = false//是否镜像
-    private var mirrorY = false
 
-    fun setMirror(mirrorX: Boolean, mirrorY: Boolean) {
-        this.mirrorX = mirrorX
-        this.mirrorY = mirrorY
-    }
-
+    //不使用这里镜像转换了  再外部矩阵处理
     fun mCoordVertices() = run {
-        if (mirrorX && mirrorY)
-            mCoordVerticesXY
-        else if (mirrorX)
-            mCoordVerticesX
-        else if (mirrorY)
-            mCoordVerticesY
-        else mCoordVertices
+        //        if (mirrorX && mirrorY)
+//            mCoordVerticesXY
+//        else if (mirrorX)
+//            mCoordVerticesX
+//        else if (mirrorY)
+//            mCoordVerticesY
+//        else
+        mCoordVertices
     }
 
     init {

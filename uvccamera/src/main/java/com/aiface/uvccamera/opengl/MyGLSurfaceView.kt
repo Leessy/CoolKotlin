@@ -1,14 +1,18 @@
 package com.aiface.uvccamera.opengl
 
 import android.content.Context
+import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import android.util.Log
 
 /**
- * 创建者     likunlun
- * 创建时间   2019/3/26 17:16
- * 描述	      自定义GLSurfaceView
+ *
+ * 自定义GLSurfaceView
+ *
+ * @author Created by 刘承. on 2019/10/12
+ *
+ * --深圳市尚美欣辰科技有限公司.
  */
 class MyGLSurfaceView(context: Context, attributeSet: AttributeSet?) :
     GLSurfaceView(context, attributeSet) {
@@ -43,11 +47,18 @@ class MyGLSurfaceView(context: Context, attributeSet: AttributeSet?) :
 //    }
 
 
+//    /**
+//     * 全屏拉伸显示
+//     */
+//    fun setDisplayFullscreen(b: Boolean) {
+//        renderer.setDisplayFullscreen(b)
+//    }
+
     /**
-     * 全屏拉伸显示
+     * 镜像翻转
      */
-    fun setDisplayFullscreen(b: Boolean) {
-        renderer.setDisplayFullscreen(b)
+    fun setMirrorXY(mirrorX: Boolean = false, mirrorY: Boolean = false) {
+        renderer.setMirror(mirrorX, mirrorY)
     }
 
     /**
@@ -81,110 +92,97 @@ class MyGLSurfaceView(context: Context, attributeSet: AttributeSet?) :
         requestRender()
     }
 
-
-    //镜像
-//    fun   frameMirror(byte[] data, int width, int height):byte[] {
-//        byte tempData;
-//        for (int i = 0; i < height * 3 / 2; i++) {
-//            for (int j = 0; j < width / 2; j++) {
-//            tempData = data[i * width + j];
-//            data[i * width + j] = data[(i + 1) * width - 1 - j];
-//            data[(i + 1) * width - 1 - j] = tempData;
+//
+//    //镜像
+//    fun dataMirror(data: ByteArray, width: Int, height: Int) {
+//        var tempData: Byte
+//        for (i in 0 until height * 3 / 2) {
+//            for (j in 0 until width / 2) {
+//                tempData = data[i * width + j]
+//                data[i * width + j] = data[(i + 1) * width - 1 - j]
+//                data[(i + 1) * width - 1 - j] = tempData
+//            }
 //        }
-//        }
-//        return data;
 //    }
-
-    //镜像
-    fun dataMirror(data: ByteArray, width: Int, height: Int) {
-        var tempData: Byte
-        for (i in 0 until height * 3 / 2) {
-            for (j in 0 until width / 2) {
-                tempData = data[i * width + j]
-                data[i * width + j] = data[(i + 1) * width - 1 - j]
-                data[(i + 1) * width - 1 - j] = tempData
-            }
-        }
-    }
-
-    //Y Y Y Y ... U V . --NV12       Y Y Y Y ... V U--NV21
-    fun NV21ToYuv420P(nv12: ByteArray, yuv420p: ByteArray, width: Int, height: Int): ByteArray {
-        val ySize = width * height
-        var i: Int
-        var j: Int
-        //y
-        i = 0
-        while (i < ySize) {
-            yuv420p[i] = nv12[i]
-            i++
-        }
-        //V
-        i = 0
-        j = 0
-        while (j < ySize / 2) {
-            yuv420p[ySize * 5 / 4 + i] = nv12[ySize + j]
-            i++
-            j += 2
-        }
-        //U
-        i = 0
-        j = 1
-        while (j < ySize / 2) {
-            yuv420p[ySize + i] = nv12[ySize + j]
-            i++
-            j += 2
-        }
-        return yuv420p
-    }
-
-    //NV21: YYYY VUVU  镜像
-    internal fun NV21_mirror(nv21_data: ByteArray, width: Int, height: Int): ByteArray {
-        var i: Int
-        var left: Int
-        var right: Int
-        var temp: Byte
-        var startPos = 0
-
-        //mirrorY
-        i = 0
-        while (i < height) {
-            left = startPos
-            right = startPos + width - 1
-            while (left < right) {
-                temp = nv21_data[left]
-                nv21_data[left] = nv21_data[right]
-                nv21_data[right] = temp
-                left++
-                right--
-            }
-            startPos += width
-            i++
-        }
-
-
-        //mirrorUandV
-        val offset = width * height
-        startPos = 0
-        i = 0
-        while (i < height / 2) {
-            left = offset + startPos
-            right = offset + startPos + width - 2
-            while (left < right) {
-                temp = nv21_data[left]
-                nv21_data[left] = nv21_data[right]
-                nv21_data[right] = temp
-                left++
-                right--
-
-                temp = nv21_data[left]
-                nv21_data[left] = nv21_data[right]
-                nv21_data[right] = temp
-                left++
-                right--
-            }
-            startPos += width
-            i++
-        }
-        return nv21_data
-    }
+//
+//    //Y Y Y Y ... U V . --NV12       Y Y Y Y ... V U--NV21
+//    fun NV21ToYuv420P(nv12: ByteArray, yuv420p: ByteArray, width: Int, height: Int): ByteArray {
+//        val ySize = width * height
+//        var i: Int
+//        var j: Int
+//        //y
+//        i = 0
+//        while (i < ySize) {
+//            yuv420p[i] = nv12[i]
+//            i++
+//        }
+//        //V
+//        i = 0
+//        j = 0
+//        while (j < ySize / 2) {
+//            yuv420p[ySize * 5 / 4 + i] = nv12[ySize + j]
+//            i++
+//            j += 2
+//        }
+//        //U
+//        i = 0
+//        j = 1
+//        while (j < ySize / 2) {
+//            yuv420p[ySize + i] = nv12[ySize + j]
+//            i++
+//            j += 2
+//        }
+//        return yuv420p
+//    }
+//
+//    //NV21: YYYY VUVU  镜像
+//    internal fun NV21_mirror(nv21_data: ByteArray, width: Int, height: Int): ByteArray {
+//        var i: Int
+//        var left: Int
+//        var right: Int
+//        var temp: Byte
+//        var startPos = 0
+//
+//        //mirrorY
+//        i = 0
+//        while (i < height) {
+//            left = startPos
+//            right = startPos + width - 1
+//            while (left < right) {
+//                temp = nv21_data[left]
+//                nv21_data[left] = nv21_data[right]
+//                nv21_data[right] = temp
+//                left++
+//                right--
+//            }
+//            startPos += width
+//            i++
+//        }
+//
+//
+//        //mirrorUandV
+//        val offset = width * height
+//        startPos = 0
+//        i = 0
+//        while (i < height / 2) {
+//            left = offset + startPos
+//            right = offset + startPos + width - 2
+//            while (left < right) {
+//                temp = nv21_data[left]
+//                nv21_data[left] = nv21_data[right]
+//                nv21_data[right] = temp
+//                left++
+//                right--
+//
+//                temp = nv21_data[left]
+//                nv21_data[left] = nv21_data[right]
+//                nv21_data[right] = temp
+//                left++
+//                right--
+//            }
+//            startPos += width
+//            i++
+//        }
+//        return nv21_data
+//    }
 }

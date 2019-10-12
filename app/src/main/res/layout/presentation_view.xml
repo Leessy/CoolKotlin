@@ -4,8 +4,8 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:layout_width="1366px"
-        android:layout_height="924px"
+        android:layout_width="1000px"
+        android:layout_height="720px"
         android:layout_gravity="center">
 
         <com.aiface.uvccamera.opengl.MyGLSurfaceView

@@ -10,9 +10,10 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 /**
- * 创建者     likunlun
- * 创建时间   2019/3/26 17:17
- * 描述	      GLSurfaceView.Renderer 渲染类
+ * GLSurfaceView.Renderer 渲染类
+ * @author Created by 刘承. on 2019/10/12
+ *
+ * --深圳市尚美欣辰科技有限公司.
  */
 class MyGLRenderer : GLSurfaceView.Renderer {
     companion object {
@@ -34,7 +35,73 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     private val projectionMatrix = FloatArray(16)
     private val viewMatrix = FloatArray(16)
 
-    //翻转矩阵？ 将Y坐标翻转// 反转Y轴坐标 ，使输出的图像为正向
+    var isStartDrawYuv = false
+
+    var isFullscreen = false
+
+
+    //  x +向 默认值1 0 0   Y +默认值0 1 0        Z +默认值0 0 1
+    //  x   y   z            1   0   0
+    //  x   y   z            0   1   0
+    //  x   y   z            0   0   1
+
+    //cos(90)=0;cos(180)=-1;cos(270)=0;cos(0)=1;
+    //sin(90)=1;sin(180)=0;sin(270)=-1;sin(0)=0;
+    //旋转变换（Rotation）通用为沿Z轴旋转
+    //  cos(angle)       -sin(angle)     z
+    //  sin(angle)       cos(angle)      z
+    //  x                 y              z
+
+    //沿X轴旋转
+    //  x       y              z
+    //  x       cos(angle)     -sin(angle)
+    //  x       sin(angle)     cos(angle)
+
+    //沿Y轴旋转
+    //  cos(angle)        y     sin(angle)
+    //  x                 y     z
+    //  -sin(angle)       y     cos(angle)
+
+    //旋转90°示例
+//    private val CMartix = floatArrayOf(
+//        0.0f, -1.0f, 0.0f, 0.0f,
+//        1.0f, 0.0f, 0.0f, 0.0f,
+//        0.0f, 0.0f, 1.0f, 0.0f,
+//        0.0f, 0.0f, 0.0f, 1.0f
+//    )
+//    //旋转180°示例
+//    private val CMartix = floatArrayOf(
+//        -1.0f, 0.0f, 0.0f, 0.0f,
+//        0.0f, -1.0f, 0.0f, 0.0f,
+//        0.0f, 0.0f, 1.0f, 0.0f,
+//        0.0f, 0.0f, 0.0f, 1.0f
+//    )
+
+//    //沿Y轴旋转90°示例  相当于宽的缩放效果
+//    private val CMartix = floatArrayOf(
+//        0.5f, 0.0f, 0.8f, 0.0f,
+//        0.0f, 1.0f, 0.0f, 0.0f,
+//        -0.8f, 0.0f, 0.5f, 0.0f,
+//        0.0f, 0.0f, 0.0f, 1.0f
+//    )
+
+//    //左右翻转示例 改变X轴视角方向（镜像）
+//    private val CMartix = floatArrayOf(
+//        -1.0f, 0.0f, 0.0f, 0.0f,
+//        0.0f, 1.0f, 0.0f, 0.0f,
+//        0.0f, 0.0f, 1.0f, 0.0f,
+//        0.0f, 0.0f, 0.0f, 1.0f
+//    )
+//    //上下翻转示例 改变Y轴视角方向
+//    private val CMartix = floatArrayOf(
+//        1.0f, 0.0f, 0.0f, 0.0f,
+//        0.0f, -1.0f, 0.0f, 0.0f,
+//        0.0f, 0.0f, 1.0f, 0.0f,
+//        0.0f, 0.0f, 0.0f, 1.0f
+//    )
+
+    //    翻转矩阵？ 将Y坐标翻转// 反转Y轴坐标 ，使输出的图像为正向
+    //正常输入
     private val CMartix = floatArrayOf(
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
@@ -59,8 +126,8 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     //  Called once to set up the view's OpenGL ES environment.
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // Set the background frame color
-//        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
-
+        //GLclampf red,GLclampf green,Glclampf blue,GLclampf alpha
+        GLES20.glClearColor(MyGLColor.red, MyGLColor.green, MyGLColor.blue, MyGLColor.alpha)
         // 配置OpenGL ES 环境
         mProgram = MyGLProgram()
     }
@@ -90,6 +157,11 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
     //  Called for each redraw of the view.
     override fun onDrawFrame(unused: GL10) {
+        if (!isStartDrawYuv) {//还没有yuv数据的时候画背景数据
+            // Redraw background color
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+            return
+        }
         synchronized(this) {
             if (y.capacity() > 0) {
                 y.position(0)
@@ -102,7 +174,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
                     mProgram.feedTextureWithImageData(y, uv, mVideoWidth, mVideoHeight)
                 }
                 // Redraw background color
-                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+//                GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
 
                 // Calculate the projection and view transformation
 //                Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
@@ -137,7 +209,6 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         }
     }
 
-    var isFullscreen = false
 
     /**
      * 是否全屏显示，默认拉伸
@@ -146,13 +217,13 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         isFullscreen = b
     }
 
+    /**
+     * 镜像翻转处理
+     */
     fun setMirror(mirrorX: Boolean, mirrorY: Boolean) {
-        this.mirrorX = mirrorX
-        this.mirrorY = mirrorY
+        CMartix[0] = if (mirrorX) -1f else 1f
+        CMartix[5] = if (mirrorY) -1f else 1f
     }
-
-    var mirrorX: Boolean = false
-    var mirrorY: Boolean = false
 
     /**
      * 设置渲染的YUV数据的宽高
@@ -197,8 +268,6 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         if (mScreenWidth > 0 && mScreenHeight > 0) {
             val f1 = mScreenHeight.toFloat() / mScreenWidth.toFloat()
             val f2 = height.toFloat() / width.toFloat()
-            //设置镜像参数
-            mProgram.setMirror(mirrorX, mirrorY)
             //直接全屏（拉伸）
             if (isFullscreen) {
                 mProgram.createBuffers(MyGLProgram.squareVertices)
@@ -265,6 +334,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
                     y.put(yuvdata, 0, mVideoWidth * mVideoHeight)
                     uv.put(yuvdata, mVideoWidth * mVideoHeight, mVideoWidth * mVideoHeight / 2)
                 }
+                isStartDrawYuv = true//开始draw
             }
         }
     }

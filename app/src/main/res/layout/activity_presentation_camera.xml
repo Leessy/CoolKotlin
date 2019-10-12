@@ -7,6 +7,7 @@
     tools:context=".PresentationCameraActivity">
 
     <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="1000px"
         android:layout_height="720px"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,12 +24,25 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center" />
+
     </FrameLayout>
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="主屏"
-        android:textSize="50dp" />
+        android:id="@+id/testX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="X翻转"
+        android:textSize="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/testY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Y翻转"
+        android:textSize="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/testX" />
 
 </android.support.constraint.ConstraintLayout>

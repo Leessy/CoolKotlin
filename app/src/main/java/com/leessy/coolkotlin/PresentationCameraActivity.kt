@@ -5,18 +5,19 @@ import android.content.Context
 import android.graphics.Matrix
 import android.graphics.SurfaceTexture
 import android.hardware.display.DisplayManager
+import android.opengl.GLES20
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Display
 import android.view.TextureView
-import android.webkit.URLUtil
 import com.aiface.uvccamera.camera.Camera
 import com.aiface.uvccamera.camera.CamerasMng
 import com.aiface.uvccamera.camera.IFrameCall
-import com.leessy.aifacecore.AiFaceCore.AiFaceCore
-import com.leessy.aifacecore.opt.ImageColor
-import kotlinx.android.synthetic.main.activity_ai_face_core_test.*
+import com.aiface.uvccamera.opengl.MyGLColor
+import com.leessy.KotlinExtension.onClick
+import kotlinx.android.synthetic.main.activity_ai_face_core_test.textureview
+import kotlinx.android.synthetic.main.activity_presentation_camera.*
 import kotlinx.android.synthetic.main.presentation_view.*
 import java.nio.ByteBuffer
 import java.util.*
@@ -25,8 +26,8 @@ class PresentationCameraActivity : AppCompatActivity() {
     private val TAG = javaClass.name
     var c: Camera? = null
     var c2: Camera? = null
-    val cameraColorW = 640
-    val cameraColorH = 480
+    val cameraColorW = 1280
+    val cameraColorH = 720
     private var mDisplayManager: DisplayManager? = null
     private var display: Display? = null
     private var presentation: PresentationView? = null
@@ -81,21 +82,18 @@ class PresentationCameraActivity : AppCompatActivity() {
             }
         }
         showPresentationView()
+        testX.onClick {
+            presentation?.showmirror()
+        }
+        testY.onClick {
+            presentation?.showmirrorY()
+        }
     }
 
     var call = object : IFrameCall {
         override fun call(bf: ByteBuffer, w: Int, h: Int) {
             val bytes = ByteArray(bf.capacity())
             bf.get(bytes, 0, bytes.size)
-//                发送到算法库识别
-//            AiFaceCore.dataEmitter(
-//                bytes,
-//                ImageColor.COLOR,
-//                cameraColorW,
-//                cameraColorH,
-//                bMirror = 1,
-//                nRotate = 2
-//            )
             presentation?.setYuvData(bytes, 2)
         }
     }
@@ -110,7 +108,6 @@ class PresentationCameraActivity : AppCompatActivity() {
     //视图转换  镜像
     private fun MatrixView(textureView: TextureView, w: Int, h: Int) {
         val matrix = Matrix()
-
         textureView.getTransform(matrix)
         //                matrix.postRotate(90, i / 2, i1 / 2);//绕某个点旋转90度，这里选择的原点是图片的中心点
         //                matrix.setSinCos(1, 0, i / 2, i1 / 2);//把图像旋转90度，那么90度对应的sin和cos分别是1和0。
@@ -126,7 +123,6 @@ class PresentationCameraActivity : AppCompatActivity() {
         presentation?.show()
     }
 
-
     inner class PresentationView : Presentation {
         constructor(outerContext: Context?, display: Display?) : super(outerContext, display)
 
@@ -138,15 +134,38 @@ class PresentationCameraActivity : AppCompatActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+            MyGLColor.setBackgroundColor(1.0f, 0.0f, 0f, 1f)//在glview创建之前配置背景color值
             setContentView(R.layout.presentation_view)
-
+            myglsurfaceview.requestRender()//更新背景颜色
+            //初始化参数
             myglsurfaceview.setYuvDataSize(
                 cameraColorW,
                 cameraColorH,
-                mirrorX = true
+                isfullscreen = true
             )
         }
 
+        var ismX = false
+        var ismY = false
+        fun showmirror() {
+            ismX = !ismX
+            //初始化参数
+            myglsurfaceview.setMirrorXY(
+                mirrorX = ismX,
+                mirrorY = ismY
+            )
+        }
+
+        fun showmirrorY() {
+            ismY = !ismY
+            //初始化参数
+            myglsurfaceview.setMirrorXY(
+                mirrorX = ismX,
+                mirrorY = ismY
+            )
+        }
+
+        //设置预览数据
         fun setYuvData(yuvData: ByteArray?, type: Int) {
             myglsurfaceview.feedData(yuvData, type)
         }

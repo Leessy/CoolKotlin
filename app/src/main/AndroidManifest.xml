@@ -4,6 +4,9 @@
     package="com.leessy.coolkotlin"
     android:sharedUserId="android.uid.system">
 
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
     <application
         android:name="com.leessy.App"
         android:allowBackup="true"
@@ -73,12 +76,14 @@
         <service android:name="com.leessy.ofm1000test.mqtt.MQTTService" />
         <service android:name="org.eclipse.paho.android.service.MqttService" />
     </application>
+
     <uses-feature android:name="android.permission.DEVICE_POWER" />
     <uses-feature android:name="android.hardware.camera" />
 
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="true" />
+
     <uses-permission android:name="android.permission.SHUTDOWN" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />
