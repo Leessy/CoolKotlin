@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="1366px"
+        android:layout_height="924px"
+        android:layout_gravity="center">
+
+        <com.aiface.uvccamera.opengl.MyGLSurfaceView
+            android:id="@+id/myglsurfaceview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+
+        <com.leessy.View.FaceView
+            android:id="@+id/faceview222"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
+
+</FrameLayout>

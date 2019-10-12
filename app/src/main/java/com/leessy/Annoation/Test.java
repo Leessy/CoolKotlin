@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.reactivex.Observable;
 
@@ -52,9 +54,19 @@ public class Test {
             (byte) 0xe7, 0x23
     };
 
+    public static boolean isHttpUrl(String urls) {
+        boolean isurl = false;
+        String regex = "(((https|http)?://)?([a-z0-9]+[.])|(www.))"
+                + "\\w+[.|\\/]([a-z0-9]{0,})?[[.]([a-z0-9]{0,})]+((/[\\S&&[^,;\u4E00-\u9FA5]]+)+)?([.][a-z0-9]{0,}+|/?)";//设置正则表达式
+        Pattern pat = Pattern.compile(regex.trim());//比对
+        Matcher mat = pat.matcher(urls.trim());
+        isurl = mat.matches();//判断是否匹配
+        return isurl;
+    }
 
     //01 03 14 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
     public static void main(String[] args) {
+
         Long ll = 1858558321L;
         System.out.println("---***** " + (43111 / 10000));
 

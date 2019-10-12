@@ -81,14 +81,15 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
         RxView.clicks(ofm1000test).observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                isAuto = true
-//                startActivity(Intent(this, ofm1000testActivity::class.java))
                 startActivity(Intent(this, ofm1000ServerTest::class.java))
             }
         RxView.clicks(F501Test).observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                isAuto = true
                 startActivity(Intent(this, F501ATestActivity::class.java))
+            }
+        RxView.clicks(presentationCamera).observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                startActivity(Intent(this, PresentationCameraActivity::class.java))
             }
 
 
