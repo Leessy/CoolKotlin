@@ -3,10 +3,9 @@ package com.leessy.coolkotlin
 import android.app.Presentation
 import android.content.Context
 import android.graphics.Matrix
+import android.graphics.RectF
 import android.graphics.SurfaceTexture
 import android.hardware.display.DisplayManager
-import android.opengl.GLES20
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Display
@@ -16,13 +15,24 @@ import com.aiface.uvccamera.camera.CamerasMng
 import com.aiface.uvccamera.camera.IFrameCall
 import com.aiface.uvccamera.opengl.MyGLColor
 import com.leessy.KotlinExtension.onClick
+import com.leessy.aifacecore.AiFaceCore.AiFaceCore
+import com.leessy.aifacecore.datas.RectData
+import com.leessy.aifacecore.datas.isLivings
+import com.leessy.aifacecore.opt.*
+import com.trello.rxlifecycle2.android.ActivityEvent
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_ai_face_core_test.*
 import kotlinx.android.synthetic.main.activity_ai_face_core_test.textureview
 import kotlinx.android.synthetic.main.activity_presentation_camera.*
+import kotlinx.android.synthetic.main.activity_presentation_camera.faceview
 import kotlinx.android.synthetic.main.presentation_view.*
 import java.nio.ByteBuffer
 import java.util.*
+import java.util.concurrent.TimeUnit
 
-class PresentationCameraActivity : AppCompatActivity() {
+class PresentationCameraActivity : RxAppCompatActivity() {
     private val TAG = javaClass.name
     var c: Camera? = null
     var c2: Camera? = null
@@ -88,13 +98,78 @@ class PresentationCameraActivity : AppCompatActivity() {
         testY.onClick {
             presentation?.showmirrorY()
         }
+
+        //人脸框数据处理
+        AiFaceCore.FollowFaceRect(imageColor = ImageColor.COLOR)
+            .compose(this.bindUntilEvent(ActivityEvent.STOP))
+            .observeOn(Schedulers.newThread())
+            .map {
+                it.apply {
+                    //                    if (!isNoneFace()) {
+//                        FaceFilterCalculate(16, 250, 500, 30, 0, 85)
+//                    }
+                    rect = RectF(
+                        it.nFaceLeft.toFloat(),
+                        it.nFaceTop.toFloat(),
+                        it.nFaceRight.toFloat(),
+                        it.nFaceBottom.toFloat()
+                    )
+                }
+            }
+//            .FaceFilterCalculate(16, 250, 500, 30, 0, 85)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.d("---- 人脸框  过滤值=", "${it.rect} ")
+                //画彩色人脸框或者红外人脸框
+                when (it.imageColor) {
+                    ImageColor.COLOR ->
+//                        faceview.setFaces(it.rect, 480, 640)
+                    {
+                        faceview.setFaces(RectF(it.rect), cameraColorW, cameraColorH)
+                        presentation?.setFaces(it)
+                    }
+
+//                    ImageColor.IR ->
+//                        faceview2.setFaces(it.rect, cameraIrH, cameraIrW)
+                }
+
+            }, {
+                Log.d("---- 人脸框 异常", " $it")
+            })
+
+        AiFaceCore.Follows(ImageColor.COLOR)
+            .compose(this.bindUntilEvent(ActivityEvent.STOP))
+            .sample(300, TimeUnit.MILLISECONDS)
+            .DetectFaceAndFilter()
+            .subscribe({
+                //                Log.d(TAG, "人脸个数:${it.faceNum} ")
+                Log.d(TAG, "人脸:${it.faceResult} ")
+            }, {})
+//            .observeOn(Schedulers.io())
+//            .compose(this.bindUntilEvent(ActivityEvent.STOP))
+//            .sample(200, TimeUnit.MILLISECONDS)
+//            .LivingsSinglePass()
+//            .filter { it.isLivings() }
+//            .FeatureGet()
     }
 
+    var num1 = 0L
     var call = object : IFrameCall {
         override fun call(bf: ByteBuffer, w: Int, h: Int) {
             val bytes = ByteArray(bf.capacity())
             bf.get(bytes, 0, bytes.size)
             presentation?.setYuvData(bytes, 2)
+
+            //发送到算法库识别
+            if (num1++ % 3 != 0L) return
+            AiFaceCore.dataEmitter(
+                bytes,
+                ImageColor.COLOR,
+                cameraColorW,
+                cameraColorH,
+                bMirror = 0,
+                nRotate = 0
+            )
         }
     }
     //翻转矩阵？ 将Y坐标翻转
@@ -141,8 +216,13 @@ class PresentationCameraActivity : AppCompatActivity() {
             myglsurfaceview.setYuvDataSize(
                 cameraColorW,
                 cameraColorH,
-                isfullscreen = true
+                isfullscreen = true,
+                mirrorX = true
             )
+        }
+
+        fun setFaces(rect: RectData) {
+            faceview222.setFaces(rect.rect, cameraColorW, cameraColorH, true)
         }
 
         var ismX = false

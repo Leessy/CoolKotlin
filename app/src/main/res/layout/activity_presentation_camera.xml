@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,10 +8,9 @@
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:layout_width="1000px"
-        android:layout_height="720px"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_width="1422px"
+        android:layout_height="800px"
+        android:layout_gravity="center">
 
         <TextureView
             android:id="@+id/textureview"
@@ -27,22 +26,24 @@
 
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/testX"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="X翻转"
-        android:textSize="50dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/testY"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Y翻转"
-        android:textSize="50dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/testX" />
+        <TextView
+            android:id="@+id/testX"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="X翻转"
+            android:textSize="50dp" />
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/testY"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Y翻转"
+            android:textSize="50dp" />
+    </LinearLayout>
+
+</FrameLayout>

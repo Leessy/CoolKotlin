@@ -10,6 +10,7 @@ import android.view.View;
 import java.util.concurrent.TimeUnit;
 
 import com.leessy.coolkotlin.R;
+
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -21,10 +22,12 @@ import io.reactivex.functions.Consumer;
 public class FaceView extends View {
     private static final String TAG = "Liuc";
     private Paint mLinePaint;
-    //    private Matrix mMatrix = new Matrix();
+    private Matrix mMatrix = new Matrix();
     private RectF mRect = null;
     float _width = 480;
     float _height = 640;
+
+    boolean isMirror = false;
 
     public FaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -68,6 +71,21 @@ public class FaceView extends View {
         invalidate();
     }
 
+    /**
+     * 可见光人脸框  镜像
+     *
+     * @param faceResult
+     * @param w
+     * @param h
+     */
+    public void setFaces(RectF faceResult, int w, int h, boolean isMirror) {
+        this.mRect = faceResult;
+        this.isMirror = isMirror;
+        _width = w;
+        _height = h;
+        invalidate();
+    }
+
 
     /**
      * 清除人脸框
@@ -90,6 +108,7 @@ public class FaceView extends View {
         mRect.right *= wws;
         mRect.top *= hhs;
         mRect.bottom *= hhs;
+
         //根据中心点转换 为正方形
         //画第一个原 3条弧形 外圆圈
         int centerX = (int) mRect.centerX();
@@ -97,14 +116,20 @@ public class FaceView extends View {
         int reatr = (int) ((mRect.width() + mRect.height()) / 4);
         mRect.set(centerX - reatr, centerY - reatr, centerX + reatr, centerY + reatr);
         //开始绘制
+
+        Log.d("---- 人脸框1 =", mRect.toString());
+        /////镜像
+        if (isMirror){
+            mMatrix.setScale(-1, 1);
+            mMatrix.postTranslate(getWidth(), 0);
+            mMatrix.mapRect(mRect);
+            Log.d("---- 人脸框 mirror =", mRect.toString());
+
+        }
+
         np.draw(canvas, mRect);
 
-        /////镜像
-//        mMatrix.setScale(-1, 1);
-//        mMatrix.postTranslate(getWidth(), 0);
-//        mMatrix.mapRect(mRect);
 //        canvas.drawRect(mRect, mLinePaint);
-
 //        canvas.restore();//防止影响下一次绘制  多人脸
         super.onDraw(canvas);
     }

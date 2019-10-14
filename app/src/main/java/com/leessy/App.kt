@@ -45,6 +45,8 @@ class App : Application() {
         app = this
 //        initXcrash()
         DoraemonKit.install(this)
+
+
     }
 
     //初始化 scrash
