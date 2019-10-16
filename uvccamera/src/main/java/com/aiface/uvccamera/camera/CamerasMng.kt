@@ -103,8 +103,8 @@ object CamerasMng {
                 c = it
             }
         }
+        Log.d("CamerasMng", "disconnect ---设备个数   ${cameraList.size}")
         c?.stopPreview()//释放相机资源
-//        Log.d("CamerasMng", "disconnect ---设备个数   ${cameraList.size}")
     }
 
     //USB设备移除处理

@@ -55,7 +55,7 @@ class PresentationCameraActivity : RxAppCompatActivity() {
 
         //获取设备列表
         CamerasMng.cameraList.forEach {
-            Log.d("CamerasMng", "CamerasMng ${it.pid}")
+//            Log.d("CamerasMng", "CamerasMng ${it.pid}")
             if (it.pid == 33073) {//33073
                 c = it
                 c?.openCamera()
@@ -88,7 +88,9 @@ class PresentationCameraActivity : RxAppCompatActivity() {
 
             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?): Boolean {
                 Log.d("----", "--   onSurfaceTextureDestroyed")
-                c?.stopPreview()
+                c?.stopSecede()
+//                c?.stopPreview()
+//                c?.destroyCamera()
                 return true
             }
         }

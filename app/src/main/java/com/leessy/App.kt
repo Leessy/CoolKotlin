@@ -44,7 +44,7 @@ class App : Application() {
         super.onCreate()
         app = this
 //        initXcrash()
-        DoraemonKit.install(this)
+//        DoraemonKit.install(this)
 
 
     }

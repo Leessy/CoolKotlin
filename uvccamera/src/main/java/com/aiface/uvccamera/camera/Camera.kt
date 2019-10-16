@@ -28,6 +28,7 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
     /**
      * 启动相机
      */
+    @Synchronized
     fun openCamera(): Boolean {
         if (isOpen()) return true
         try {
@@ -35,11 +36,16 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
             uvcCamera?.open(controlBlock)
 //            setPreviewSize(CamerasMng.defaultPreviewWidth, CamerasMng.defaultPreviewHeight)//设置预览参数
             if (CamerasMng.usingDfSize && CamerasMng.defaultPreviewWidth != 0 && CamerasMng.defaultPreviewHeight != 0) {
-                uvcCamera?.setPreviewSize(CamerasMng.defaultPreviewWidth, CamerasMng.defaultPreviewHeight)
+                uvcCamera?.setPreviewSize(
+                    CamerasMng.defaultPreviewWidth,
+                    CamerasMng.defaultPreviewHeight
+                )
                 uvcCamera?.setAutoFocus(true)
             }
             return true
         } catch (e: Exception) {
+            Log.d("------", "$pid openCamera()  faild $e ")
+            uvcCamera?.destroy()//open失败的时候调用，回调USBMonitor注册的 disconnect（）
             uvcCamera = null
         }
         return false
@@ -112,36 +118,48 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
         max_fps: Int = 15,
         frameType: Int = UVCCamera.FRAME_FORMAT_MJPEG,
         previewcall: IFrameCall? = null
-    ) {
+    ): Boolean {
         if (openCamera()) {
             previewcall?.let {
                 setFrameCall(previewcall)//此处为空不再重置为空
             }
-            previewSurfaceTexture = previewTexture
-            uvcCamera?.run {
-                if (previewTexture != null) {
-                    setPreviewTexture(previewTexture)
-                } else if (surface != null) {
-                    setPreviewDisplay(surface)
-                } else {
-                    setPreviewTexture(SURFACE_TEXTURE)
-                }
-                if (w != 0 && h != 0) {
-                    this@Camera.setPreviewSize(w, h, max_fps = max_fps, frameType = frameType)
-                }
-                setFrameCallback(iFrameCallback, UVCCamera.PIXEL_FORMAT_YUV420SP)// uvcCamera.PIXEL_FORMAT_NV21
-                previewSize?.let {
-                    //获取不到分辨率数据的自行get，人脸算法需要
-                    Height = previewSize.height
-                    Width = previewSize.width
-                }
+            try {
+                previewSurfaceTexture = previewTexture
+                uvcCamera?.run {
+                    if (previewTexture != null) {
+                        setPreviewTexture(previewTexture)
+                    } else if (surface != null) {
+                        setPreviewDisplay(surface)
+                    } else {
+                        setPreviewTexture(SURFACE_TEXTURE)
+                    }
+                    if (w != 0 && h != 0) {
+                        this@Camera.setPreviewSize(w, h, max_fps = max_fps, frameType = frameType)
+                    }
+                    setFrameCallback(
+                        iFrameCallback,
+                        UVCCamera.PIXEL_FORMAT_YUV420SP
+                    )// uvcCamera.PIXEL_FORMAT_NV21
+                    previewSize?.let {
+                        //获取不到分辨率数据的自行get，人脸算法需要
+                        Height = previewSize.height
+                        Width = previewSize.width
+                    }
 
-                startPreview()
-                powerlineFrequency = 1
-                updateCameraParams()
-                isPreview = true
+                    startPreview()
+                    powerlineFrequency = 1
+                    updateCameraParams()
+                    isPreview = true
+                }
+            } catch (e: java.lang.Exception) {
+                Log.d("------", "stratPreview() faild $pid $e")
+                isPreview = false
             }
-        } else Log.d("------", "open  faild ")
+            return isPreview
+        } else {
+            Log.d("------", "stratPreview() openCamera()  faild $pid")
+            return false
+        }
     }
 
     //假关闭，从相机中脱离，相机逻辑不变，应用不再使用相机数据
@@ -157,7 +175,6 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
     //取消预览
     @Synchronized
     fun stopPreview() {
-        if (!isPreview) return
         isPreview = false
         call = null
         uvcCamera?.stopPreview()
@@ -169,8 +186,10 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
      * 使相机进入关闭状态
      */
     fun destroyCamera() {
-        if (isPreviewing()) stopPreview()
+//        if (isPreviewing()) stopPreview()
         uvcCamera?.destroy()
+        isPreview = false
+        call = null
         uvcCamera = null
         previewSurfaceTexture = null
     }
