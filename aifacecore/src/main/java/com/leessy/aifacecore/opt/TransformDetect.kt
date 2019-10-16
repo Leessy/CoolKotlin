@@ -166,20 +166,20 @@ fun Observable<CameraData>.DetectFace(): Observable<FaceData> {
                     }
                 }
             }
-
+            //现赋值旋转后宽高再构建人脸框信息
+            width = w[0]
+            height = h[0]
             if (faceNum > 0) {
                 FaceRectEmitterCenter.sendFaceRect(
-                    it.imageColor,
-                    it.CameraID,
-                    it.width,
-                    it.height,
+                    imageColor,
+                    CameraID,
+                    width,
+                    height,
                     detectResult!!
                 )
             } else {
                 FaceRectEmitterCenter.sendFaceRect(it.imageColor, it.CameraID)
             }
-            width = w[0]
-            height = h[0]
             this.testTime_face = System.currentTimeMillis() - start
             logd(
                 "---",

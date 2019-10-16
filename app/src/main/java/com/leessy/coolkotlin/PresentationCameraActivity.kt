@@ -14,6 +14,7 @@ import com.aiface.uvccamera.camera.Camera
 import com.aiface.uvccamera.camera.CamerasMng
 import com.aiface.uvccamera.camera.IFrameCall
 import com.aiface.uvccamera.opengl.MyGLColor
+import com.blankj.utilcode.util.ToastUtils
 import com.leessy.KotlinExtension.onClick
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.datas.RectData
@@ -172,13 +173,6 @@ class PresentationCameraActivity : RxAppCompatActivity() {
             )
         }
     }
-    //翻转矩阵？ 将Y坐标翻转
-    private val CMartix = floatArrayOf(
-        -1.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    ) // 反转Y轴坐标 ，使输出的图像为正向
 
     //视图转换  镜像
     private fun MatrixView(textureView: TextureView, w: Int, h: Int) {
@@ -186,14 +180,35 @@ class PresentationCameraActivity : RxAppCompatActivity() {
         textureView.getTransform(matrix)
         //                matrix.postRotate(90, i / 2, i1 / 2);//绕某个点旋转90度，这里选择的原点是图片的中心点
         //                matrix.setSinCos(1, 0, i / 2, i1 / 2);//把图像旋转90度，那么90度对应的sin和cos分别是1和0。
-        matrix.setScale(-1f, 1f)
+//        matrix.preRotate(180f)
+
+//        * translate（平移），rotate（旋转），scale（缩放）和skew（倾斜）四种*/
+        //旋转后的宽高比不正确，如果选哟铺满全屏显示，还需设置缩放比例额
+//        matrix.setScale((w / h).toFloat(), (h / w).toFloat(), (w / 2).toFloat(), (h / 2).toFloat())
+        Log.d(TAG, "缩放比例=${(w.toFloat() / h.toFloat())}  ${(h.toFloat() / w.toFloat())}")
+
+//        matrix.postRotate(90F, (w / 2).toFloat(), 1f)//绕某个点旋转90度，这里选择的原点是图片的中心点
+//        matrix.setScale(-1f, 1f)//设置初始值，会把之前的计算重置
+
+
+        //先旋转
+        matrix.postRotate(90F, (w.toFloat() / 2), h.toFloat() / 2)//绕某个点旋转90度，这里选择的原点是图片的中心点
+
+        //镜像---相当于把X轴1转到-1（沿X0旋转了180°，此时图片在负轴，不可见），然后再往X轴平移宽度过来
+        matrix.postScale(-1f, 1f)
         matrix.postTranslate(w.toFloat(), 0f)
+        //缩放
+        matrix.postScale(
+            (w.toFloat() / h),
+            (h.toFloat() / w),
+            w.toFloat() / 2,
+            h.toFloat() / 2
+        )
         textureView.setTransform(matrix)
-        matrix.getValues(CMartix)
-        Log.d(TAG, "---***   ${Arrays.toString(CMartix)}")
     }
 
     private fun showPresentationView() {
+        if (display == null) return
         presentation = PresentationView(this, display)
         presentation?.show()
     }
@@ -219,6 +234,9 @@ class PresentationCameraActivity : RxAppCompatActivity() {
                 isfullscreen = true,
                 mirrorX = true
             )
+            testBt1.onClick {
+                ToastUtils.showLong("副屏点击按钮测试")
+            }
         }
 
         fun setFaces(rect: RectData) {
