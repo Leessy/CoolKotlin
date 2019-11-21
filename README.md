@@ -2,8 +2,11 @@
 
 ### [AiFaceCore人脸算法核心库](https://github.com/Leessy/CoolKotlin/blob/master/README-AiFaceCore.md)
 
-### 必须同时引入的库
+### [USBCameraMng封装库](https://github.com/Leessy/CoolKotlin/blob/master/README-UsbCamera.md)
 
+
+
+### 必须同时引入的库
 某些库需要以下内容同时加入配置（并且配置kotlin）
 ``` Gradle
 dependencies {
@@ -20,7 +23,7 @@ dependencies {
 ``` Gradle
 dependencies {
     //直接使用全部功能lib会异常
-    implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.2.35'
+    implementation 'com.github.Leessy.CoolKotlin:0.2.35'
 }
 ```
 ### 正常引入方式

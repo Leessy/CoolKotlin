@@ -8,7 +8,7 @@
 ## 使用说明
 >项目主要使用kotlin语言，使用示例将使用kotlin（java使用参考kotlin方式修改即可）
 
-### :fa-gear: 工程配置
+###工程配置
 >项目主要使用kotlin中协程([coroutines](https://github.com/Kotlin/kotlinx.coroutines))
 >封装库内使用Rxjava2([Rxjava2](https://github.com/ReactiveX/RxJava))
 
@@ -27,10 +27,10 @@ dependencies {
 ```
 
 
-### :fa-star: 初始化
->+ 算法支持主要功能最大占用cpu数
-+ 算法支持活体检测
-+ 算法支持新版V10特征与V8特征码配置（互不兼容）
+### 初始化
+> 算法支持主要功能最大占用cpu数
+> 算法支持活体检测
+> 算法支持新版V10特征与V8特征码配置（互不兼容）
 
 + 初始化示例：
 ```
@@ -52,10 +52,10 @@ AiFaceCore.initAiFace(
 
 
 ### 人脸识别&人库对比
-> + 默认使用相机回调数据（YUV420SP格式）
-+ 含人脸信息结果订阅与人脸框位置信息订阅
-+ 各通道同时只能有一处订阅
-+ 核心库现在最大检测速度每秒8次左右，最终速度根据处理性能决定
+> 默认使用相机回调数据（YUV420SP格式）
+> 含人脸信息结果订阅与人脸框位置信息订阅
+> 各通道同时只能有一处订阅
+> 核心库现在最大检测速度每秒8次左右，最终速度根据处理性能决定
 
 + 发送数据到人脸算法核心库：
 ```
@@ -126,7 +126,12 @@ camera.setFrameCall(object : IFrameCall {
 			//.filter { it.isLivings() }//过滤活体失败的数据
 			//.FeatureGet()//提取人脸特征码
 			//.filter { it.isReadyCompare() }//过滤提取特征码失败的数据
-			//.map {}//保存数据、对比或者其他逻辑处理
+			//.map {
+				//保存数据、对比或者其他逻辑处理
+				//或取当前特征码与指定特征码1:1对比
+				//t2.CompareRet =AiChlFace.FeatureCompare(t2.nChannelNo.ordinal, it.feature,
+				//temp.templateColor).toLong()
+			//}
             .subscribe({
 			//人脸信息结果 it
 			}）
