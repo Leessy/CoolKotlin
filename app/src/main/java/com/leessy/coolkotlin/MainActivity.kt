@@ -16,10 +16,13 @@ import com.aiface.uvccamera.camera.CamerasMng
 import com.blankj.utilcode.util.ShellUtils
 import com.jakewharton.rxbinding2.view.RxView
 import com.leessy.ActionBroadCast
+import com.leessy.CardTest.YxCardTestActivity
 import com.leessy.F501ATest.F501ATestActivity
 import com.leessy.F602SystemTool
+import com.leessy.KotlinExtension.onClick
 import com.leessy.LED
 import com.leessy.Loaction.LoactionActivity
+import com.leessy.OCR.OcrActivity
 import com.leessy.PowerManagerUtil
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.AiFaceCore.AiFaceType
@@ -43,6 +46,7 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         setContentView(R.layout.activity_main)
 
         sendBroadcast(Intent("android.intent.action.SHOW_NAVIGATION_BAR"))
+//        sendBroadcast(Intent("android.intent.action.HIDE_NAVIGATION_BAR"))
 
 //        RxView.clicks(functionList1).observeOn(AndroidSchedulers.mainThread())
 //                .subscribe { startActivity(Intent(this, ScrollingActivity::class.java)) }
@@ -76,7 +80,8 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         RxView.clicks(AiFaceCoreTest).observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 isAuto = true
-                startActivity(Intent(this, AiFaceCoreTestActivity::class.java))
+//                startActivity(Intent(this, AiFaceCoreTestActivity::class.java))
+                startaifacecore()
             }
 
         RxView.clicks(ofm1000test).observeOn(AndroidSchedulers.mainThread())
@@ -91,6 +96,11 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
             .subscribe {
                 startActivity(Intent(this, PresentationCameraActivity::class.java))
             }
+
+        ocr.onClick {
+            startActivity(Intent(this, YxCardTestActivity::class.java))
+//            startActivity(Intent(this, OcrActivity::class.java))
+        }
 
 
         //灯光测试---------------------------
@@ -180,9 +190,11 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
         Log.d("----****", "cpunum=     ${AiChlFace.GetCpuNum()}")
 //        AiChlFace.SetFuncCpuNum(0, 2)
+        //0-全部功能，1-人脸检测，2-特征提取，3-活体检测
         AiChlFace.SetFuncCpuNum(1, 1)
         AiChlFace.SetFuncCpuNum(2, 1)
         AiChlFace.SetFuncCpuNum(3, 1)
+        //配置特征码版本（默认V8）
         AiFaceCore.isV10 = true
         AiFaceCore.initAiFace(
             application, AiFaceType.MODE_DM2016, object : IAiFaceInitCall {
@@ -221,8 +233,25 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         PowerManagerUtil.goToSleep(this)
     }
 
-    var isAuto = false
+    var isAuto = true
 
+
+    fun startaifacecore() {
+        val s = edittext.text.toString().trim()
+        startActivity(Intent(this, AiFaceCoreTestActivity::class.java).apply {
+            val wh = s.split("*")
+            if (wh.size == 2) {
+                try {
+                    val w = wh[0].toInt()
+                    val h = wh[1].toInt()
+                    putExtra("w", w)
+                    putExtra("h", h)
+                } catch (e: Exception) {
+                }
+            }
+        })
+
+    }
 
     override fun onResume() {
         super.onResume()
@@ -231,13 +260,14 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 //            startActivity(Intent(this@MainActivity, FunctionTestActivity::class.java))
 //        }
         Log.d("----", ":onResume ")
-//        if (isAuto) {
-//            Observable.timer(2, TimeUnit.SECONDS, Schedulers.io())
-//                .compose(this.bindToLifecycle())
-//                .subscribe {
-//                    startActivity(Intent(this, AiFaceCoreTestActivity::class.java))
-//                }
-//        }
+        if (isAuto) {
+            Observable.timer(2, TimeUnit.SECONDS, Schedulers.io())
+                .compose(this.bindToLifecycle())
+                .subscribe {
+                    //                    startActivity(Intent(this, AiFaceCoreTestActivity::class.java))
+                    startaifacecore()
+                }
+        }
     }
 
     override fun onDestroy() {

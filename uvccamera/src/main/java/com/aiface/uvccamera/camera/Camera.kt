@@ -25,6 +25,15 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
         }
     }
 
+
+    fun startCapture(surface: Surface) {
+        uvcCamera?.startCapture(surface)
+    }
+
+    fun stopCapture() {
+        uvcCamera?.stopCapture()
+    }
+
     /**
      * 启动相机
      */
@@ -66,7 +75,14 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
 
     /**
      * 设置预览宽高
-     * 目前问题:1.红外相机在mjpeg模式下，有些分辨率设置失效，但是回调的数据分辨率是正确的
+     * 目前问题:1.红外相机在mjpeg模式下，有些分辨率设置失效，但是回调的数据分辨率是正确的(联咏，松汉镜头组)
+     *
+     *
+     *      int type = this.mCurrentFrameFormat > 0 ? 6 : 4;
+     * ---> 根据代码推断type=6为mjpeg分辨率，type=4为yuv分辨率
+     *
+     * {"formats":[{"index":1,"type":6,"default":1,"size":["640x480","800x600","848x480","1024x768","1280x800","1280x720","1920x1080"]},
+     * {"index":2,"type":4,"default":1,"size":["640x480","800x600","848x480","1024x768","1280x800","1280x720","1920x1080"]}]}
      */
     @Synchronized
     fun setPreviewSize(
@@ -77,10 +93,12 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
         bandwidthFactor: Float = 0.5F
     ): Boolean {
         if (!isOpen()) return false
-        val list = uvcCamera?.getSupportedSizeList()
+        val list = uvcCamera?.supportedSizeList
+        Log.d("------", "相机pid$pid supportedSize :  ${uvcCamera?.supportedSize} ")
+        list?.forEach { Log.d("------", "相机pid$pid setPreviewSize :  ${it} ") }
         var size: Size? = null//查询是否支持预设值=宽高
         list?.forEach { if (it.width == w && it.height == h) size = it }
-        Log.d("------", "$devName setPreviewSize *-****:  ${size} ")
+        Log.d("------", "相机pid$pid  setPreviewSize  最终设置size:  ${size} ")
         Log.d("------", "max_fps $max_fps  frameType ${frameType} ")
         return if (size != null) {
             try {
@@ -175,9 +193,9 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
     //取消预览
     @Synchronized
     fun stopPreview() {
+        uvcCamera?.stopPreview()
         isPreview = false
         call = null
-        uvcCamera?.stopPreview()
         previewSurfaceTexture = null
     }
 
@@ -185,12 +203,13 @@ class Camera(var controlBlock: USBMonitor.UsbControlBlock) : base() {
     /**
      * 使相机进入关闭状态
      */
+    @Synchronized
     fun destroyCamera() {
 //        if (isPreviewing()) stopPreview()
         uvcCamera?.destroy()
+        uvcCamera = null
         isPreview = false
         call = null
-        uvcCamera = null
         previewSurfaceTexture = null
     }
 

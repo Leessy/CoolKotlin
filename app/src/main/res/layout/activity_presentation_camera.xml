@@ -6,17 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".PresentationCameraActivity">
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center">
+<!--    <FrameLayout-->
+<!--        android:id="@+id/frameLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_gravity="center">-->
 
-        <!--    <FrameLayout-->
-        <!--        android:id="@+id/frameLayout"-->
-        <!--        android:layout_width="1422px"-->
-        <!--        android:layout_height="800px"-->
-        <!--        android:layout_gravity="center">-->
+            <FrameLayout
+                android:id="@+id/frameLayout"
+                android:layout_width="1422px"
+                android:layout_height="800px"
+                android:layout_gravity="center">
 
         <TextureView
             android:id="@+id/textureview"

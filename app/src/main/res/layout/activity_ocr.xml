@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.leessy.OCR.OcrActivity">
+
+    <Button
+        android:id="@+id/initocr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="初始化" />
+
+    <Button
+        android:id="@+id/ocridcard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="身份证识别" />
+    <Button
+        android:id="@+id/ocrcar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="驾驶证" />
+    <Button
+        android:id="@+id/passport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="护照" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp" />
+</LinearLayout>

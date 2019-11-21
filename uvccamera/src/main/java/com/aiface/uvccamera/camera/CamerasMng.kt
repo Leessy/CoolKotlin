@@ -104,7 +104,9 @@ object CamerasMng {
             }
         }
         Log.d("CamerasMng", "disconnect ---设备个数   ${cameraList.size}")
-        c?.stopPreview()//释放相机资源
+//        c?.stopPreview()//释放相机资源
+        c?.destroyCamera()//释放相机资源
+
     }
 
     //USB设备移除处理

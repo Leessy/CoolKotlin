@@ -6,6 +6,13 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <EditText
+        android:id="@+id/edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text="1920*1080" />
+
     <!--<Button-->
     <!--android:id="@+id/functionList1"-->
     <!--android:layout_width="match_parent"-->
@@ -59,16 +66,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="ofm1000接口测试" />
+
     <Button
         android:id="@+id/F501Test"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="F501镜头" />
+
     <Button
         android:id="@+id/presentationCamera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="F502副屏异显相机预览" />
+
+    <Button
+        android:id="@+id/ocr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ocr测试" />
 
 
     <LinearLayout

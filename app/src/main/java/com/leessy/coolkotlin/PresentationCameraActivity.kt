@@ -37,8 +37,8 @@ class PresentationCameraActivity : RxAppCompatActivity() {
     private val TAG = javaClass.name
     var c: Camera? = null
     var c2: Camera? = null
-    val cameraColorW = 1280
-    val cameraColorH = 720
+    val cameraColorW = 1920
+    val cameraColorH = 1080
     private var mDisplayManager: DisplayManager? = null
     private var display: Display? = null
     private var presentation: PresentationView? = null
@@ -56,10 +56,10 @@ class PresentationCameraActivity : RxAppCompatActivity() {
         //获取设备列表
         CamerasMng.cameraList.forEach {
 //            Log.d("CamerasMng", "CamerasMng ${it.pid}")
-            if (it.pid == 33073) {//33073
+            if (it.pid == 1) {//33073
                 c = it
                 c?.openCamera()
-                c?.setPreviewSize(cameraColorW, cameraColorH)
+                c?.setPreviewSize(cameraColorW, cameraColorH,max_fps = 25)
                 c?.setFrameCall(call)
             }
         }
@@ -165,14 +165,14 @@ class PresentationCameraActivity : RxAppCompatActivity() {
 
             //发送到算法库识别
             if (num1++ % 3 != 0L) return
-            AiFaceCore.dataEmitter(
-                bytes,
-                ImageColor.COLOR,
-                cameraColorW,
-                cameraColorH,
-                bMirror = 0,
-                nRotate = 0
-            )
+//            AiFaceCore.dataEmitter(
+//                bytes,
+//                ImageColor.COLOR,
+//                cameraColorW,
+//                cameraColorH,
+//                bMirror = 0,
+//                nRotate = 0
+//            )
         }
     }
 

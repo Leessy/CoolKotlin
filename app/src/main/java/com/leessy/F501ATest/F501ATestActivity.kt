@@ -34,7 +34,7 @@ class F501ATestActivity : AppCompatActivity() {
             //            /dev/bus/usb/002/005  7727  38789
 //            /dev/bus/usb/002/004  6935  2048
             Log.d("CamerasMng", "CamerasMng ${it.pid}")
-            if (it.pid == 38789) {//33073
+            if (it.pid == 3) {//33073
                 c = it
                 c?.openCamera()
 //                var l = c?.getSupportedSizeList()
@@ -42,7 +42,7 @@ class F501ATestActivity : AppCompatActivity() {
 //                    Log.d("----", ": $size ")
 //                }
                 c?.setPreviewSize(cameraColorW, cameraColorH, max_fps = 30)
-            } else if (it.pid == 2048) {
+            } else if (it.pid == 1) {
                 c2 = it
                 c2?.openCamera()
                 c2?.setPreviewSize(cameraIrW, cameraIrH, max_fps = 30)

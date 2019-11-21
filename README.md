@@ -1,5 +1,7 @@
 # CoolKotlin [![](https://jitpack.io/v/Leessy/CoolKotlin.svg)](https://jitpack.io/#Leessy/CoolKotlin)
 
+### [AiFaceCore人脸算法核心库](https://github.com/Leessy/CoolKotlin/blob/master/README-AiFaceCore.md)
+
 ### 必须同时引入的库
 
 某些库需要以下内容同时加入配置（并且配置kotlin）

@@ -31,6 +31,7 @@ import android.support.v4.app.SupportActivity
 import android.support.v4.app.SupportActivity.ExtraData
 import com.trello.rxlifecycle2.RxLifecycle.bindUntilEvent
 import android.content.Context
+import com.thonnn.cubeengine.engineapi.EngineApiConfig
 
 
 class ofm1000ServerTest : BaseActivity() {
@@ -231,7 +232,7 @@ class ofm1000ServerTest : BaseActivity() {
             var jsonhttp = gson.toJson(RequestDatas(FinishData(mqttbody.cmid, "完成cmd")))
             Log.d(TAG, "http 应答数据 json:${jsonhttp}")
             RetrofitHelper.apiService()
-                .Finish(RequestBody.create(MEDIA_TYPE_urlencoded, "json=$jsonhttp"))//？？？这样得类型处理 蛋疼
+                .Finish(RequestBody.create(MEDIA_TYPE_urlencoded, "json=$jsonhttp"))//？？？这样得类型处理
                 .subscribe {
                     Log.d(TAG, "FinishData :${gson.toJson(it)}")
                 }

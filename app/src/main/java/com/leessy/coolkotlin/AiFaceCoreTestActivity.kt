@@ -1,15 +1,25 @@
 package com.leessy.coolkotlin
 
+import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.RectF
 import android.graphics.SurfaceTexture
 import android.os.Bundle
+import android.os.Environment
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.Gravity
+import android.view.Surface
 import android.view.TextureView
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import com.AiChlFace.AiChlFace
 import com.aiface.uvccamera.camera.Camera
 import com.aiface.uvccamera.camera.CamerasMng
 import com.aiface.uvccamera.camera.IFrameCall
+import com.leessy.KotlinExtension.onClick
+import com.leessy.MyBitmapFactory
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.datas.isLivings
 import com.leessy.aifacecore.datas.isNoneFace
@@ -21,6 +31,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_ai_face_core_test.*
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
@@ -28,51 +42,74 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
     var c: Camera? = null
     var c2: Camera? = null
 
-    //    val cameraColorW = 800
-//    val cameraColorH = 600
-    val cameraColorW = 640
-    val cameraColorH = 480
-    val cameraIrW = 640
-    val cameraIrH = 480
-//    val cameraIrW = 1280
-//    val cameraIrH = 720
+    var cameraColorW = 1280
+    var cameraColorH = 720
+    //    var cameraColorW = 1920
+//    var cameraColorH = 1080
+    var cameraIrW = 640
+    var cameraIrH = 480
+//    var cameraIrW = 1920
+//    var cameraIrH = 1080
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ai_face_core_test)
         Log.d("----", "**************************???")
-//        Observable.timer(200 * 5000, TimeUnit.MILLISECONDS)
-//            .compose(this.bindToLifecycle())
-//            .subscribe({
-//                finish()
-//            }, {
-//            })
+        val w = intent.getIntExtra("w", 0)
+        val h = intent.getIntExtra("h", 0)
+        if (w != 0 && h != 0) {
+            cameraColorW = w
+            cameraIrW = w
+            cameraColorH = h
+            cameraIrH = h
+        }
+        Observable.timer(4 * 1000, TimeUnit.MILLISECONDS)
+            .compose(this.bindToLifecycle())
+            .subscribe({
+                finish()
+            }, {
+            })
 
         //获取设备列表
         CamerasMng.cameraList.forEach {
-            Log.d("CamerasMng", "CamerasMng ${it.pid}")
-            if (it.pid == 33073) {//33073
+            Log.d("CamerasMng", "CamerasMng pid ${it.pid}")
+            if (it.pid == 3) {//33073
                 c = it
                 c?.openCamera()
-
-                c?.setPreviewSize(cameraColorW, cameraColorH)
-            } else if (it.pid == 25446) {
+                c?.setPreviewSize(cameraColorW, cameraColorH, max_fps = 25)
+            } else if (it.pid == 1) {//22594   25446
                 c2 = it
-                c2?.setPreviewSize(cameraIrW, cameraIrH)
+                c2?.openCamera()
+                c2?.setPreviewSize(cameraIrW, cameraIrH, max_fps = 25)
             }
         }
 
         initAiFAce()//算法
 
-
-        textureview.rotation = -90F
+//        val d = DisplayMetrics()
+//        windowManager.defaultDisplay.getMetrics(d)
+//        d.widthPixels
+//        Log.d("----", "get w ${d.widthPixels} ")
+//        Log.d("----", "get h ${d.heightPixels} ")
+//
+//        Log.d("----", "get 111 ${windowManager.defaultDisplay.width} ")
+//        Log.d("----", "get 111 ${windowManager.defaultDisplay.height} ")
+//
+//        val p = frame1.layoutParams as ViewGroup.MarginLayoutParams
+////            val p = FrameLayout.LayoutParams(m)
+//        p.width = 1812
+//        p.height = 1024
+//        frame1.layoutParams = p
+//        textureview.onClick {
+//        }
+//        textureview.rotation = -90F
         textureview.setSurfaceTextureListener(object : TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(
                 surface: SurfaceTexture?,
                 width: Int,
                 height: Int
             ) {
-                Log.d("----", "--   onSurfaceTextureAvailable")
+                Log.d("----", "--   onSurfaceTextureAvailable$width  $height")
                 MatrixView(textureview, width, height)
                 c?.startPreview(surface)
             }
@@ -82,7 +119,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 width: Int,
                 height: Int
             ) {
-                Log.d("----", "--   onSurfaceTextureSizeChanged")
+                Log.d("----", "--   onSurfaceTextureSizeChanged$width  $height")
             }
 
             override fun onSurfaceTextureUpdated(surface: SurfaceTexture?) {
@@ -97,7 +134,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 return true
             }
         })
-        textureview2.rotation = -90F
+//        textureview2.rotation = -90F
         textureview2.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(
                 surface: SurfaceTexture?,
@@ -148,35 +185,102 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
     private fun initAiFAce() {
         c?.setFrameCall(object : IFrameCall {
             override fun call(bf: ByteBuffer, w: Int, h: Int) {
-//                发送到算法库识别
-                if (num1++ % 3 != 0L) return
-                val bytes = ByteArray(bf.capacity())
-                bf.get(bytes, 0, bytes.size)
-//                发送到算法库识别
-                AiFaceCore.dataEmitter(
-                    bytes,
-                    ImageColor.COLOR,
-                    cameraColorW,
-                    cameraColorH,
-                    bMirror = 1,
-                    nRotate = 2
-                )
+//                Log.d("----", "彩色 相机数据ByteBuffer ${bf.capacity()}  $w   $h")
+
+                //                发送到算法库识别
+                if (num1++ % 3 == 0L) {
+                    val bytes = ByteArray(bf.capacity())
+                    bf.get(bytes, 0, bytes.size)
+                    //发送到算法库识别
+                    AiFaceCore.dataEmitter(
+                        bytes,
+                        ImageColor.COLOR,
+                        cameraColorW,
+                        cameraColorH,
+                        CameraID = 0,
+                        stream = 2,
+                        bMirror = 1,
+                        nRotate = 0
+                    )
+
+                    if (num1 == 4L) {
+                        try {
+                            val p = Environment.getExternalStoragePublicDirectory("DCIM").toString()
+                            var fileName = System.currentTimeMillis().toString() + ".jpg"
+                            val targetFile = File(p, fileName)
+                            val outputStream = FileOutputStream(targetFile)
+
+                            var bitmap =
+                                YUV420SP_Util.JUV420SPDataToBitmap(
+                                    bytes,
+                                    cameraColorW,
+                                    cameraColorH
+                                )
+//                    var bitmap =
+//                        MyBitmapFactory.createMyBitmap(it.RGB24, cameraColorH, cameraColorW)
+                            bitmap?.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
+
+                            outputStream.flush()
+                            //确保图片保存后不会出现0kb
+                            outputStream.fd.sync()
+                            outputStream.close()
+                            Log.d("---", "保存图片完成 ");
+                        } catch (e: FileNotFoundException) {
+                            e.printStackTrace()
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+
             }
         })
         c2?.setFrameCall(object : IFrameCall {
             override fun call(bf: ByteBuffer, w: Int, h: Int) {
-                if (num2++ % 3 != 0L) return
-                val bytes = ByteArray(bf.capacity())
-                bf.get(bytes, 0, bytes.size)
+//                Log.d("----", "黑白 相机数据ByteBuffer ${bf.capacity()}  $w   $h")
+
+                if (num2++ % 3 == 0L) {
+                    val bytes = ByteArray(bf.capacity())
+                    bf.get(bytes, 0, bytes.size)
 //                发送到算法库识别
-                AiFaceCore.dataEmitter(
-                    bytes,
-                    ImageColor.IR,
-                    cameraIrW,
-                    cameraIrH,
-                    bMirror = 1,
-                    nRotate = 2
-                )
+                    AiFaceCore.dataEmitter(
+                        bytes,
+                        ImageColor.IR,
+                        cameraIrW,
+                        cameraIrH,
+                        bMirror = 1,
+                        nRotate = 2
+                    )
+                    if (num2 == 4L) {
+                        try {
+                            val p = Environment.getExternalStoragePublicDirectory("DCIM").toString()
+                            var fileName = System.nanoTime().toString() + ".jpg"
+                            val targetFile = File(p, fileName)
+                            val outputStream = FileOutputStream(targetFile)
+
+                            var bitmap =
+                                YUV420SP_Util.JUV420SPDataToBitmap(
+                                    bytes,
+                                    cameraColorW,
+                                    cameraColorH
+                                )
+//                    var bitmap =
+//                        MyBitmapFactory.createMyBitmap(it.RGB24, cameraColorH, cameraColorW)
+                            bitmap?.compress(Bitmap.CompressFormat.JPEG, 50, outputStream)
+
+                            outputStream.flush()
+                            //确保图片保存后不会出现0kb
+                            outputStream.fd.sync()
+                            outputStream.close()
+                            Log.d("---", "保存图片完成 ");
+                        } catch (e: FileNotFoundException) {
+                            e.printStackTrace()
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+
             }
         })
 
@@ -186,7 +290,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             .observeOn(Schedulers.newThread())
             .map {
                 it.apply {
-//                    if (!isNoneFace()) {
+                    //                    if (!isNoneFace()) {
 //                        FaceFilterCalculate(16, 250, 500, 30, 0, 85)
 //                    }
                     rect = RectF(
@@ -205,7 +309,8 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 when (it.imageColor) {
                     ImageColor.COLOR ->
 //                        faceview.setFaces(it.rect, 480, 640)
-                        faceview.setFaces(it.rect, cameraColorH, cameraColorW)
+                        faceview.setFaces(it.rect, it.width, it.height)
+//                        faceview.setFaces(it.rect, cameraColorH, cameraColorW)
                     ImageColor.IR ->
 //                        faceview2.setFaces(it.rect, 480, 640)
                         faceview2.setFaces(it.rect, cameraIrH, cameraIrW)
@@ -216,10 +321,15 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             })
 
         //红外人脸数据处理
-        AiFaceCore.Follows(ImageColor.IR)
+        AiFaceCore.Follows(ImageColor.IR, CameraID = 0)
             .compose(this.bindUntilEvent(ActivityEvent.STOP))
-//            .sample(200, TimeUnit.MILLISECONDS)
+            .sample(200, TimeUnit.MILLISECONDS)
+//            .DetectFace()
             .DetectFaceAndFilter()
+            .LivingsSinglePass()
+            .FeatureGet()
+
+//            .filter { it.isLivings() }
 //            .Livings()
 //            .observeOn(Schedulers.io())
 //            .sample(200, TimeUnit.MILLISECONDS)
