@@ -8,12 +8,19 @@
 ## 使用说明
 >项目主要使用kotlin语言，使用示例将使用kotlin（java使用参考kotlin方式修改即可）
 
-###工程配置
+### 工程配置
+
 >项目主要使用kotlin中协程([coroutines](https://github.com/Kotlin/kotlinx.coroutines))
 >封装库内使用Rxjava2([Rxjava2](https://github.com/ReactiveX/RxJava))
 
 示例：
 ```
+allprojects {
+    repositories {
+		//project gradle配置
+        maven { url "https://jitpack.io" }
+    }
+}
 dependencies {
     //人脸识别库
     implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.2.38'
@@ -154,6 +161,7 @@ interface ITemp {
 }
 ```
 + 人脸识别+人库对比示例参考：
+
 ```
         //人脸数据处理
         AiFaceCore.Follows(ImageColor.COLOR, CameraID = 0)
@@ -167,5 +175,90 @@ interface ITemp {
 				it.CompareRet//对比最高分值数据
 				it.CompareDataID//数据ID
 			}）
+```
+
++ 人脸识别结果图片转换（人脸区域截取）
+
+```
+//人脸数据处理
+AiFaceCore.Follows(ImageColor.COLOR, CameraID = 0)
+			.compose(this.bindUntilEvent(ActivityEvent.STOP))
+			.DetectFaceAndFilter()//检测人脸并过滤无人脸数据
+			//.......
+            .subscribe({
+				//图片数据转成bitmap
+				val colors = convertByteToColor(data)//把BGR数据转换成RGB数据
+				val bmp = Bitmap.createBitmap(colors, 0, width, width, height, Bitmap.Config.ARGB_8888)
+				//截取人脸区域
+				bmp = bmp.clipFace(
+                                it.faceResult.nFaceLeft,
+                                it.faceResult.nFaceTop,
+                                it.faceResult.nFaceRight,
+                                it.faceResult.nFaceBottom
+                            )
+			}）
+
+    /*
+     * 将BGR数组转化为 RGB像素数组 示例（java）
+     */
+    private static int[] convertByteToColor(byte[] data) {
+        int size = data.length;
+        if (size == 0) {
+            return null;
+        }
+        // 理论上data的长度应该是3的倍数，这里做个兼容
+        int arg = 0;
+        if (size % 3 != 0) {
+            arg = 1;
+        }
+        int[] color = new int[size / 3 + arg];
+        if (arg == 0) {//  正好是3的倍数
+            for (int i = 0; i < color.length; ++i) {
+                //bgr顺序排列
+                color[i] = (data[i * 3 + 2] << 16 & 0x00FF0000) |
+                        (data[i * 3 + 1] << 8 & 0x0000FF00) |
+                        (data[i * 3] & 0x000000FF) |
+                        0xFF000000;
+                //rgb顺序排列
+//                color[i] = (data[i * 3] << 16 & 0x00FF0000) |
+//                        (data[i * 3 + 1] << 8 & 0x0000FF00) |
+//                        (data[i * 3 + 2] & 0x000000FF) |
+//                        0xFF000000;
+            }
+        } else {// 不是3的倍数
+            for (int i = 0; i < color.length - 1; ++i) {
+                color[i] = (data[i * 3 + 2] << 16 & 0x00FF0000) |
+                        (data[i * 3 + 1] << 8 & 0x0000FF00) |
+                        (data[i * 3] & 0x000000FF) |
+                        0xFF000000;
+				//rgb顺序排列
+//                color[i] = (data[i * 3] << 16 & 0x00FF0000) |
+//                        (data[i * 3 + 1] << 8 & 0x0000FF00) |
+//                        (data[i * 3 + 2] & 0x000000FF) |
+//                        0xFF000000;
+            }
+            color[color.length - 1] = 0xFF000000;// 最后一个像素用黑色填充
+        }
+        return color;
+    }
+
+/**
+ * 根据人脸框截取人脸图片 默认偏移offset=35像素点(Kotlin)
+ */
+fun Bitmap.clipFace(faceL: Int, faceT: Int, faceR: Int, faceB: Int, offset: Int = 35): Bitmap {
+    try {
+        val x = if (faceL - offset <= 0) 0 else (faceL - offset)
+        val y = if (faceT - offset <= 0) 0 else (faceT - offset)
+        return Bitmap.createBitmap(
+            this,
+            x, y,
+            if ((faceR + offset) >= width) (width - x) else (faceR + offset) - x,
+            if (faceB + offset >= height) (height - y) else (faceB + offset) - y
+        )
+    } catch (e: Exception) {
+        logd("剪裁异常 $e")
+    }
+    return this
+}
 ```
 

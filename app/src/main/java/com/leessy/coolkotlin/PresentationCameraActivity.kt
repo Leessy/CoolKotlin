@@ -56,7 +56,7 @@ class PresentationCameraActivity : RxAppCompatActivity() {
         //获取设备列表
         CamerasMng.cameraList.forEach {
 //            Log.d("CamerasMng", "CamerasMng ${it.pid}")
-            if (it.pid == 1) {//33073
+            if (it.pid == 3) {//33073
                 c = it
                 c?.openCamera()
                 c?.setPreviewSize(cameraColorW, cameraColorH,max_fps = 25)
@@ -226,7 +226,7 @@ class PresentationCameraActivity : RxAppCompatActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            MyGLColor.setBackgroundColor(1.0f, 0.0f, 0f, 1f)//在glview创建之前配置背景color值
+            MyGLColor.setBackgroundColor(0.40f, 0.40f, 0.40f, 1f)//在glview创建之前配置背景color值
             setContentView(R.layout.presentation_view)
             myglsurfaceview.requestRender()//更新背景颜色
             //初始化参数

@@ -105,13 +105,23 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 //        textureview.rotation = -90F
         textureview.setSurfaceTextureListener(object : TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(
-                surface: SurfaceTexture?,
+                surfaceTexture: SurfaceTexture?,
                 width: Int,
                 height: Int
             ) {
                 Log.d("----", "--   onSurfaceTextureAvailable$width  $height")
                 MatrixView(textureview, width, height)
-                c?.startPreview(surface)
+                c?.startPreview(surfaceTexture)
+                c?.startPreview(previewTexture = surfaceTexture,
+                    surface = null,
+                    w = 640,
+                    h = 480,
+                    max_fps = 25,
+                    frameType = Camera.FRAME_FORMAT_MJPEG,
+                    previewcall = object : IFrameCall {
+                        override fun call(bf: ByteBuffer, w: Int, h: Int) {
+                        }
+                    })
             }
 
             override fun onSurfaceTextureSizeChanged(
@@ -130,7 +140,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 Log.d("----", "--   onSurfaceTextureDestroyed")
 //                c?.stopSecede()
                 c?.stopPreview()
-//                c?.destroyCamera()
+                c?.destroyCamera()
                 return true
             }
         })
@@ -144,6 +154,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 Log.d("----", "--   onSurfaceTextureAvailable")
                 MatrixView(textureview2, width, height)
                 c2?.startPreview(surface)
+                c2?.startPreview()
             }
 
             override fun onSurfaceTextureSizeChanged(

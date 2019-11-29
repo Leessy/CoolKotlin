@@ -8,7 +8,12 @@ import com.blankj.utilcode.util.ToastUtils
 import com.hdos.usbdevice.publicSecurityIDCardLib
 import com.leessy.KotlinExtension.onClick
 import com.leessy.coolkotlin.R
+import com.pboc.TransLib
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_yx_card_test.*
+import vpos.apipackage.IDCard
+import vpos.apipackage.Picc
+import vpos.apipackage.Sys
 import java.util.*
 
 class YxCardTestActivity : AppCompatActivity() {
@@ -19,8 +24,29 @@ class YxCardTestActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_yx_card_test)
-        init()
+//        init()
         read.onClick { if (cardSDk) readcard() else ToastUtils.showLong("初始化失败") }
+        Schedulers.io().scheduleDirect {
+            test()
+        }
+    }
+
+    private fun test() {
+        Sys.initEnv(applicationContext)
+        Sys.Lib_SetComPath("/dev/ttyS4")
+        TransLib.TransLibSetOnCardholderAction(TransLib.cardholderAction)
+
+        Log.d("****1", "    0")
+        var ret = Picc.Lib_PiccOpen()
+        Log.d("****1", "    1  ret $ret")
+        ret = IDCard.Lib_IDCardOpen()
+        Log.d("****1", "    3 ret $ret")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Picc.Lib_PiccClose()
+        IDCard.Lib_IDCardClose()
     }
 
 

@@ -48,7 +48,7 @@ public class MyBitmapFactory {
             bmp = Bitmap.createBitmap(colors, 0, width, width, height,
                     Bitmap.Config.ARGB_8888);
         } catch (Exception e) {
-            // TODO: handle exception  
+            // TODO: handle exception
 
             return null;
         }

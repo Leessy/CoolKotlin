@@ -33,7 +33,7 @@ object CamerasMng {
     }
 
     /**
-     *初始化相机管理工具,可选传入相机默认分辨率
+     *初始化相机管理工具,可选传入相机默认分辨率,并确认是否启用自动设置size默认关
      */
     fun initCameras(c: Context, w: Int = 640, h: Int = 480, usingDfSize: Boolean = false) {
         if (isInit) return

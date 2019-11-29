@@ -5,13 +5,18 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.hardware.Camera
+import android.hardware.camera2.CameraManager
 import android.os.Bundle
 import android.os.PowerManager
+import android.provider.MediaStore
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.widget.Toast
 import com.AiChlFace.AiChlFace
+import com.aiface.jidacard.MainCardActivity
 import com.aiface.uvccamera.camera.CamerasMng
 import com.blankj.utilcode.util.ShellUtils
 import com.jakewharton.rxbinding2.view.RxView
@@ -22,7 +27,6 @@ import com.leessy.F602SystemTool
 import com.leessy.KotlinExtension.onClick
 import com.leessy.LED
 import com.leessy.Loaction.LoactionActivity
-import com.leessy.OCR.OcrActivity
 import com.leessy.PowerManagerUtil
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.AiFaceCore.AiFaceType
@@ -41,6 +45,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 
+    @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -98,8 +103,36 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
             }
 
         ocr.onClick {
-            startActivity(Intent(this, YxCardTestActivity::class.java))
+            //            startActivity(Intent(this, YxCardTestActivity::class.java))
+//            startActivity(Intent(this, MainCardActivity::class.java))
 //            startActivity(Intent(this, OcrActivity::class.java))
+//            var came = Camera.open(0)
+//            var came1 = Camera.open(1)
+//            var came2 = Camera.open(2)
+
+//            Log.d("****camera", " " + came)
+//            Log.d("****camera", " " + came1)
+//            Log.d("****camera", " " + came2)
+
+
+            val cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
+            Log.d("****camera", "size :${cameraManager.cameraIdList.size} ")
+
+            cameraManager.cameraIdList.forEachIndexed { index, s ->
+                Log.d("****camera", "ID===${s} ")
+            }
+//
+//            Log.d(
+//                "****camera",
+//                " " + getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)
+//            )
+
+//
+//            startActivity(
+//                Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+//                    putExtra("android.intent.extras.CAMERA_FACING_FRONT", 2)//前置摄像头
+////                    putExtra("android.intent.extras.CAMERA_FACING", 2)//前置摄像头
+//                })
         }
 
 
@@ -194,7 +227,7 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         AiChlFace.SetFuncCpuNum(1, 1)
         AiChlFace.SetFuncCpuNum(2, 1)
         AiChlFace.SetFuncCpuNum(3, 1)
-        //配置特征码版本（默认V8）
+        //配置特征码版本（）
         AiFaceCore.isV10 = true
         AiFaceCore.initAiFace(
             application, AiFaceType.MODE_DM2016, object : IAiFaceInitCall {
@@ -203,7 +236,7 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
                     Log.d("----", "算法版本size     ${AiChlFace.FeatureSize()}")
 
                     GlobalScope.launch(Dispatchers.Main) {
-                        //                        startActivity(Intent(this@MainActivity, FunctionTestActivity::class.java))
+                        //                        startActivity(Intent(this@MainCardActivity, FunctionTestActivity::class.java))
                         Toast.makeText(
                             application,
                             "算法初始化    $colorsInit   $irInit",
@@ -233,7 +266,8 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         PowerManagerUtil.goToSleep(this)
     }
 
-    var isAuto = true
+    //    var isAuto = true
+    var isAuto = false
 
 
     fun startaifacecore() {
@@ -257,7 +291,7 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         super.onResume()
 //        GlobalScope.launch(Dispatchers.Main) {
 //            delay(8000)
-//            startActivity(Intent(this@MainActivity, FunctionTestActivity::class.java))
+//            startActivity(Intent(this@MainCardActivity, FunctionTestActivity::class.java))
 //        }
         Log.d("----", ":onResume ")
         if (isAuto) {
@@ -423,4 +457,6 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         var alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         alarmManager.cancel(pi)
     }
+
+
 }
