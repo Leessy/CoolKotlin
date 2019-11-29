@@ -187,7 +187,7 @@ AiFaceCore.Follows(ImageColor.COLOR, CameraID = 0)
 			//.......
             .subscribe({
 				//图片数据转成bitmap
-				val colors = convertByteToColor(data)//把BGR数据转换成RGB数据
+				val colors = convertByteToColor(it.RGB24)//把BGR数据(it.RGB24) 转换成RGB数据
 				val bmp = Bitmap.createBitmap(colors, 0, width, width, height, Bitmap.Config.ARGB_8888)
 				//截取人脸区域
 				bmp = bmp.clipFace(

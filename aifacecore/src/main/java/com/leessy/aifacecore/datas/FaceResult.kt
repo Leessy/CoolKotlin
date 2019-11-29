@@ -1,6 +1,7 @@
 package com.leessy.aifacecore.datas
 
 import com.AiChlFace.FACE_DETECT_RESULT
+import java.lang.Exception
 
 class FaceResult<T>(f: T) {
     var face: T? = f
@@ -24,11 +25,18 @@ class FaceResult<T>(f: T) {
     var nBrightAvg: Int = 0 // 人脸区域平均亮度
 
     fun getColor(): FACE_DETECT_RESULT {
-        return face as FACE_DETECT_RESULT
+        if (face is FACE_DETECT_RESULT)
+            return face as FACE_DETECT_RESULT
+        else
+            throw Exception("红外人脸数据，请调用 getIr()")
     }
 
     fun getIr(): com.AiChlIrFace.FACE_DETECT_RESULT {
-        return face as com.AiChlIrFace.FACE_DETECT_RESULT
+        if (face is com.AiChlIrFace.FACE_DETECT_RESULT)
+            return face as com.AiChlIrFace.FACE_DETECT_RESULT
+        else
+            throw Exception("彩色人脸数据，请调用 getColor()")
+
     }
 
     init {
