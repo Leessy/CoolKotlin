@@ -156,33 +156,6 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
             F602SystemTool.closeAll()
         }
         //灯光测试---------------------------
-        RxView.clicks(alm1).subscribe {
-            var intent = Intent(this, ActionBroadCast::class.java)
-            intent.putExtra("msg", "我是 2 分钟定时关机闹钟--")
-            var pi = PendingIntent.getBroadcast(this, 0, intent, 0);
-            test(pi, 2 * 60 * 1000)
-        }
-        RxView.clicks(alm11).subscribe {
-            var intent = Intent(this, ActionBroadCast::class.java)
-            intent.putExtra("msg", "我是 2 分钟定时关机闹钟--")
-            var pi = PendingIntent.getBroadcast(this, 0, intent, 0);
-            cancle(pi)
-            Toast.makeText(this, "取消 2 分钟定时关机闹钟", Toast.LENGTH_SHORT).show();
-        }
-        RxView.clicks(alm2).subscribe {
-            var intent = Intent(this, ActionBroadCast::class.java)
-            intent.putExtra("msg", "我是 5 分钟定时关机闹钟--")
-            var pi = PendingIntent.getBroadcast(this, 1, intent, 0);
-            test(pi, 2 * 60 * 1000)
-        }
-        RxView.clicks(alm22).subscribe {
-            var intent = Intent(this, ActionBroadCast::class.java)
-            intent.putExtra("msg", "我是 5 分钟定时关机闹钟--")
-            var pi = PendingIntent.getBroadcast(this, 1, intent, 0);
-            cancle(pi)
-            Toast.makeText(this, "取消 5 分钟定时关机闹钟", Toast.LENGTH_SHORT).show();
-        }
-
         var window = getWindow()
         //背景亮
         RxView.clicks(bg_u).subscribe {
