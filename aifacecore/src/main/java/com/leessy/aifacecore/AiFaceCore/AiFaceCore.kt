@@ -182,13 +182,19 @@ object AiFaceCore {
      * @return 其他错误码对照算法
      * @see AiChlFace.FeatureCompare
      */
+    fun compare11(channel: Int, face1: ByteArray, face2: ByteArray): Int {
+        if (face1.size == AiChlFaceSize && face2.size == AiChlFaceSize) {
+            return AiChlFace.FeatureCompare(channel, face1, face2)
+        }
+        return -1000
+    }
+
     fun compare11(face1: ByteArray, face2: ByteArray): Int {
         if (face1.size == AiChlFaceSize && face2.size == AiChlFaceSize) {
             return AiChlFace.FeatureCompare(0, face1, face2)
         }
         return -1000
     }
-
 
     /**
      * 检测图片人脸

@@ -398,7 +398,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 Log.d("----", "-*----------彩色 检测时间     ${it.testTime_face}")
                 Log.d("----", "-*----------彩色 特征时间     ${it.testTime_feature}")
                 Log.d("----", "-*----------彩色 活体结果     ${it.Livings}")
-it.faceResult.nAnglePitch
+                it.faceResult.nAnglePitch
 //                try {
 //                    var fileName = System.currentTimeMillis().toString() + ".jpg"
 //                    val targetFile = File("/storage/emulated/0/DCIM", fileName)
