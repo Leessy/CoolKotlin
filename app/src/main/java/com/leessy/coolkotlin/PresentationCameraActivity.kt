@@ -2,7 +2,9 @@ package com.leessy.coolkotlin
 
 import android.app.Presentation
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.graphics.Matrix
+import android.graphics.Point
 import android.graphics.RectF
 import android.graphics.SurfaceTexture
 import android.hardware.display.DisplayManager
@@ -37,13 +39,14 @@ class PresentationCameraActivity : RxAppCompatActivity() {
     private val TAG = javaClass.name
     var c: Camera? = null
     var c2: Camera? = null
-    val cameraColorW = 1920
-    val cameraColorH = 1080
+    val cameraColorW = 480
+    val cameraColorH = 640
     private var mDisplayManager: DisplayManager? = null
     private var display: Display? = null
     private var presentation: PresentationView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_presentation_camera)
         mDisplayManager = getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
@@ -52,14 +55,20 @@ class PresentationCameraActivity : RxAppCompatActivity() {
                 display = mDisplayManager!!.displays[1]
             }
         }
-
+//        on Attach AnyDev /dev/bus/usb/005/004  49512  49186
+//        on Attach CameraType /dev/bus/usb/005/004  49512  49186
+//        on Attach AnyDev /dev/bus/usb/001/006  4070  33054
+//        on Attach CameraType /dev/bus/usb/001/006  4070  33054
+//        on Attach AnyDev /dev/bus/usb/005/003  2362  9488
+//        on Attach AnyDev /dev/bus/usb/001/007  53608  53282
+//        on Attach CameraType /dev/bus/usb/001/007  53608  53282
         //获取设备列表
         CamerasMng.cameraList.forEach {
-//            Log.d("CamerasMng", "CamerasMng ${it.pid}")
-            if (it.pid == 3) {//33073
+            //            Log.d("CamerasMng", "CamerasMng ${it.pid}")
+            if (it.pid == 53282) {//33073  49186==彩色
                 c = it
                 c?.openCamera()
-                c?.setPreviewSize(cameraColorW, cameraColorH,max_fps = 25)
+                c?.setPreviewSize(cameraColorW, cameraColorH, max_fps = 25)
                 c?.setFrameCall(call)
             }
         }
@@ -88,8 +97,8 @@ class PresentationCameraActivity : RxAppCompatActivity() {
 
             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?): Boolean {
                 Log.d("----", "--   onSurfaceTextureDestroyed")
-                c?.stopSecede()
-//                c?.stopPreview()
+//                c?.stopSecede()
+                c?.stopPreview()
 //                c?.destroyCamera()
                 return true
             }
@@ -226,6 +235,8 @@ class PresentationCameraActivity : RxAppCompatActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+//
+//            setRequestedOrientation
             MyGLColor.setBackgroundColor(0.40f, 0.40f, 0.40f, 1f)//在glview创建之前配置背景color值
             setContentView(R.layout.presentation_view)
             myglsurfaceview.requestRender()//更新背景颜色
@@ -239,6 +250,13 @@ class PresentationCameraActivity : RxAppCompatActivity() {
             testBt1.onClick {
                 ToastUtils.showLong("副屏点击按钮测试")
             }
+            window.decorView.width
+//            var point: Point? = null
+//            this.display.getSize(point)
+            Log.d(
+                TAG,
+                "副屏显示=${window.decorView.width}  ${window.decorView.height}"
+            )
         }
 
         fun setFaces(rect: RectData) {

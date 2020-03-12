@@ -3,10 +3,8 @@ package com.aiface.uvccamera.camera
 import android.content.Context
 import android.hardware.usb.UsbDevice
 import android.util.Log
-import com.serenegiant.usb.DeviceFilter
 import com.serenegiant.usb.USBMonitor
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import io.reactivex.schedulers.Schedulers
 
 /**
  *
@@ -35,6 +33,7 @@ object CamerasMng {
     /**
      *初始化相机管理工具,可选传入相机默认分辨率,并确认是否启用自动设置size默认关
      */
+    @Synchronized
     fun initCameras(c: Context, w: Int = 640, h: Int = 480, usingDfSize: Boolean = false) {
         if (isInit) return
         isInit = true
@@ -44,28 +43,43 @@ object CamerasMng {
         destroy()//防止重复初始化
         mUSBMonitor = USBMonitor(c, object : USBMonitor.OnDeviceConnectListener {
             override fun onAttach(device: UsbDevice?) {
+                Log.d(
+                    "CamerasMng",
+                    "on Attach AnyDev ${device?.deviceName}  ${device?.vendorId}  ${device?.productId}"
+                )
                 device?.let {
                     if (pidFilter.contains(it.productId)) return//过滤指定pid设备
                     if (it.deviceClass == 239 && it.deviceSubclass == 2) {
-                        Log.d("CamerasMng", "on Attach ${device.deviceName}  ${device.vendorId}  ${device.productId}")
+                        Log.d(
+                            "CamerasMng",
+                            "on Attach CameraType ${device.deviceName}  ${device.vendorId}  ${device.productId}"
+                        )
                         mUSBMonitor?.requestPermission(device)
                     }
                 }
             }
 
-            override fun onConnect(device: UsbDevice?, controlBlock: USBMonitor.UsbControlBlock?, createNew: Boolean) {
-                Log.d("CamerasMng", "onConnect ${controlBlock?.busNum}    ${controlBlock?.devNum}   $createNew")
+            override fun onConnect(
+                device: UsbDevice?,
+                controlBlock: USBMonitor.UsbControlBlock?,
+                createNew: Boolean
+            ) {
+                Log.d(
+                    "CamerasMng",
+                    "onConnect ${controlBlock?.busNum}    ${controlBlock?.devNum}   $createNew"
+                )
                 if (!createNew) return
                 device?.let {
-                    GlobalScope.launch {
-                        connectDevice(device, controlBlock!!)
-                    }
+                    Schedulers.io().scheduleDirect { connectDevice(device, controlBlock!!) }
                 }
             }
 
-            override fun onDisconnect(device: UsbDevice?, controlBlock: USBMonitor.UsbControlBlock?) {
+            override fun onDisconnect(
+                device: UsbDevice?,
+                controlBlock: USBMonitor.UsbControlBlock?
+            ) {
 //                Log.d("CamerasMng", "on Disconnect ${device?.deviceName}")
-                GlobalScope.launch {
+                Schedulers.io().scheduleDirect {
                     disconnect(device!!, controlBlock!!)
                 }
             }
@@ -76,7 +90,7 @@ object CamerasMng {
 
             override fun onDettach(device: UsbDevice?) {
 //                Log.d("CamerasMng", "on onDettach ${device?.deviceName}")
-                GlobalScope.launch {
+                Schedulers.io().scheduleDirect {
                     dettach(device!!)
                 }
             }
@@ -89,6 +103,7 @@ object CamerasMng {
 
 
     //USB设备接入处理
+    @Synchronized
     private fun connectDevice(device: UsbDevice, controlBlock: USBMonitor.UsbControlBlock) {
         cameraList.add(Camera(controlBlock).apply {
             initmarking()
@@ -96,6 +111,7 @@ object CamerasMng {
     }
 
     //关闭设备连接
+    @Synchronized
     private fun disconnect(device: UsbDevice, controlBlock: USBMonitor.UsbControlBlock) {
         var c: Camera? = null
         cameraList.forEach {
@@ -110,6 +126,7 @@ object CamerasMng {
     }
 
     //USB设备移除处理
+    @Synchronized
     private fun dettach(device: UsbDevice) {
         var c: Camera? = null
         cameraList.forEach {
@@ -124,6 +141,7 @@ object CamerasMng {
 
 
     //关闭所有camera
+    @Synchronized
     fun destroyAllCamera() {
         cameraList.forEach {
             it.destroyCamera()
@@ -131,6 +149,7 @@ object CamerasMng {
     }
 
     //关闭相机管理器
+    @Synchronized
     fun destroy() {
         cameraList.forEach {
             it.destroyCamera()

@@ -84,6 +84,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="ocr测试" />
+    <Button
+        android:id="@+id/records"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="视频录制demo" />
 
     <TextView
         android:layout_width="1360px"

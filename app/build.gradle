@@ -28,14 +28,12 @@ android {
         versionName "1.0Test"
 
         multiDexEnabled true
-    }
-
-    defaultConfig {
         ndk {
             abiFilters 'armeabi-v7a'
 
         }
     }
+
 
     buildTypes {
         debug {

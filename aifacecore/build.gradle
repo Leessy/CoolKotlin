@@ -37,9 +37,6 @@ dependencies {
     // RxJava 2
     compileOnly 'io.reactivex.rxjava2:rxjava:2.2.11'
     compileOnly 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    //coroutines
-    compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M2'
-    compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0-M2'
 
     //使用卡尔加密的时候需要 另外导入uvc库
     compileOnly project(path: ':kaerreadsdk')

@@ -86,7 +86,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoBar">
-        <activity android:name="com.leessy.CardTest.YxCardTestActivity"></activity>
+        <activity android:name="com.leessy.mediarecord.MediaRecordActivity"></activity>
+        <activity android:name="com.leessy.CardTest.YxCardTestActivity" />
         <activity android:name="com.leessy.OCR.OcrActivity" />
         <activity android:name=".PresentationCameraActivity" />
         <activity android:name="com.leessy.F501ATest.F501ATestActivity" />

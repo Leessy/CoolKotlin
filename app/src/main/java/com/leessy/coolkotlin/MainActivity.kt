@@ -31,6 +31,7 @@ import com.leessy.PowerManagerUtil
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.aifacecore.AiFaceCore.AiFaceType
 import com.leessy.aifacecore.AiFaceCore.IAiFaceInitCall
+import com.leessy.mediarecord.MediaRecordActivity
 import com.leessy.ofm1000test.ofm1000ServerTest
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.Observable
@@ -49,6 +50,15 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+//        var p = Runtime.getRuntime().exec("su")
+//        var s = "chmod 777 /dev/video0\n"
+//        var pr = p.getOutputStream()
+//        pr.write(s.toByteArray())
+//        pr.flush()
+//        pr.write("exit\n".toByteArray())
+//        pr.flush()
+//        pr.close()
 
         sendBroadcast(Intent("android.intent.action.SHOW_NAVIGATION_BAR"))
 //        sendBroadcast(Intent("android.intent.action.HIDE_NAVIGATION_BAR"))
@@ -101,6 +111,10 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
             .subscribe {
                 startActivity(Intent(this, PresentationCameraActivity::class.java))
             }
+        records.onClick {
+            startActivity(Intent(this, MediaRecordActivity::class.java))
+        }
+
 
         ocr.onClick {
             //            startActivity(Intent(this, YxCardTestActivity::class.java))
