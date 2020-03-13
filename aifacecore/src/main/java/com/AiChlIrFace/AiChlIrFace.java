@@ -2,6 +2,8 @@ package com.AiChlIrFace;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
+
 import com.leessy.liuc.aiface.CheckLicense;
 import com.leessy.liuc.aiface.DebugL;
 
@@ -179,6 +181,17 @@ public class AiChlIrFace {
     //       2. 界面上需要画人脸人眼等坐标时，需要对检测出的人脸坐标参数根据裁减、旋转和镜象情况进行校正
     public static native int DetectFaceEx(int nChannelNo, int nFmt, byte[] bSrcImg, int nWidth, int nHeight, int nLeft, int nTop, int nRight, int nBottom, int nRotate, int bMirror, byte[] bRgb24, int[] nNewWidth, int[] nNewHeight, FACE_DETECT_RESULT sFaceResult);
 
+    // 检测人脸质量，包括口罩遮挡等属性
+    // 输入参数：
+    //     nChannelNo ----  通道号(0 ~ nMaxChannelNum - 1)
+    //     bRgb24 ---- RGB24格式的图象数据
+    //     nWidth ---- 图象数据宽度
+    //     nHeight ---- 图象数据高度
+    //     sFaceResult ---- 检测到的人脸参数（必须将检测人脸返回的结果原样传入）
+    // 输出参数：sFaceQuality ---- 返回人脸质量
+    // 返回：成功返回0，未授权返回-1，参数错误返回-2，失败返回其它
+    public static native int FaceQuality(int nChannelNo, byte[] bRgb24, int nWidth, int nHeight, FACE_DETECT_RESULT sFaceResult, FACE_QUALITY sFaceQuality);
+
     // 获取特征码大小
     // 返回：特征码大小
     public static native int FeatureSize();
@@ -288,15 +301,10 @@ public class AiChlIrFace {
     //    4. LiveDetect 不需要对图象进行人脸检测，只需要传入彩色和黑白图象（内部会先对两个图象检测人脸然后判别是否活体）
     //    5. 过程中只要一次确认是活体，则本次结果确认为活体；如超时仍无一次确认是活体，则本次结果确认为非活体
     public static native int LiveDetect(int nChannelNo, int nWidth, int nHeight, byte[] bColorRgb24, FACE_DETECT_RESULT sColorFaceResult, byte[] bBwRgb24, FACE_DETECT_RESULT sBwFaceResult);
-
     public static native int LiveDetectColor(int nChannelNo, int nWidth, int nHeight, byte[] bColorRgb24, FACE_DETECT_RESULT sColorFaceResult, byte[] bBwRgb24);
-
     public static native int LiveDetectColorEyes(int nChannelNo, int nWidth, int nHeight, byte[] bColorRgb24, int nColorLeftEyeX, int nColorLeftEyeY, int nColorRightEyeX, int nColorRightEyeY, byte[] bBwRgb24);
-
     public static native int LiveDetectBW(int nChannelNo, int nWidth, int nHeight, byte[] bColorRgb24, byte[] bBwRgb24, FACE_DETECT_RESULT sBwFaceResult);
-
     public static native int LiveDetectBWEyes(int nChannelNo, int nWidth, int nHeight, byte[] bColorRgb24, byte[] bBwRgb24, int nBwLeftEyeX, int nBWLeftEyeY, int nBwRightEyeX, int nBwRightEyeY);
-
     public static native int LiveDetectImg(int nChannelNo, int nWidth, int nHeight, byte[] bColorRgb24, byte[] bBwRgb24);
 
     // 单目活体检测（只需要单路图象，彩色或红外均支持）
@@ -320,9 +328,7 @@ public class AiChlIrFace {
     //    2. LiveDetectImgOneCamera 不需要对图象进行人脸检测，直接传入图象（内部会先对图象检测人脸然后判别是否活体，检测效率最低）
     //    3. 过程中只要一次确认是活体，则本次结果确认为活体；如超时仍无一次确认是活体，则本次结果确认为非活体
     public static native int LiveDetectOneCamera(int nChannelNo, int nCameraType, int nWidth, int nHeight, byte[] bRgb24, FACE_DETECT_RESULT sFaceResult);
-
     public static native int LiveDetectEyesOneCamera(int nChannelNo, int nCameraType, int nWidth, int nHeight, byte[] bRgb24, int nLeftEyeX, int nLeftEyeY, int nRightEyeX, int nRightEyeY);
-
     public static native int LiveDetectImgOneCamera(int nChannelNo, int nCameraType, int nWidth, int nHeight, byte[] bRgb24);
 
     // 设置活体检测的判活阈值
@@ -493,8 +499,10 @@ public class AiChlIrFace {
 
     static {
         try {
+//            System.loadLibrary("omp");
             System.loadLibrary("AiChlIrFace");
         } catch (Throwable e) {
+            Log.e("LoadLibrary", "Load library AiChlIrFace fail.");
         }
     }
 }

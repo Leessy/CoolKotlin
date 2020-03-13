@@ -6,6 +6,7 @@ import android.graphics.SurfaceTexture
 import android.os.Bundle
 import android.util.Log
 import android.view.TextureView
+import com.AiChlFace.AiChlFace
 import com.aiface.uvccamera.camera.Camera
 import com.aiface.uvccamera.camera.CamerasMng
 import com.aiface.uvccamera.camera.IFrameCall
@@ -184,7 +185,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
     private fun initAiFAce() {
         c?.setFrameCall(object : IFrameCall {
             override fun call(bf: ByteBuffer, w: Int, h: Int) {
-                Log.d("----", "彩色 相机数据ByteBuffer ${bf.capacity()}  $w   $h")
+//                Log.d("----", "彩色 相机数据ByteBuffer ${bf.capacity()}  $w   $h")
 
                 //                发送到算法库识别
                 if (num1++ % 3 == 0L) {
@@ -236,7 +237,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         })
         c2?.setFrameCall(object : IFrameCall {
             override fun call(bf: ByteBuffer, w: Int, h: Int) {
-                Log.d("----", "黑白 相机数据ByteBuffer ${bf.capacity()}  $w   $h")
+//                Log.d("----", "黑白 相机数据ByteBuffer ${bf.capacity()}  $w   $h")
                 if (num2++ % 3 == 0L) {
                     val bytes = ByteArray(bf.capacity())
                     bf.get(bytes, 0, bytes.size)
@@ -299,10 +300,10 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                     )
                 }
             }
-            .FaceFilterCalculate(16, 250, 500, 30, 0, 85)
+//            .FaceFilterCalculate(16, 250, 500, 30, 0, 85)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.d("---- 人脸框  过滤值=", "${it.faceFilterRet} ")
+//                Log.d("---- 人脸框  过滤值=", "${it.faceFilterRet} ")
                 //画彩色人脸框或者红外人脸框
                 when (it.imageColor) {
                     ImageColor.COLOR ->
@@ -322,18 +323,24 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         AiFaceCore.Follows(ImageColor.IR, CameraID = 0)
             .compose(this.bindUntilEvent(ActivityEvent.STOP))
             .sample(200, TimeUnit.MILLISECONDS)
-            .DetectFace()
-//            .DetectFaceAndFilter()
+//            .DetectFace()
+            .DetectFaceAndFilter()
 //            .LivingsSinglePass()
 //            .FeatureGet()
 
 //            .filter { it.isLivings() }
-//            .Livings()
+            .Livings()
 //            .observeOn(Schedulers.io())
 //            .sample(200, TimeUnit.MILLISECONDS)
 //            .FeatureGet()
 //            .DetectFace_Feature()
+            .FaceQualityGet()
             .subscribe({
+                Log.d(
+                    "----",
+                    "-*----------红外 人脸 质量检测 状态：${it.faceQualityStatus}   nMask=${it.nMask}  nHat=${it.nHat} nBlur=${it.nBlur} " +
+                            " nGlasses=${it.nGlasses}  nBrightLevel=${it.nBrightLevel}"
+                )
                 Log.d(
                     "----",
                     "-*----------红外 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}"
@@ -372,12 +379,19 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             .observeOn(Schedulers.io())
             .compose(this.bindUntilEvent(ActivityEvent.STOP))
             .sample(200, TimeUnit.MILLISECONDS)
-            .LivingsSinglePass()
-            .filter { it.isLivings() }
-            .FeatureGet()
+            .Livings()
+//            .LivingsSinglePass()
+//            .filter { it.isLivings() }
+//            .FeatureGet()
+            .FaceQualityGet()
 //            .CompareListColor()
 //            .DetectFace_Feature()
             .subscribe({
+                Log.d(
+                    "----",
+                    "-*----------彩色 人脸 质量检测 状态：${it.faceQualityStatus}   nMask=${it.nMask}  nHat=${it.nHat} nBlur=${it.nBlur} " +
+                            " nGlasses=${it.nGlasses}  nBrightLevel=${it.nBrightLevel}"
+                )
                 Log.d(
                     "----",
                     "-*----------彩色 人脸个数  ${it.faceNum}   Thread=${Thread.currentThread().name}"

@@ -42,6 +42,15 @@ class FaceData {
     var testTime_feature = 0L//测试时间用
 
 
+    //人脸质量检测值
+    var faceQualityStatus: Int = -1//人脸质量检测状态
+
+    var nMask: Int = 0 // 人脸遮挡度(值越大表示人脸遮挡程度越高): 判别是否戴口罩的建议阈值为 30
+    var nHat: Int = 0 // 是否戴帽(值越大表示越可能戴着帽子)，建议阈值为 50
+    var nGlasses: Int = 0 // 是否戴眼镜(值越大表示越可能戴着眼镜)，建议阈值为 70
+    var nBrightLevel: Int = 0 // 人脸亮度级别：-1->太暗，0->正常，1->太亮
+    var nBlur: Int = 0 //人脸模糊度(值越大表示图像越模糊)，建议阈值为 70
+
 }
 
 /**

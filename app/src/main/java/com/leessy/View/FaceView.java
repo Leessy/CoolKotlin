@@ -117,7 +117,7 @@ public class FaceView extends View {
         mRect.set(centerX - reatr, centerY - reatr, centerX + reatr, centerY + reatr);
         //开始绘制
 
-        Log.d("---- 人脸框1 =", mRect.toString());
+//        Log.d("---- 人脸框1 =", mRect.toString());
         /////镜像
         if (isMirror){
             mMatrix.setScale(-1, 1);

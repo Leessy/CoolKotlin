@@ -3,8 +3,9 @@ package com.leessy.aifacecore.AiFaceCore.Compare
 import com.AiChlFace.AiChlFace
 import com.leessy.aifacecore.AiFaceCore.AiFaceCore
 import com.leessy.logd
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import io.reactivex.schedulers.Schedulers
+//import kotlinx.coroutines.GlobalScope
+//import kotlinx.coroutines.launch
 import java.util.*
 
 /**
@@ -80,7 +81,7 @@ object ComparList {
         if (!isInit || itempList.isNullOrEmpty()) {
             return
         }
-        GlobalScope.launch {
+        Schedulers.io().scheduleDirect {
             itempList.map {
                 addTemp(it)
             }

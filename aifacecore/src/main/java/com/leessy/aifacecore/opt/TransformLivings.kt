@@ -42,7 +42,7 @@ fun Observable<FaceData>.LivingsSinglePass(isOpen: Boolean = true): Observable<F
                     RGB24,
                     detectResult as com.AiChlIrFace.FACE_DETECT_RESULT
                 )
-                logd("Livings", "活体${Livings}  时间 IR ： ${System.currentTimeMillis() - start}")
+                logd("Livings", "IR 活体${Livings}  时间 ： ${System.currentTimeMillis() - start}")
 
             } else if (it.imageColor == ImageColor.COLOR) {
 //                logd("Livings", "GetLiveFaceThreshold  ${AiChlFace.GetLiveFaceThreshold()}")
@@ -89,10 +89,10 @@ fun Observable<FaceData>.Livings(isOpen: Boolean = true): Observable<FaceData> {
                     RGB24,
                     detectResult as com.AiChlIrFace.FACE_DETECT_RESULT
                 )
-                logd("Livings", "活体时间 IR ： ${System.currentTimeMillis() - start}")
+                logd("Livings", "IR 活体时间  ： ${System.currentTimeMillis() - start}")
 
             } else if (it.imageColor == ImageColor.COLOR) {
-                logd("Livings", "GetLiveFaceThreshold  ${AiChlFace.GetLiveFaceThreshold()}")
+//                logd("Livings", "GetLiveFaceThreshold  ${AiChlFace.GetLiveFaceThreshold()}")
                 val start = System.currentTimeMillis()
                 Livings = AiChlFace.LiveDetectOneCamera(
                     if (nChannelNo == AiFaceChannelNo.COLORNo1) 1 else 3,

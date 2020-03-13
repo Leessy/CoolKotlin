@@ -98,12 +98,13 @@ dependencies {
     //utils
     api 'com.blankj:utilcode:1.22.7'
     implementation project(path: ':aifacecore')
+    //    //人脸识别库
+//    implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.2.40'
     implementation project(path: ':uvccamera')
     implementation project(path: ':jidacard')
 //    implementation project(path: ':yxcardsdk')
     implementation 'com.github.Leessy.CoolKotlin:yxcardsdk:0.2.2'
-//    //人脸识别库
-//    implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.2.38'
+
     implementation files('libs/BaiduLBS_Android.jar')
     //Gson
     api 'com.google.code.gson:gson:2.8.5'

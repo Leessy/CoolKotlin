@@ -136,11 +136,12 @@ public class AiFace {
     // 备注：必须在SDK初始化前调用才有效
     public static native void AiFaceSetAuth(int nAuthType, int nUsbDogHandle);
 
-    // SDK(V7算法)初始化
+    // SDK(V7算法)初始化 【为兼容旧版本而保留，新用户不要调用本接口 】
     // 输入参数：
     //     strCachePath ---- 本APP的cache目录，需要此目录有可读写权限，且能根据上级目录找到lib目录加载模型文件（可参考DEMO例程获取cache目录）
     // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
     // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
+    //       本接口为V7算法版本保留，无需兼容V7算法的用户应调用V10接口 AiFaceInitV10 或 AiFaceInitExV10
     public static native int AiFaceInit(String strCacheDir);
 
     // SDK(V10算法)初始化
@@ -150,12 +151,13 @@ public class AiFace {
     // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
     public static native int AiFaceInitV10(String strCacheDir);
 
-    // SDK(V7算法)初始化(允许指定独立的库文件及临时文件目录)
+    // SDK(V7算法)初始化(允许指定独立的库文件及临时文件目录) 【为兼容旧版本而保留，新用户不要调用本接口 】
     // 输入参数： strLibPath ---- SDK依赖的LIB文件所在目录
     //            strCachePath ---- 临时文件目录，需要此目录有可读写权限（可参考DEMO例程获取cache目录）
     // 返回：成功返回0，许可无效返回-1，算法初始化失败返回-2
     // 备注：检测人脸、获取特征大小、提取特征、一对一及一对多等接口都必须在SDK初始化成功后才能调用
     //       本接口支持LIB文件目录与临时文件目录任意指定
+    //       本接口为V7算法版本保留，无需兼容V7算法的用户应调用V10接口 AiFaceInitV10 或 AiFaceInitExV10
     public static native int AiFaceInitEx(String strLibDir, String strCacheDir);
 
     // SDK(V10算法)初始化(允许指定独立的库文件及临时文件目录)
@@ -252,6 +254,16 @@ public class AiFace {
     //       2. 使用此接口的检测结果来提取特征时，必须使用这里的输出图象、输出图象的宽高和检测到的人脸参数做为参数
     //       3. 界面上需要画人脸人眼等坐标时，需要对检测出的人脸坐标参数根据裁减、旋转和镜象情况进行校正
     public static native int AiFaceDetectAllFacesEx(int nFmt, byte[] bSrcImg, int nWidth, int nHeight, int nRotate, int bMirror, int nMaxFace, byte[] bRgb24, int[] nNewWidth, int[] nNewHeight, FACE_DETECT_RESULT[] sFaceResult);
+
+    // 检测人脸质量，包括口罩遮挡等属性
+    // 输入参数：
+    //     bRgb24 ---- RGB24格式的图象数据
+    //     nWidth ---- 图象数据宽度
+    //     nHeight ---- 图象数据高度
+    //     sFaceResult ---- 检测到的人脸参数（必须将检测人脸返回的结果原样传入）
+    // 输出参数：sFaceQuality ---- 返回人脸质量
+    // 返回：成功返回0，未授权返回-1，参数错误返回-2，失败返回其它
+    public static native int AiFaceQuality(byte[] bRgb24, int nWidth, int nHeight, FACE_DETECT_RESULT sFaceResult, FACE_QUALITY sFaceQuality);
 
     // 获取特征码大小
     // 返回：特征码大小
@@ -358,15 +370,10 @@ public class AiFace {
     //    4. AiFaceLiveDetect 不需要对图象进行人脸检测，只需要传入彩色和黑白图象（内部会先对两个图象检测人脸然后判别是否活体）
     //    5. 过程中只要一次确认是活体，则本次结果确认为活体；如超时仍无一次确认是活体，则本次结果确认为非活体
     public static native int AiFaceLiveDetect(int nWidth, int nHeight, byte[] bColorRgb24, FACE_DETECT_RESULT sColorFaceResult, byte[] bBwRgb24, FACE_DETECT_RESULT sBwFaceResult);
-
     public static native int AiFaceLiveDetectColor(int nWidth, int nHeight, byte[] bColorRgb24, FACE_DETECT_RESULT sColorFaceResult, byte[] bBwRgb24);
-
     public static native int AiFaceLiveDetectColorEyes(int nWidth, int nHeight, byte[] bColorRgb24, int nColorLeftEyeX, int nColorLeftEyeY, int nColorRightEyeX, int nColorRightEyeY, byte[] bBwRgb24);
-
     public static native int AiFaceLiveDetectBW(int nWidth, int nHeight, byte[] bColorRgb24, byte[] bBwRgb24, FACE_DETECT_RESULT sBwFaceResult);
-
     public static native int AiFaceLiveDetectBWEyes(int nWidth, int nHeight, byte[] bColorRgb24, byte[] bBwRgb24, int nBwLeftEyeX, int nBWLeftEyeY, int nBwRightEyeX, int nBwRightEyeY);
-
     public static native int AiFaceLiveDetectImg(int nWidth, int nHeight, byte[] bColorRgb24, byte[] bBwRgb24);
 
     // 单目活体检测（只需要单路图象，彩色或红外均支持）
@@ -389,9 +396,7 @@ public class AiFace {
     //    2. AiFaceLiveDetectImgOneCamera 不需要对图象进行人脸检测，直接传入图象（内部会先对图象检测人脸然后判别是否活体，检测效率最低）
     //    3. 过程中只要一次确认是活体，则本次结果确认为活体；如超时仍无一次确认是活体，则本次结果确认为非活体
     public static native int AiFaceLiveDetectOneCamera(int nCameraType, int nWidth, int nHeight, byte[] bRgb24, FACE_DETECT_RESULT sFaceResult);
-
     public static native int AiFaceLiveDetectEyesOneCamera(int nCameraType, int nWidth, int nHeight, byte[] bRgb24, int nLeftEyeX, int nLeftEyeY, int nRightEyeX, int nRightEyeY);
-
     public static native int AiFaceLiveDetectImgOneCamera(int nCameraType, int nWidth, int nHeight, byte[] bRgb24);
 
     // 设置活体检测的判活阈值
@@ -529,12 +534,15 @@ public class AiFace {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     static {
         try {
-            if (android.os.Build.VERSION.RELEASE.compareTo("5.0") < 0) {
+            if(android.os.Build.VERSION.SDK_INT < 21) {
                 System.loadLibrary("THFaceImage");
                 System.loadLibrary("THFaceLive");
+                System.loadLibrary("THFaceQuality");
+//                System.loadLibrary("omp");
             }
             System.loadLibrary("AiFace");
         } catch (Throwable e) {
+            Log.e("LoadLibrary", "Load AiFace fail：" + e.getMessage());
         }
     }
 }

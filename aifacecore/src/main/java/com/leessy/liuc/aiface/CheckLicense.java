@@ -3,6 +3,7 @@ package com.leessy.liuc.aiface;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+
 import com.leessy.aifacecore.BuildConfig;
 
 import java.io.BufferedReader;
@@ -45,9 +46,9 @@ public class CheckLicense {
         String key = null;
         if (nAuthType == 2) {
             dm2016();
-            key = BuildConfig.VERSION_NAME + CARD;
-        } else if (nAuthType == 3) {
             key = BuildConfig.VERSION_NAME + DM2016;
+        } else if (nAuthType == 3) {
+            key = BuildConfig.VERSION_NAME + CARD;
         }
         SharedPreferences preferences = context.getSharedPreferences(LCSP, Context.MODE_PRIVATE);
         boolean aBoolean = preferences.getBoolean(key, false);

@@ -175,6 +175,16 @@ public class AiIrFace {
     //       2. 界面上需要画人脸人眼等坐标时，需要对检测出的人脸坐标参数根据裁减、旋转和镜象情况进行校正
     public static native int AiFaceDetectFaceEx(int nFmt, byte[] bSrcImg, int nWidth, int nHeight, int nLeft, int nTop, int nRight, int nBottom, int nRotate, int bMirror, byte[] bRgb24, int[] nNewWidth, int[] nNewHeight, FACE_DETECT_RESULT sFaceResult);
 
+    // 检测人脸质量，包括口罩遮挡等属性
+    // 输入参数：
+    //     bRgb24 ---- RGB24格式的图象数据
+    //     nWidth ---- 图象数据宽度
+    //     nHeight ---- 图象数据高度
+    //     sFaceResult ---- 检测到的人脸参数（必须将检测人脸返回的结果原样传入）
+    // 输出参数：sFaceQuality ---- 返回人脸质量
+    // 返回：成功返回0，未授权返回-1，参数错误返回-2，失败返回其它
+    public static native int AiFaceQuality(byte[] bRgb24, int nWidth, int nHeight, FACE_DETECT_RESULT sFaceResult, FACE_QUALITY sFaceQuality);
+
     // 获取特征码大小
     // 返回：特征码大小
     public static native int AiFaceFeatureSize();
@@ -280,15 +290,10 @@ public class AiIrFace {
     //    4. AiFaceLiveDetect 不需要对图象进行人脸检测，只需要传入彩色和黑白图象（内部会先对两个图象检测人脸然后判别是否活体）
     //    5. 过程中只要一次确认是活体，则本次结果确认为活体；如超时仍无一次确认是活体，则本次结果确认为非活体
     public static native int AiFaceLiveDetect(int nWidth, int nHeight, byte[] bColorRgb24, FACE_DETECT_RESULT sColorFaceResult, byte[] bBwRgb24, FACE_DETECT_RESULT sBwFaceResult);
-
     public static native int AiFaceLiveDetectColor(int nWidth, int nHeight, byte[] bColorRgb24, FACE_DETECT_RESULT sColorFaceResult, byte[] bBwRgb24);
-
     public static native int AiFaceLiveDetectColorEyes(int nWidth, int nHeight, byte[] bColorRgb24, int nColorLeftEyeX, int nColorLeftEyeY, int nColorRightEyeX, int nColorRightEyeY, byte[] bBwRgb24);
-
     public static native int AiFaceLiveDetectBW(int nWidth, int nHeight, byte[] bColorRgb24, byte[] bBwRgb24, FACE_DETECT_RESULT sBwFaceResult);
-
     public static native int AiFaceLiveDetectBWEyes(int nWidth, int nHeight, byte[] bColorRgb24, byte[] bBwRgb24, int nBwLeftEyeX, int nBWLeftEyeY, int nBwRightEyeX, int nBwRightEyeY);
-
     public static native int AiFaceLiveDetectImg(int nWidth, int nHeight, byte[] bColorRgb24, byte[] bBwRgb24);
 
     // 单目活体检测（只需要单路图象，彩色或红外均支持）
@@ -311,9 +316,7 @@ public class AiIrFace {
     //    2. AiFaceLiveDetectImgOneCamera 不需要对图象进行人脸检测，直接传入图象（内部会先对图象检测人脸然后判别是否活体，检测效率最低）
     //    3. 过程中只要一次确认是活体，则本次结果确认为活体；如超时仍无一次确认是活体，则本次结果确认为非活体
     public static native int AiFaceLiveDetectOneCamera(int nCameraType, int nWidth, int nHeight, byte[] bRgb24, FACE_DETECT_RESULT sFaceResult);
-
     public static native int AiFaceLiveDetectEyesOneCamera(int nCameraType, int nWidth, int nHeight, byte[] bRgb24, int nLeftEyeX, int nLeftEyeY, int nRightEyeX, int nRightEyeY);
-
     public static native int AiFaceLiveDetectImgOneCamera(int nCameraType, int nWidth, int nHeight, byte[] bRgb24);
 
     // 设置活体检测的判活阈值
@@ -483,8 +486,10 @@ public class AiIrFace {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     static {
         try {
+//            System.loadLibrary("omp");
             System.loadLibrary("AiIrFace");
         } catch (Throwable e) {
+//            Log.e("LoadLibrary", "Load library AiIrFace fail.");
         }
     }
 }
