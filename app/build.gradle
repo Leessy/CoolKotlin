@@ -15,6 +15,7 @@ android {
         config {
             keyAlias 'yjraiface'
             keyPassword '123456'
+//            storeFile file("../key/release702.keystore")
             storeFile file("../key/release.jks")
             storePassword '123456'
         }
@@ -24,8 +25,8 @@ android {
         applicationId "com.leessy.coolkotlin"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0Test"
+        versionCode 3
+        versionName "1.0Test3"
 
         multiDexEnabled true
         ndk {
@@ -97,14 +98,13 @@ dependencies {
     implementation 'com.iqiyi.xcrash:xcrash-android-lib:2.2.0'
     //utils
     api 'com.blankj:utilcode:1.22.7'
-    implementation project(path: ':aifacecore')
     //    //人脸识别库
-//    implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.2.40'
+    implementation project(path: ':aifacecore')
+    //    implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.2.41'
     implementation project(path: ':uvccamera')
     implementation project(path: ':jidacard')
-//    implementation project(path: ':yxcardsdk')
+    //    implementation project(path: ':yxcardsdk')
     implementation 'com.github.Leessy.CoolKotlin:yxcardsdk:0.2.2'
-
     implementation files('libs/BaiduLBS_Android.jar')
     //Gson
     api 'com.google.code.gson:gson:2.8.5'

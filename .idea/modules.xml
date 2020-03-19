@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CoolKotlin.iml" filepath="$PROJECT_DIR$/CoolKotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/aifacecore/aifacecore.iml" filepath="$PROJECT_DIR$/aifacecore/aifacecore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/aifacecorenolibs/aifacecorenolibs.iml" filepath="$PROJECT_DIR$/aifacecorenolibs/aifacecorenolibs.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/arcface/arcface.iml" filepath="$PROJECT_DIR$/arcface/arcface.iml" />
       <module fileurl="file://$PROJECT_DIR$/jidacard/jidacard.iml" filepath="$PROJECT_DIR$/jidacard/jidacard.iml" />

@@ -18,6 +18,7 @@ import android.widget.Toast
 import com.AiChlFace.AiChlFace
 import com.aiface.jidacard.MainCardActivity
 import com.aiface.uvccamera.camera.CamerasMng
+import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.ShellUtils
 import com.jakewharton.rxbinding2.view.RxView
 import com.leessy.ActionBroadCast
@@ -33,12 +34,14 @@ import com.leessy.aifacecore.AiFaceCore.AiFaceType
 import com.leessy.aifacecore.AiFaceCore.IAiFaceInitCall
 import com.leessy.mediarecord.MediaRecordActivity
 import com.leessy.ofm1000test.ofm1000ServerTest
+import com.leessy.util.RarUtil
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
+import java.io.File
 import java.io.FileReader
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -128,13 +131,15 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 //            Log.d("****camera", " " + came1)
 //            Log.d("****camera", " " + came2)
 
+//            initAiFace()
+            testRar()
 
-            val cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
-            Log.d("****camera", "size :${cameraManager.cameraIdList.size} ")
-
-            cameraManager.cameraIdList.forEachIndexed { index, s ->
-                Log.d("****camera", "ID===${s} ")
-            }
+//            val cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
+//            Log.d("****camera", "size :${cameraManager.cameraIdList.size} ")
+//
+//            cameraManager.cameraIdList.forEachIndexed { index, s ->
+//                Log.d("****camera", "ID===${s} ")
+//            }
 //
 //            Log.d(
 //                "****camera",
@@ -195,7 +200,8 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
 //                    screenBrightness = 0.1F
 //                }
 //            }
-            goToSleep()
+//            goToSleep()
+
 //            F602SystemTool.restUsb()
 
         }
@@ -204,16 +210,58 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
         CamerasMng.initCameras(application)
 
 
-        Log.d("----", "厂商     ${android.os.Build.BRAND}")
-        Log.d("----", "厂商     ${android.os.Build.MODEL}")
-        Log.d("----", "算法版本     ${AiChlFace.Ver()}")
+//        ObjectInduction()
+//        PowerManagerUtil.wakeUp(application)
+        Log.d("----", ":onCreate ")
 
-        Log.d("----****", "cpunum=     ${AiChlFace.GetCpuNum()}")
-//        AiChlFace.SetFuncCpuNum(0, 2)
-        //0-全部功能，1-人脸检测，2-特征提取，3-活体检测
-        AiChlFace.SetFuncCpuNum(1, 1)
-        AiChlFace.SetFuncCpuNum(2, 1)
-        AiChlFace.SetFuncCpuNum(3, 1)
+        pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val isScreenOn = pm?.isScreenOn//如果为true，则表示屏幕“亮”了，否则屏幕“暗”了。
+
+//        initAiFace()
+        textdm2016()
+    }
+
+    private fun testRar() {
+        Schedulers.io().scheduleDirect {
+            var l=System.currentTimeMillis()
+            RarUtil.unzipFileByKeyword(File("/storage/emulated/0/aifacelibs.zip"),
+                File("/storage/emulated/0/aifacelibs"),null)
+//            RarUtil.unrar("/storage/emulated/0/aifacelibs.zip","/storage/emulated/0/aifacelibs")
+            Log.d("----", "解压文件耗时    ${System.currentTimeMillis()-l}")
+        }
+
+    }
+
+    private fun initAiFace() {
+        var l=System.currentTimeMillis()
+        //这个方法目标目录其他文件都删了。。。。。。
+//        FileUtils.copyDir("/storage/emulated/0/AiFaceLib/",getCacheDir().parent+"/lib/")
+        Log.d("----", "算法初始化 拷贝文件  nativeLibraryDir  ${getCacheDir().parent}")
+        var file =File("/storage/emulated/0/AiFaceLib/")
+        for (listFile in file.listFiles()) {
+            var des= File( getCacheDir().parent+"/lib/"+listFile.name)
+//            if (des.exists()&&des.isFile){
+//                Log.d("----", "算法初始化 拷贝文件  文件存在  ${des.name}")
+//                continue
+//            }
+            Log.d("----", "算法初始化 拷贝文件  listFile  ${listFile.absolutePath}    des${des.absolutePath}")
+            var s= FileUtils.copyFile(listFile,des)
+            Log.d("----", "算法初始化 拷贝文件  listFile 结果 $s")
+        }
+        Log.d("----", "算法初始化 拷贝文件耗时    ${System.currentTimeMillis()-l}")
+
+
+          Log.d("----", "厂商     ${android.os.Build.BRAND}")
+       Log.d("----", "厂商     ${android.os.Build.MODEL}")
+       Log.d("----", "算法版本     ${AiChlFace.Ver()}")
+
+       Log.d("----****", "cpunum=     ${AiChlFace.GetCpuNum()}")
+    //        AiChlFace.SetFuncCpuNum(0, 2)
+       //0-全部功能，1-人脸检测，2-特征提取，3-活体检测
+       AiChlFace.SetFuncCpuNum(1, 1)
+       AiChlFace.SetFuncCpuNum(2, 1)
+       AiChlFace.SetFuncCpuNum(3, 1)
+
         //配置特征码版本（）
         AiFaceCore.isV10 = true
         AiFaceCore.initAiFace(
@@ -233,15 +281,6 @@ class MainActivity : RxAppCompatActivity(), CoroutineScope by MainScope() {
                 }
             }
         )
-
-//        ObjectInduction()
-//        PowerManagerUtil.wakeUp(application)
-        Log.d("----", ":onCreate ")
-
-        pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-        val isScreenOn = pm?.isScreenOn//如果为true，则表示屏幕“亮”了，否则屏幕“暗”了。
-
-        textdm2016()
     }
 
     var pm: PowerManager? = null

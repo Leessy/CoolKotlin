@@ -3,6 +3,7 @@ package com.aiface.jidacard
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.aiface.jidacard.card.IDCardUtil
 import com.pboc.TransLib
 import vpos.apipackage.IDCard
 import vpos.apipackage.Picc
@@ -22,7 +23,6 @@ class MainCardActivity : AppCompatActivity() {
         TransLib.TransLibSetOnCardholderAction(TransLib.cardholderAction)
 
         var ret = Picc.Lib_PiccOpen()
-
         Log.d("****1", "    1  ret $ret")
         ret = IDCard.Lib_IDCardOpen()
         Log.d("****1", "    3 ret $ret")
