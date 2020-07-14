@@ -86,7 +86,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoBar">
-        <activity android:name="com.leessy.mediarecord.MediaRecordActivity"></activity>
+        <activity android:name=".PrinterActivity"></activity>
+        <activity android:name=".ApiTestActivity" />
+        <activity android:name=".OpenSdkTestActivity" />
+        <activity android:name=".HardwareTestActivity" />
+        <activity android:name=".AifaceListTestActivity" />
+        <activity android:name=".CameraTestListActivity" />
+        <activity android:name=".FunctionListActivity" />
+        <activity android:name="com.leessy.webviewjs.WebViewJsActivity" />
+        <activity android:name="com.leessy.mediarecord.MediaRecordActivity" />
         <activity android:name="com.leessy.CardTest.YxCardTestActivity" />
         <activity android:name="com.leessy.OCR.OcrActivity" />
         <activity android:name=".PresentationCameraActivity" />
@@ -118,7 +126,8 @@
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- meta-data需要写在application中 -->
+        </activity>
+        <activity android:name="com.leessy.CardTest.JidaCardTestActivity" /> <!-- meta-data需要写在application中 -->
         <!-- http://lbsyun.baidu.com/apiconsole/key -->
         <!-- AK鉴权 -->
         <meta-data

@@ -11,7 +11,19 @@
         android:id="@+id/read"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="读卡" />
+        android:text="开始读卡" />
+
+    <Button
+        android:id="@+id/stopread"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="停止读卡" />
+
+    <Button
+        android:id="@+id/getstatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="查询读卡状态" />
 
     <TextView
         android:id="@+id/text"

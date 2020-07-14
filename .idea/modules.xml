@@ -2,18 +2,18 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CoolKotlin.iml" filepath="$PROJECT_DIR$/CoolKotlin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/aifacecore/aifacecore.iml" filepath="$PROJECT_DIR$/aifacecore/aifacecore.iml" />
-      <module fileurl="file://$PROJECT_DIR$/aifacecorenolibs/aifacecorenolibs.iml" filepath="$PROJECT_DIR$/aifacecorenolibs/aifacecorenolibs.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/arcface/arcface.iml" filepath="$PROJECT_DIR$/arcface/arcface.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jidacard/jidacard.iml" filepath="$PROJECT_DIR$/jidacard/jidacard.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jidacardusb/jidacardusb.iml" filepath="$PROJECT_DIR$/jidacardusb/jidacardusb.iml" />
-      <module fileurl="file://$PROJECT_DIR$/kaerreadsdk/kaerreadsdk.iml" filepath="$PROJECT_DIR$/kaerreadsdk/kaerreadsdk.iml" />
-      <module fileurl="file://$PROJECT_DIR$/myfacetest/myfacetest.iml" filepath="$PROJECT_DIR$/myfacetest/myfacetest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/printer/printer.iml" filepath="$PROJECT_DIR$/printer/printer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/uvccamera/uvccamera.iml" filepath="$PROJECT_DIR$/uvccamera/uvccamera.iml" />
-      <module fileurl="file://$PROJECT_DIR$/yxcardsdk/yxcardsdk.iml" filepath="$PROJECT_DIR$/yxcardsdk/yxcardsdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CoolKotlin.iml" filepath="$PROJECT_DIR$/CoolKotlin.iml" group="CoolKotlin" />
+      <module fileurl="file://$PROJECT_DIR$/aifacecore/aifacecore.iml" filepath="$PROJECT_DIR$/aifacecore/aifacecore.iml" group="CoolKotlin/aifacecore" />
+      <module fileurl="file://$PROJECT_DIR$/aifacecorenolibs/aifacecorenolibs.iml" filepath="$PROJECT_DIR$/aifacecorenolibs/aifacecorenolibs.iml" group="CoolKotlin/aifacecorenolibs" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="CoolKotlin/app" />
+      <module fileurl="file://$PROJECT_DIR$/arcface/arcface.iml" filepath="$PROJECT_DIR$/arcface/arcface.iml" group="CoolKotlin/arcface" />
+      <module fileurl="file://$PROJECT_DIR$/jidacard/jidacard.iml" filepath="$PROJECT_DIR$/jidacard/jidacard.iml" group="CoolKotlin/jidacard" />
+      <module fileurl="file://$PROJECT_DIR$/jidacardusb/jidacardusb.iml" filepath="$PROJECT_DIR$/jidacardusb/jidacardusb.iml" group="CoolKotlin/jidacardusb" />
+      <module fileurl="file://$PROJECT_DIR$/kaerreadsdk/kaerreadsdk.iml" filepath="$PROJECT_DIR$/kaerreadsdk/kaerreadsdk.iml" group="CoolKotlin/kaerreadsdk" />
+      <module fileurl="file://$PROJECT_DIR$/myfacetest/myfacetest.iml" filepath="$PROJECT_DIR$/myfacetest/myfacetest.iml" group="CoolKotlin/myfacetest" />
+      <module fileurl="file://$PROJECT_DIR$/printer/printer.iml" filepath="$PROJECT_DIR$/printer/printer.iml" group="CoolKotlin/printer" />
+      <module fileurl="file://$PROJECT_DIR$/uvccamera/uvccamera.iml" filepath="$PROJECT_DIR$/uvccamera/uvccamera.iml" group="CoolKotlin/uvccamera" />
+      <module fileurl="file://$PROJECT_DIR$/yxcardsdk/yxcardsdk.iml" filepath="$PROJECT_DIR$/yxcardsdk/yxcardsdk.iml" group="CoolKotlin/yxcardsdk" />
     </modules>
   </component>
 </project>

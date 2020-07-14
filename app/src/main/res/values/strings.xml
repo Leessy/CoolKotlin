@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CoolKotlin</string>
+    <string name="app_name">功能调试(3399)</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="accessibility_service_label">key监听</string>
     <string name="accessibility_description">key监听1111</string>

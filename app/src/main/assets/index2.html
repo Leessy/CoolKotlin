@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Carson</title>
+    <script>
+        function callAndroidtest(){
+        // 由于对象映射，所以调用test对象等于调用Android映射的对象
+            Android.test("js调用了android中的方法");
+        }
+        function callAndroidtest2(){
+            Android.test2("js调用了android中的方法","222");
+        }
+        // Android需要调用的方法
+        function callJS(s){
+              alert("web收到返回值："+s.toString());
+        }
+
+    </script>
+</head>
+<body>
+<ul>
+    <li>
+        <!--//点击按钮则调用callAndroid函数-->
+        <button type="button" id="button1" style="height:60px" onclick="callAndroidtest()" onresize="30">启动刷卡</button>
+    </li>
+
+    <li>
+    <button type="button" id="button2" style="height:60px" onclick="callAndroidtest2()" onresize="30">启动刷卡后进行人证核验</button>
+    </li>
+</ul>
+</body>
+</html>

@@ -44,17 +44,13 @@ class App : Application() {
         super.onCreate()
         app = this
 //        initXcrash()
-//        DoraemonKit.install(this)
-
-
+        DoraemonKit.install(this)
     }
 
     //初始化 scrash
     private fun initXcrash() {
-
         // The callback when App process crashed.
         val callback = ICrashCallback { logPath, emergency ->
-
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)

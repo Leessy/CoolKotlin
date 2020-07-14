@@ -15,6 +15,7 @@ import com.leessy.aifacecore.datas.isLivings
 import com.leessy.aifacecore.opt.*
 import com.trello.rxlifecycle2.android.ActivityEvent
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -23,15 +24,20 @@ import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
 class AiFaceCoreTestActivity : RxAppCompatActivity() {
+    private val TAG = javaClass.name
     var c: Camera? = null
     var c2: Camera? = null
 
+//    var cameraColorW = 640
+//    var cameraColorH = 480
+
     var cameraColorW = 1280
     var cameraColorH = 720
-    //    var cameraColorW = 1920
-//    var cameraColorH = 1080
-    var cameraIrW = 1280
+
+        var cameraIrW = 1280
     var cameraIrH = 720
+//    var cameraIrW = 640
+//    var cameraIrH = 480
 //    var cameraIrW = 1920
 //    var cameraIrH = 1080
 
@@ -47,12 +53,12 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 //            cameraColorH = h
 //            cameraIrH = h
 //        }
-//        Observable.timer(4 * 1000, TimeUnit.MILLISECONDS)
-//            .compose(this.bindToLifecycle())
-//            .subscribe({
-//                finish()
-//            }, {
-//            })
+        Observable.timer(8 * 1000, TimeUnit.MILLISECONDS)
+            .compose(this.bindToLifecycle())
+            .subscribe({
+                finish()
+            }, {
+            })
 
         //获取设备列表
         CamerasMng.cameraList.forEach {
@@ -61,11 +67,19 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             if (it.pid == 3) {//33073
                 c = it
                 c?.openCamera()
-                c?.setPreviewSize(cameraColorW, cameraColorH, max_fps = 25)
+                var setsize1 = c?.setPreviewSize(
+                    cameraColorW,
+                    cameraColorH,
+                    max_fps = 25,
+                    bandwidthFactor = 1.0F
+                )
+                Log.d(TAG, "设置分辨率返回 $setsize1")
             } else if (it.pid == 1) {//22594   25446
                 c2 = it
                 c2?.openCamera()
-                c2?.setPreviewSize(cameraIrW, cameraIrH, max_fps = 25)
+                var setsize2 =
+                    c2?.setPreviewSize(cameraIrW, cameraIrH, max_fps = 25, bandwidthFactor = 1.0F)
+                Log.d(TAG, "设置分辨率返回 $setsize2")
             }
         }
 
@@ -86,7 +100,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 //        frame1.layoutParams = p
 //        textureview.onClick {
 //        }
-        textureview.rotation = -90F
+//        textureview.rotation = -90F
         textureview.setSurfaceTextureListener(object : TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(
                 surfaceTexture: SurfaceTexture?,
@@ -129,7 +143,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 return true
             }
         })
-        textureview2.rotation = -90F
+//        textureview2.rotation = -90F
         textureview2.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(
                 surface: SurfaceTexture?,
@@ -163,7 +177,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
                 Log.d("----", "--   onSurfaceTextureDestroyed")
 //                c2?.stopSecede()
                 c2?.stopPreview()
-                //                c2?.destroyCamera()
+                c2?.destroyCamera()
 
                 return true
             }
@@ -185,7 +199,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
     private fun initAiFAce() {
         c?.setFrameCall(object : IFrameCall {
             override fun call(bf: ByteBuffer, w: Int, h: Int) {
-//                Log.d("----", "彩色 相机数据ByteBuffer ${bf.capacity()}  $w   $h")
+                Log.d("----", "彩色 相机数据ByteBuffer ${bf.capacity()}  $w   $h")
 
                 //                发送到算法库识别
                 if (num1++ % 3 == 0L) {
@@ -237,7 +251,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
         })
         c2?.setFrameCall(object : IFrameCall {
             override fun call(bf: ByteBuffer, w: Int, h: Int) {
-//                Log.d("----", "黑白 相机数据ByteBuffer ${bf.capacity()}  $w   $h")
+                Log.d("----", "黑白 相机数据ByteBuffer ${bf.capacity()}  $w   $h")
                 if (num2++ % 3 == 0L) {
                     val bytes = ByteArray(bf.capacity())
                     bf.get(bytes, 0, bytes.size)
@@ -282,6 +296,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 
             }
         })
+        if (c != null) return
 
         //人脸框数据处理
         AiFaceCore.FollowFaceRect(imageColor = ImageColor.COLOR)
@@ -303,7 +318,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
 //            .FaceFilterCalculate(16, 250, 500, 30, 0, 85)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-//                Log.d("---- 人脸框  过滤值=", "${it.faceFilterRet} ")
+                //                Log.d("---- 人脸框  过滤值=", "${it.faceFilterRet} ")
                 //画彩色人脸框或者红外人脸框
                 when (it.imageColor) {
                     ImageColor.COLOR ->

@@ -9,13 +9,12 @@
     <FrameLayout
         android:id="@+id/frame1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center">
+        android:layout_height="500px">
 
         <TextureView
             android:id="@+id/textureview"
-            android:layout_width="1280px"
-            android:layout_height="800px"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center" />
         <!--        <TextureView-->
         <!--            android:id="@+id/textureview"-->
@@ -31,14 +30,14 @@
     </FrameLayout>
 
     <FrameLayout
-        android:layout_width="300px"
+        android:layout_width="match_parent"
         android:layout_height="500px"
         android:layout_gravity="bottom">
 
         <TextureView
             android:id="@+id/textureview2"
-            android:layout_width="500px"
-            android:layout_height="300px"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center" />
 
         <com.leessy.View.FaceView

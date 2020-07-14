@@ -31,7 +31,6 @@ android {
         multiDexEnabled true
         ndk {
             abiFilters 'armeabi-v7a'
-
         }
     }
 
@@ -75,7 +74,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     //multidex
     implementation 'com.android.support:multidex:1.0.3'
-    // RxJava 2
+    // RxJava 2 F502B200713000002
     api 'io.reactivex.rxjava2:rxjava:2.2.11'
     api 'io.reactivex.rxjava2:rxandroid:2.1.1'
     // retrofit 2
@@ -103,8 +102,9 @@ dependencies {
     //    implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.2.41'
     implementation project(path: ':uvccamera')
     implementation project(path: ':jidacard')
-    //    implementation project(path: ':yxcardsdk')
-    implementation 'com.github.Leessy.CoolKotlin:yxcardsdk:0.2.2'
+    implementation project(path: ':printer')
+    api project(path: ':yxcardsdk')
+//    implementation 'com.github.Leessy.CoolKotlin:yxcardsdk:0.2.41'
     implementation files('libs/BaiduLBS_Android.jar')
     //Gson
     api 'com.google.code.gson:gson:2.8.5'
