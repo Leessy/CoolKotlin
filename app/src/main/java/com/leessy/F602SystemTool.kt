@@ -25,6 +25,7 @@ object F602SystemTool {
     //602机器
     private val irled602 = "/sys/devices/platform/gpioport/gpioport/ir_led"//红外 602
     private val dsled602 = "/sys/devices/platform/gpioport/gpioport/ds_led_flash"// 白色补光 602
+
     private val redled602 = "/sys/devices/platform/gpioport/gpioport/led_blue"//红led
     private val greled602 = "/sys/devices/platform/gpioport/gpioport/led_gre"//绿灯
     private val blueled602 = "/sys/devices/platform/gpioport/gpioport/led_red"//蓝灯
@@ -33,6 +34,7 @@ object F602SystemTool {
 
     //防拆
     val DISMANTLE_KEY = "/sys/bus/platform/devices/gpioport/gpioport/forbid"
+
     //人体感应
     val INDUCTION_KEY = "/sys/bus/platform/devices/gpioport/gpioport/mandet"
     val gpio1 = "/sys/bus/platform/devices/gpioport/gpioport/gpio1"
@@ -58,7 +60,7 @@ object F602SystemTool {
     }
 
     //写文件
-    private fun writeSysFile(sys_path: String, value: String) {
+    fun writeSysFile(sys_path: String, value: String) {
         try {
             var bufWriter: BufferedWriter? = null
             bufWriter = BufferedWriter(FileWriter(sys_path))
@@ -66,6 +68,24 @@ object F602SystemTool {
             bufWriter.close()
         } catch (e: IOException) {
             e.printStackTrace()
+        }
+    }
+
+    fun usbPowerOff() {
+        GlobalScope.launch {
+            writeSysFile(
+                hubrst,
+                "0"
+            )
+        }
+    }
+
+    fun usbPowerOn() {
+        GlobalScope.launch {
+            writeSysFile(
+                hubrst,
+                "1"
+            )
         }
     }
 

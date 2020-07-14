@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".OpenSdkTestActivity">
+
+    <Button
+        android:id="@+id/webviewjs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="WebViewJsDemo" />
+
+    <Button
+        android:id="@+id/xcrash"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="xcrash异常捕获demo" />
+
+    <Button
+        android:id="@+id/MySQLBt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MySQL崩溃日志查看" />
+
+    <Button
+        android:id="@+id/coroutine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="kotlinCoroutine 协程" />
+</LinearLayout>

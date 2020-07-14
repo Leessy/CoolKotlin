@@ -53,6 +53,9 @@ class PresentationCameraActivity : RxAppCompatActivity() {
         if (mDisplayManager != null) {
             if (mDisplayManager!!.displays.size > 1) {
                 display = mDisplayManager!!.displays[1]
+                val p = Point()
+                display?.getSize(p)
+                Log.d("双屏分辨率", " ${p.x}    ${p.y}")
             }
         }
 //        on Attach AnyDev /dev/bus/usb/005/004  49512  49186

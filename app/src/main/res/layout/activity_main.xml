@@ -6,19 +6,53 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <EditText
-        android:id="@+id/edittext"
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:text="1920*1080" />
+        android:layout_height="75dp"
+        android:onClick="functiontest"
+        android:text="功能测试"
+        android:textSize="22dp" />
 
-    <!--<Button-->
-    <!--android:id="@+id/functionList1"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="Appbarlayout"/>-->
-    <!--<Button-->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:onClick="cameratest"
+        android:text="相机测试"
+        android:textSize="22dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:onClick="hardwaretest"
+        android:text="外接硬件功能测试"
+        android:textSize="22dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:onClick="aifacetest"
+        android:text="算法测试"
+        android:textSize="22dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:onClick="SdkFuncation"
+        android:text="开源三方库功能demo"
+        android:textSize="22dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:onClick="interfacetest"
+        android:text="网络接口测试"
+        android:textSize="22dp" />
+    <!--    <Button-->
+    <!--    android:id="@+id/functionList1"-->
+    <!--    android:layout_width="match_parent"-->
+    <!--    android:layout_height="wrap_content"-->
+    <!--    android:text="Appbarlayout"/>-->
+    <!--    <Button-->
     <!--android:id="@+id/fullscreenactivity"-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content"-->
@@ -33,146 +67,6 @@
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:text="List"/>-->
-    <!--<Button-->
-    <!--android:id="@+id/MySQLBt"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="MySQL崩溃日志查看"/>-->
-    <!--<Button-->
-    <!--android:id="@+id/coroutine"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="kotlinCoroutine 协程"/>-->
-    <!--<Button-->
-    <!--android:id="@+id/xcrash"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="xcrash异常捕获"/>-->
-
-    <Button
-        android:id="@+id/loaction"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="定位测试" />
-
-    <Button
-        android:id="@+id/AiFaceCoreTest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="算法核心库测试" />
-
-    <Button
-        android:id="@+id/ofm1000test"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ofm1000接口测试" />
-
-    <Button
-        android:id="@+id/F501Test"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="F501镜头" />
-
-    <Button
-        android:id="@+id/presentationCamera"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="F502副屏异显相机预览" />
-
-    <Button
-        android:id="@+id/ocr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ocr测试" />
-    <Button
-        android:id="@+id/records"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="视频录制demo" />
-
-    <TextView
-        android:layout_width="1360px"
-        android:layout_height="wrap_content"
-        android:background="#888"
-        android:text="1360px"
-        android:textColor="#f00" />
-    <TextView
-        android:layout_width="1280px"
-        android:layout_height="wrap_content"
-        android:background="#456"
-        android:text="1280px"
-        android:textColor="#f00" />
-    <TextView
-        android:layout_width="1920px"
-        android:layout_height="wrap_content"
-        android:background="#122"
-        android:text="1920px"
-        android:textColor="#f00" />
-    <TextView
-        android:layout_width="720px"
-        android:layout_height="wrap_content"
-        android:background="#323"
-        android:text="720px"
-        android:textColor="#f00" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="300dp">
-
-        <Button
-            android:id="@+id/w_led"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="白补光灯" />
-
-        <Button
-            android:id="@+id/w_ir"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="红补光灯" />
-
-        <Button
-            android:id="@+id/led_r"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="红" />
-
-        <Button
-            android:id="@+id/led_g"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="绿" />
-
-        <Button
-            android:id="@+id/led_b"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="蓝" />
-
-        <Button
-            android:id="@+id/colse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="关灯" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/bg_u"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="背景亮" />
-
-        <Button
-            android:id="@+id/bg_d"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="背景暗" />
-    </LinearLayout>
 
 
 </LinearLayout>

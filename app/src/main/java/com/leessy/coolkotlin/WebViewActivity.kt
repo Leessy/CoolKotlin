@@ -2,12 +2,14 @@ package com.leessy.coolkotlin
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.leessy.webviewjs.hookwebview
 import kotlinx.android.synthetic.main.activity_web_view.*
 
 class WebViewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        hookwebview.hookWebView()//系统权限不可以使用webview处理
         setContentView(R.layout.activity_web_view)
         val url = intent.getStringExtra("url")
 

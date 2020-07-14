@@ -1,102 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/testNativeCrashInMainThreadButton"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".MainActivity">
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:onClick="testNativeCrashInMainThread_onClick"
+        android:padding="10dp"
+        android:text="native crash (in main java thread)"
+        android:textAllCaps="false"
+        tools:ignore="HardcodedText" />
 
     <Button
-            android:id="@+id/testNativeCrashInMainThreadButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:padding="10dp"
-            android:textAllCaps="false"
-            android:onClick="testNativeCrashInMainThread_onClick"
-            android:text="native crash (in main java thread)"
-            tools:ignore="HardcodedText" />
+        android:id="@+id/testNativeCrashInAnotherJavaThreadButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:onClick="testNativeCrashInAnotherJavaThread_onClick"
+        android:padding="10dp"
+        android:text="native crash (in another java thread)"
+        android:textAllCaps="false"
+        tools:ignore="HardcodedText" />
 
     <Button
-            android:id="@+id/testNativeCrashInAnotherJavaThreadButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:padding="10dp"
-            android:textAllCaps="false"
-            android:onClick="testNativeCrashInAnotherJavaThread_onClick"
-            android:text="native crash (in another java thread)"
-            tools:ignore="HardcodedText" />
+        android:id="@+id/testNativeCrashInAnotherNativeThreadButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:onClick="testNativeCrashInAnotherNativeThread_onClick"
+        android:padding="10dp"
+        android:text="native crash (in another native thread)"
+        android:textAllCaps="false"
+        tools:ignore="HardcodedText" />
 
     <Button
-            android:id="@+id/testNativeCrashInAnotherNativeThreadButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:padding="10dp"
-            android:textAllCaps="false"
-            android:onClick="testNativeCrashInAnotherNativeThread_onClick"
-            android:text="native crash (in another native thread)"
-            tools:ignore="HardcodedText" />
+        android:id="@+id/testNativeCrashInAnotherProcessButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="10dp"
+        android:onClick="testNativeCrashInAnotherProcess_onClick"
+        android:padding="10dp"
+        android:text="native crash (in another process)"
+        android:textAllCaps="false"
+        tools:ignore="HardcodedText" />
 
     <Button
-            android:id="@+id/testNativeCrashInAnotherProcessButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginBottom="10dp"
-            android:padding="10dp"
-            android:textAllCaps="false"
-            android:onClick="testNativeCrashInAnotherProcess_onClick"
-            android:text="native crash (in another process)"
-            tools:ignore="HardcodedText" />
+        android:id="@+id/testJavaCrashInMainThreadButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:onClick="testJavaCrashInMainThread_onClick"
+        android:padding="10dp"
+        android:text="java crash (in main java thread)"
+        android:textAllCaps="false"
+        tools:ignore="HardcodedText" />
 
     <Button
-            android:id="@+id/testJavaCrashInMainThreadButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:padding="10dp"
-            android:textAllCaps="false"
-            android:onClick="testJavaCrashInMainThread_onClick"
-            android:text="java crash (in main java thread)"
-            tools:ignore="HardcodedText" />
+        android:id="@+id/testJavaCrashInAnotherThreadButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:onClick="testJavaCrashInAnotherThread_onClick"
+        android:padding="10dp"
+        android:text="java crash (in another java thread)"
+        android:textAllCaps="false"
+        tools:ignore="HardcodedText" />
 
     <Button
-            android:id="@+id/testJavaCrashInAnotherThreadButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:padding="10dp"
-            android:textAllCaps="false"
-            android:onClick="testJavaCrashInAnotherThread_onClick"
-            android:text="java crash (in another java thread)"
-            tools:ignore="HardcodedText" />
+        android:id="@+id/testJavaCrashInAnotherProcessButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:onClick="testJavaCrashInAnotherProcess_onClick"
+        android:padding="10dp"
+        android:text="java crash (in another process)"
+        android:textAllCaps="false"
+        tools:ignore="HardcodedText" />
 
     <Button
-            android:id="@+id/testJavaCrashInAnotherProcessButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="0dp"
-            android:padding="10dp"
-            android:textAllCaps="false"
-            android:onClick="testJavaCrashInAnotherProcess_onClick"
-            android:text="java crash (in another process)"
-            tools:ignore="HardcodedText" />
-    <Button
-            android:layout_width="match_parent"
-            android:text="测试"
-            android:onClick="test"
-            android:layout_height="wrap_content"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="test"
+        android:text="测试" />
 
-    <WebView
-            android:id="@+id/webview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            />
 
 </LinearLayout>

@@ -1,6 +1,9 @@
-package com.serialport;
+package com.printer;
 
 import android.graphics.Bitmap;
+
+import com.serialport.SerialPortManager;
+import com.serialport.SerialPortNew;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,9 +12,10 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidParameterException;
 
+import io.reactivex.schedulers.Schedulers;
+
 /**
- * 作者：陈博
- * 创建时间：2018/8/25 0025 14:56
+ * 打印机
  */
 public class PrinterText {
 
@@ -20,6 +24,11 @@ public class PrinterText {
     private OutputStream mOutputStream;
     private InputStream mInputStream;
     SerialPortManager serialPortManager;
+    private PringtStatusCall statusCall;
+
+    public void setStatusCall(PringtStatusCall statusCall) {
+        this.statusCall = statusCall;
+    }
 
     public static PrinterText instance() {
         if (printerText == null) {
@@ -30,6 +39,29 @@ public class PrinterText {
         return printerText;
     }
 
+    //查询一次状态
+    public void getPrintStatus() {
+        Schedulers.io().scheduleDirect(new Runnable() {
+            @Override
+            public void run() {
+                byte[] data = new byte[1];
+                try {
+                    int i = mInputStream.read(data);
+                    if (i > 0 && statusCall != null) {
+                        statusCall.statusCall(data[0]);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        sendCommand(27, 118);
+    }
+
+    interface PringtStatusCall {
+        void statusCall(int status);
+    }
+
     /**
      * 创建
      */
@@ -37,18 +69,18 @@ public class PrinterText {
         if (mSerialPort == null) {
             try {
                 mSerialPort = getSerialPort(s);
-                if (mSerialPort==null){
+                if (mSerialPort == null) {
                     return false;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        if (mOutputStream!=null&&mInputStream!=null){
+        if (mOutputStream != null && mInputStream != null) {
             //sendCommand();
             //mInputStream.read();
             return true;
-        }else {
+        } else {
             return false;
         }
     }
@@ -58,7 +90,7 @@ public class PrinterText {
             String path = s;
             int baudrate = 115200;
             try {
-                serialPortManager=new SerialPortManager();
+                serialPortManager = new SerialPortManager();
                 serialPortManager.openSerialPort(new File(path), baudrate);
                 mSerialPort = new SerialPortNew();
                 mOutputStream = serialPortManager.mFileOutputStream;
@@ -89,6 +121,7 @@ public class PrinterText {
 
     /**
      * 打印文字内容
+     *
      * @param tString 文字内容
      */
     public void sendString(String tString) {
@@ -119,14 +152,14 @@ public class PrinterText {
 
     /**
      * 打印图片位图数据
+     *
      * @param bmp
      * @return
      * @throws IOException
      */
     public void printmap(Bitmap bmp) throws IOException {
-
         if (bmp == null) {
-            return ;
+            return;
         }
         int[] pixels = new int[bmp.getByteCount()];
         bmp.getPixels(pixels, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
@@ -180,6 +213,7 @@ public class PrinterText {
 
     /**
      * 先下发头信息
+     *
      * @param weight
      */
     private void PrintImaageHead(int weight) {
@@ -195,11 +229,10 @@ public class PrinterText {
     }
 
     /**
-     *
-     * @param callerame 访客姓名
+     * @param callerame  访客姓名
      * @param targetName 被 访 人
-     * @param purpose 事    由
-     * @param time 来访时间
+     * @param purpose    事    由
+     * @param time       来访时间
      */
     public void printer(String callerame, String targetName, String purpose, String time) {
         if (this.mSerialPort != null && this.mOutputStream != null) {
@@ -227,16 +260,15 @@ public class PrinterText {
     }
 
     /**
-     * 打印二维码byte
+     * 打印图片转bytes后的数据
+     *
      * @param data
      * @return
      */
-    private int PrintByte(byte[] data) {
+    public int PrintByte(byte[] data) {
         try {
             mOutputStream.write(data);
-            //sleep(100);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return 0;
@@ -246,9 +278,9 @@ public class PrinterText {
      * 关闭串口
      */
     public void closePrinter() {
-        if (serialPortManager!=null){
+        if (serialPortManager != null) {
             serialPortManager.closeSerialPort();
-            mSerialPort=null;
+            mSerialPort = null;
         }
 
         try {

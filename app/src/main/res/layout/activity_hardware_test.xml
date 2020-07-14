@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".HardwareTestActivity">
+
+    <Button
+        android:id="@+id/yxcard"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:text="远向读卡" />
+
+    <Button
+        android:id="@+id/jidacard"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:text="暨达读卡" />
+
+    <Button
+        android:id="@+id/printer"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:text="打印机" />
+</LinearLayout>

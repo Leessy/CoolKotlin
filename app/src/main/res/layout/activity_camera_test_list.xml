@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".CameraTestListActivity">
+
+    <Button
+        android:id="@+id/F501Test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="F501镜头" />
+
+    <Button
+        android:id="@+id/presentationCamera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="F502副屏异显相机预览" />
+
+    <Button
+        android:id="@+id/records"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="视频录制demo" />
+</LinearLayout>

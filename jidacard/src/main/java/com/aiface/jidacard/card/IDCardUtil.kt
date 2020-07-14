@@ -2,9 +2,11 @@ package com.aiface.jidacard.card
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.text.TextUtils
 import android.util.Log
 import com.lzw.qlhsshare.Tool
 import com.lzw.qlhsshare.Wlt2bmpShare
+import com.pboc.TransLib
 import jdkj.Base16Encoding
 import vpos.apipackage.IDCard
 import vpos.apipackage.Picc
@@ -18,10 +20,13 @@ import java.io.UnsupportedEncodingException
  * --深圳市尚美欣辰科技有限公司.
  */
 object IDCardUtil {
+    var cardSDkopen = false//sdk open状态，未open不进行寻卡 读卡操作
+
     //开始读卡
     @Synchronized
     fun readCard(): IDCardInfo {
         var idCardInfo = IDCardInfo()
+        if (!cardSDkopen) return idCardInfo
         val bf = ByteArray(5 * 1024)
         val ret = IDCard.Lib_IDCardReadRaw(bf, 5)
         if (ret == 0) {
@@ -56,6 +61,8 @@ object IDCardUtil {
         }
         try {
             val cardType = TmpStr.substring(124, 125)
+            Log.d("***", "TmpStr: $TmpStr")
+            Log.d("***", "cardtype: $cardType")
             if (cardType.contains("I")) {//外国人居住证
                 decodeInfo[0] = TmpStr.substring(0, 60)//英文名
                 decodeInfo[1] = TmpStr.substring(60, 61)//性别
@@ -165,7 +172,6 @@ object IDCardUtil {
         }
     }
 
-
     /**
      * @param pic_src 读卡器返回的1024 + 字节的照片数据
      */
@@ -181,38 +187,55 @@ object IDCardUtil {
     }
 
 
+    //模块上电
+    fun openSdk(): Boolean {
+        var ret = Picc.Lib_PiccOpen()//不需要单独寻卡或者读IC卡可不初始化
+        ret = IDCard.Lib_IDCardOpen()
+        cardSDkopen = ret == 0
+        return cardSDkopen
+    }
+
+    //模块下电
+    fun closeSdk() {
+        if (cardSDkopen) {
+            Picc.Lib_PiccClose()
+            IDCard.Lib_IDCardClose()
+        }
+        cardSDkopen = false
+    }
+
+    //版本号
+    fun getVersion(): ByteArray {
+        val data = ByteArray(8)
+        if (!cardSDkopen) return data
+        Sys.Lib_GetVersion(data)
+        return data;
+    }
+
     //初始化读卡模块参数配置
     fun initSdk(context: Context, serialport: String) {
         Sys.initEnv(context)
         Sys.Lib_SetComPath(serialport)
-//        TransLib.TransLibSetOnCardholderAction(TransLib.cardholderAction)
+        TransLib.TransLibSetOnCardholderAction(TransLib.cardholderAction)
     }
-
-    //设备上电
-    fun openSdk(): Int {
-        var ret = Picc.Lib_PiccOpen()
-        ret = IDCard.Lib_IDCardOpen()
-        return ret
-    }
-
-    //设备下电
-    fun closeSdk(): Int {
-        Picc.Lib_PiccClose()
-        return IDCard.Lib_IDCardClose()
-    }
-
 
     //寻身份证
     fun searchIDCard(): Boolean {
+        if (!cardSDkopen) return false
         val temp = ByteArray(128)
         val cardtype = ByteArray(2)
         val ret = Picc.Lib_PiccCheck(66.toByte(), cardtype, temp)
-//        Log.d("---", "测试  UID=" + Arrays.toString(temp))
-        return ret == 0
+        if (ret == 0) {
+//            Log.d("---", "测试  UID=" + Arrays.toString(temp))
+            return true
+        }
+        return false
     }
+
 
     //寻银行卡
     fun searchBankCard(): Boolean {
+        if (!cardSDkopen) return false
         val temp = ByteArray(128)
         val cardtype = ByteArray(2)
         val ret = Picc.Lib_PiccCheck(65.toByte(), cardtype, temp)
@@ -222,11 +245,43 @@ object IDCardUtil {
 
     //读ic卡 uid
     fun readICCard(): String {
+        if (!cardSDkopen) return ""
         val temp = ByteArray(128)
         val cardtype = ByteArray(2)
         val ret = Picc.Lib_PiccCheck(65.toByte(), cardtype, temp)
         return if (ret == 0) {
             Base16Encoding.byteArrayToHexstring(temp, 1, temp[0] + 1)
         } else ""
+    }
+
+    fun readBankCardNotSearch(): BankCardInfo {
+        val cardInfo = BankCardInfo()
+        if (!cardSDkopen) return cardInfo
+        val temp = ByteArray(128)
+        val cardtype = ByteArray(2)
+        var ret = Picc.Lib_PiccCheck(65.toByte(), cardtype, temp)
+        if (ret != 0) {
+            return cardInfo
+        }
+        val uid = Base16Encoding.byteArrayToHexstring(temp, 1, temp[0] + 1)
+        cardInfo.setUid(uid)
+        val pan = TransLib.TransLibGetPan()
+        cardInfo.setCardNo(pan)
+        if (!TextUtils.isEmpty(pan)) {
+            val bin = pan.substring(0, 6)
+            cardInfo.setBin(bin)
+        }
+        var balance: String? = null
+        val data = ByteArray(6)
+        ret = TransLib.TransLibGetData(40825, data)
+        if (ret == 0) {
+            balance = com.pboc.Base16Encoding.byteArrayToHexstring(data)
+            val fbalance = balance.toFloat() / 100.0f
+            balance = fbalance.toString() + ""
+            cardInfo.setBalance(balance)
+        }
+        cardInfo.setRetCode(1)
+        //        Picc.Lib_PiccClose();
+        return cardInfo
     }
 }

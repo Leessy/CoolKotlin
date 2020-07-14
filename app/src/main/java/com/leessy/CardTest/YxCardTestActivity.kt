@@ -1,54 +1,57 @@
 package com.leessy.CardTest
 
 import android.graphics.Bitmap
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import com.blankj.utilcode.util.ToastUtils
+import android.widget.Toast
 import com.hdos.usbdevice.publicSecurityIDCardLib
 import com.leessy.KotlinExtension.onClick
 import com.leessy.coolkotlin.R
-import com.pboc.TransLib
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_yx_card_test.*
-import vpos.apipackage.IDCard
-import vpos.apipackage.Picc
-import vpos.apipackage.Sys
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class YxCardTestActivity : AppCompatActivity() {
     private var iDCardDevice: publicSecurityIDCardLib? = null
 
     var cardSDk = false
 
+    var num = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_yx_card_test)
-//        init()
-        read.onClick { if (cardSDk) readcard() else ToastUtils.showLong("初始化失败") }
-        Schedulers.io().scheduleDirect {
-            test()
+        init()
+        read.onClick {
+            //            readcard()
+            startRead()
         }
+        stopread.onClick {
+            d?.dispose()
+        }
+        getstatus.onClick {
+            val ret = iDCardDevice?.getSAMStatus()!!
+            Toast.makeText(this, "设备状态 $ret   ${ret == 0x90}", Toast.LENGTH_LONG).show()
+        }
+
     }
 
-    private fun test() {
-        Sys.initEnv(applicationContext)
-        Sys.Lib_SetComPath("/dev/ttyS4")
-        TransLib.TransLibSetOnCardholderAction(TransLib.cardholderAction)
-
-        Log.d("****1", "    0")
-        var ret = Picc.Lib_PiccOpen()
-        Log.d("****1", "    1  ret $ret")
-        ret = IDCard.Lib_IDCardOpen()
-        Log.d("****1", "    3 ret $ret")
+    var d: Disposable? = null
+    fun startRead() {
+        d?.let { it.dispose() }
+        d = Observable.intervalRange(0, Long.MAX_VALUE, 500, 500, TimeUnit.MILLISECONDS)
+            .map {
+                readcard()
+            }
+            .subscribe({
+                num++
+                Log.d("读卡结果  次数", " " + num)
+            }, {
+                startRead()
+            })
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Picc.Lib_PiccClose()
-        IDCard.Lib_IDCardClose()
-    }
-
 
     //初始化
     private fun init() {
@@ -75,15 +78,27 @@ class YxCardTestActivity : AppCompatActivity() {
                 BmpFile,
                 getPackageName()
             )
+            Log.d("读卡结果1  总数：$num    ret:", "" + ret)
+            runOnUiThread {
+                text.text = "读卡结果 1  总数：$num     ret:" + ret
+            }
+
             if (ret == 0 || ret == 1) {//读卡成功，0中国身份证; 1外国居住证
                 val colors = iDCardDevice?.convertByteToColor(BmpFile)
                 val bm = Bitmap.createBitmap(colors, 102, 126, Bitmap.Config.ARGB_8888)
                 val bm1 = Bitmap.createScaledBitmap(bm, 102 * 2, 126 * 2, false) //这里你可以自定义它的大小
                 var c = ScanCardItem(decodeInfo, bm1, ret)
-                Log.d("读卡结果 ", c.toString())
+                Log.d("读卡结果 2   总数：$num ", c.toString())
+                runOnUiThread {
+                    text.text = "读卡结果 2  总数：$num     : " + c.toString()
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            runOnUiThread {
+                text.text = "读卡结果异常  总数：$num   " + e.toString()
+            }
+            Log.d("读卡结果 异常", "" + e)
         }
     }
 
