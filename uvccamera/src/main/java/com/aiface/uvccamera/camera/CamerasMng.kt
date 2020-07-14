@@ -22,12 +22,21 @@ object CamerasMng {
 
     //PID:293为602的4G模块
     private var pidFilter = arrayListOf(293)//相机pid
+    private var classFilter = mutableMapOf(Pair(239, 2), Pair(39, 0), Pair(2, 0), Pair(6, -1), Pair(14, 9))
 
     /**
      * 新增pid过滤设备
      */
     fun addPIDfilters(vararg pid: Int) {
         pidFilter.addAll(pid.toList())
+    }
+    
+    fun addClassFilter(pair: Pair<Int, Int>) {
+        classFilter[pair.first] = pair.second
+    }
+    
+    private fun isCameraDevice(deviceClass: Int, deviceSubclass: Int): Boolean {
+        return classFilter.containsKey(deviceClass) && classFilter[deviceClass] == deviceSubclass
     }
 
     /**
@@ -45,11 +54,11 @@ object CamerasMng {
             override fun onAttach(device: UsbDevice?) {
                 Log.d(
                     "CamerasMng",
-                    "on Attach AnyDev ${device?.deviceName}  ${device?.vendorId}  ${device?.productId}"
+                    "on Attach AnyDev ${device?.deviceName}  ${device?.vendorId}  ${device?.productId} ${device?.deviceClass} ${device?.deviceSubclass}"
                 )
                 device?.let {
                     if (pidFilter.contains(it.productId)) return//过滤指定pid设备
-                    if (it.deviceClass == 239 && it.deviceSubclass == 2) {
+                    if (isCameraDevice(it.deviceClass, it.deviceSubclass)) {
                         Log.d(
                             "CamerasMng",
                             "on Attach CameraType ${device.deviceName}  ${device.vendorId}  ${device.productId}"
