@@ -1,10 +1,14 @@
 package com.aiface.uvccamera.camera
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.hardware.usb.UsbDevice
 import android.util.Log
 import com.serenegiant.usb.USBMonitor
 import io.reactivex.schedulers.Schedulers
+
 
 /**
  *
@@ -22,7 +26,13 @@ object CamerasMng {
 
     //PID:293为602的4G模块
     private var pidFilter = arrayListOf(293)//相机pid
-    private var classFilter = mutableMapOf(Pair(239, 2), Pair(39, 0), Pair(2, 0), Pair(6, -1), Pair(14, 9))
+    private var classFilter =
+        mutableMapOf(Pair(239, 2), Pair(39, 0), Pair(2, 0), Pair(6, -1), Pair(14, 9))
+
+    private var nonePermissionDeviceList = mutableListOf<UsbDevice>()
+    private var isSystemApp = false
+
+    fun getNonePermissionDevices() = nonePermissionDeviceList.iterator()
 
     /**
      * 新增pid过滤设备
@@ -30,13 +40,41 @@ object CamerasMng {
     fun addPIDfilters(vararg pid: Int) {
         pidFilter.addAll(pid.toList())
     }
-    
+
     fun addClassFilter(pair: Pair<Int, Int>) {
         classFilter[pair.first] = pair.second
     }
-    
+
     private fun isCameraDevice(deviceClass: Int, deviceSubclass: Int): Boolean {
         return classFilter.containsKey(deviceClass) && classFilter[deviceClass] == deviceSubclass
+    }
+
+    //判断是否为系统应用
+    private fun isSystemApp(pkgName: String, context: Context): Boolean {
+        var isSystemApp = false
+        var pi: PackageInfo? = null
+        try {
+            val pm: PackageManager = context.getPackageManager()
+            pi = pm.getPackageInfo(pkgName, 0)
+        } catch (t: Throwable) {
+            Log.w("666", t.message, t)
+        }
+        if (pi != null) {
+            val isSysApp =
+                pi.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 1
+            val isSysUpd =
+                pi.applicationInfo.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP == 1
+
+            val isSystemUid = pi.applicationInfo.uid == 1000
+
+            isSystemApp = isSysApp || isSysUpd || isSystemUid
+        }
+        return isSystemApp
+    }
+
+    //申请权限
+    fun requestPermission(device: UsbDevice) {
+        mUSBMonitor?.requestPermission(device)
     }
 
     /**
@@ -44,6 +82,7 @@ object CamerasMng {
      */
     @Synchronized
     fun initCameras(c: Context, w: Int = 640, h: Int = 480, usingDfSize: Boolean = false) {
+        isSystemApp = isSystemApp(c.packageName, c)
         if (isInit) return
         isInit = true
         this.usingDfSize = usingDfSize
@@ -63,7 +102,16 @@ object CamerasMng {
                             "CamerasMng",
                             "on Attach CameraType ${device.deviceName}  ${device.vendorId}  ${device.productId}"
                         )
-                        mUSBMonitor?.requestPermission(device)
+                        Log.d(
+                            "CamerasMng",
+                            "on Attach CameraType${mUSBMonitor?.hasPermission(device)!!}"
+                        )
+
+                        if (isSystemApp && mUSBMonitor?.hasPermission(device)!!) {
+                            mUSBMonitor?.requestPermission(device)
+                        } else {
+                            nonePermissionDeviceList.add(device)//无权限设备不进行连接操作
+                        }
                     }
                 }
             }
@@ -77,6 +125,7 @@ object CamerasMng {
                     "CamerasMng",
                     "onConnect ${controlBlock?.busNum}    ${controlBlock?.devNum}   $createNew"
                 )
+                nonePermissionDeviceList.remove(device)//连接成功
                 if (!createNew) return
                 device?.let {
                     Schedulers.io().scheduleDirect { connectDevice(device, controlBlock!!) }

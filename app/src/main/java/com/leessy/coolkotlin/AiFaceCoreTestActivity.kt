@@ -34,7 +34,7 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
     var cameraColorW = 1280
     var cameraColorH = 720
 
-        var cameraIrW = 1280
+    var cameraIrW = 1280
     var cameraIrH = 720
 //    var cameraIrW = 640
 //    var cameraIrH = 480
@@ -60,25 +60,34 @@ class AiFaceCoreTestActivity : RxAppCompatActivity() {
             }, {
             })
 
+        //非系统权限的应用，申请权限
+        val s = CamerasMng.getNonePermissionDevices()
+        while (s.hasNext()) {
+            CamerasMng.requestPermission(s.next())
+        }
+
         //获取设备列表
         CamerasMng.cameraList.forEach {
             Log.d("CamerasMng", "CamerasMng pid ${it.pid}")
 //            20833
-            if (it.pid == 3) {//33073
+            if (c == null) {//33073
+//            if (it.pid == 3) {//33073
                 c = it
                 c?.openCamera()
                 var setsize1 = c?.setPreviewSize(
                     cameraColorW,
                     cameraColorH,
-                    max_fps = 25,
-                    bandwidthFactor = 1.0F
+                    max_fps = 15,
+                    bandwidthFactor = 0.5F
                 )
                 Log.d(TAG, "设置分辨率返回 $setsize1")
-            } else if (it.pid == 1) {//22594   25446
+//            } else if (it.pid == 1) {//22594   2
+            } else if (c2 == null) {//33073
+
                 c2 = it
                 c2?.openCamera()
                 var setsize2 =
-                    c2?.setPreviewSize(cameraIrW, cameraIrH, max_fps = 25, bandwidthFactor = 1.0F)
+                    c2?.setPreviewSize(cameraIrW, cameraIrH, max_fps = 15, bandwidthFactor = 0.5F)
                 Log.d(TAG, "设置分辨率返回 $setsize2")
             }
         }

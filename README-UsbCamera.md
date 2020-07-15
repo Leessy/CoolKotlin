@@ -48,6 +48,13 @@ CamerasMng.initCameras(application)
 + 启动相机 设置预览
 
 ```
+//注意！！！无系统权限的设备需要针对每个相机申请权限，并点击确定
+        val s = CamerasMng.getNonePermissionDevices()//需要申请权限的设备
+        while (s.hasNext()) {
+            //申请权限，系统弹出确定dialog,注意多个相机时注意一个个来，不然dialog只会显示最后一个
+            CamerasMng.requestPermission(s.next())
+        }
+
 //方法一：获取设备列表 选择指定相机启动
 CamerasMng.cameraList.forEach {
             Log.d("CamerasMng", "CamerasMng pid ${it.pid}")

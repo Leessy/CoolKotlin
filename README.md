@@ -23,21 +23,21 @@ dependencies {
 ``` Gradle
 dependencies {
     //直接使用全部功能lib会异常
-    implementation 'com.github.Leessy.CoolKotlin:0.2.35'
+    implementation 'com.github.Leessy.CoolKotlin:0.2.43'
 }
 ```
 ### 正常引入方式
 * 1.使用人脸算法库：
 ``` Gradle
 dependencies {
-    implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.2.35'
+    implementation 'com.github.Leessy.CoolKotlin:aifacecore:0.2.43'
 }
 ```
 
 * 2.使用USB相机库：
 ``` Gradle
 dependencies {
-    implementation 'com.github.Leessy.CoolKotlin:uvccamera:0.2.35'
+    implementation 'com.github.Leessy.CoolKotlin:uvccamera:0.2.43'
 }
 ```
 
@@ -45,8 +45,8 @@ dependencies {
 ``` Gradle
 dependencies {
     //相同功能的只能选择一种导入
-    implementation 'com.github.Leessy.CoolKotlin:jidacard:0.2.35'
-    //implementation 'com.github.Leessy.CoolKotlin:jidacardusb:0.2.35'
-    //implementation 'com.github.Leessy.CoolKotlin:yxcardsdk:0.2.35'
+    implementation 'com.github.Leessy.CoolKotlin:jidacard:0.2.43'
+    //implementation 'com.github.Leessy.CoolKotlin:jidacardusb:0.2.43'
+    //implementation 'com.github.Leessy.CoolKotlin:yxcardsdk:0.2.43'
 }
 ```
