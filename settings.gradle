@@ -1,1 +1,2 @@
+include ':aifacecorehy'
 include ':app', ':myfacetest', ':aifacecore', ':arcface', ':uvccamera', ':jidacard', ':jidacardusb', ':kaerreadsdk', ':yxcardsdk', ':printer', ':aifacecorenolibs'
